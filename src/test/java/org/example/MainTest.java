@@ -162,7 +162,7 @@ public class MainTest {
         }
 
         // Check the deck has been updated correctly
-        int expectedRemainingCards = deck.size() - (4 * 12); // 4 players with 12 cards each
+        int expectedRemainingCards = 52; // There are 100 cards - (4x12=48) = 52. Hard code but who cares
         assertEquals(expectedRemainingCards, deck.size(), "The deck should be updated after distribution");
     }
 }

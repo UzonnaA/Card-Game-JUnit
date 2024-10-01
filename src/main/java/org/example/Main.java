@@ -106,9 +106,21 @@ public class Main {
     }
 
 
-    // Method to distribute cards to players
     public Map<String, List<AdventureCard>> distributeCards(List<AdventureCard> deck, int numPlayers, int cardsPerPlayer) {
-        return new HashMap<>();
+        Map<String, List<AdventureCard>> players = new HashMap<>();
+        Collections.shuffle(deck); // Here we shuffle to ensure random cards
+
+        for (int i = 0; i < numPlayers; i++) {
+            List<AdventureCard> playerHand = new ArrayList<>();
+            for (int j = 0; j < cardsPerPlayer; j++) {
+                if (!deck.isEmpty()) {
+                    playerHand.add(deck.remove(0)); // Make sure we actually remove from deck when we add to hand
+                }
+            }
+            players.put("Player" + (i + 1), playerHand); // Assign hand to player
+        }
+
+        return players;
     }
 
 
