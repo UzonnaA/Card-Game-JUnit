@@ -1,8 +1,7 @@
 package org.example;
 
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Main {
 
@@ -104,6 +103,12 @@ public class Main {
         addEventCards(deck, "Event", "Prosperity", 2);
 
         return deck;
+    }
+
+
+    // Method to distribute cards to players
+    public Map<String, List<AdventureCard>> distributeCards(List<AdventureCard> deck, int numPlayers, int cardsPerPlayer) {
+        return new HashMap<>();
     }
 
 

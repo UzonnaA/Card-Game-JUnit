@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
+import java.util.Map;
 
 public class MainTest {
 
@@ -144,6 +145,24 @@ public class MainTest {
         long q5Count = deck.stream().filter(card -> card.getName().equals("Q5")).count();
         assertEquals(2, q5Count, "Wrong number of Q5 cards");
 
+    }
 
+    @Test
+    @DisplayName("Distribute 12 adventure cards to all players > check deck size")
+    void RESP_02_test_01() {
+        Main game = new Main();
+        List<Main.AdventureCard> deck = game.init_Adv_Deck();
+
+        // Distribute cards (I'll use 4 as the input in case I'm only giving cards to one player)
+        Map<String, List<Main.AdventureCard>> players = game.distributeCards(deck, 4, 12);
+
+        // Check each player has exactly 12 cards
+        for (Map.Entry<String, List<Main.AdventureCard>> entry : players.entrySet()) {
+            assertEquals(12, entry.getValue().size(), "Each player should have 12 cards");
+        }
+
+        // Check the deck has been updated correctly
+        int expectedRemainingCards = deck.size() - (4 * 12); // 4 players with 12 cards each
+        assertEquals(expectedRemainingCards, deck.size(), "The deck should be updated after distribution");
     }
 }
