@@ -15,7 +15,7 @@ import java.util.Scanner;
 
 public class MainTest {
 
-    private Main setupGame() {
+    private Main setupGame1Player() {
         // Create and set up the game
         Main game = new Main();
         game.InitializeDeck();
@@ -25,6 +25,14 @@ public class MainTest {
         StringWriter output = new StringWriter();
         game.PromptPlayer(new Scanner(System.in), new PrintWriter(output), game.currentPlayer.getName());
         game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output));
+        return game;
+    }
+
+    private Main setupGame(){
+        // Create and set up the game
+        Main game = new Main();
+        game.InitializeDeck();
+        game.StartGame();
         return game;
     }
 
@@ -348,7 +356,7 @@ public class MainTest {
     @Test
     @DisplayName("Test that switching to the next player works correctly")
     void RESP_06_test_02() {
-        Main game = setupGame();
+        Main game = setupGame1Player();
         StringWriter output = new StringWriter();
 
         // Simulate pressing enter to switch to the next player
@@ -362,7 +370,7 @@ public class MainTest {
     @Test
     @DisplayName("Test that Player 2 is prompted to start after pressing enter")
     void RESP_06_test_03() {
-        Main game = setupGame();
+        Main game = setupGame1Player();
         StringWriter output = new StringWriter();
 
         // Simulate pressing enter to switch to the next player
@@ -382,7 +390,7 @@ public class MainTest {
     @Test
     @DisplayName("Test that a player with 7 shields is set to winner")
     void RESP_07_test_01() {
-        Main game = setupGame();
+        Main game = setupGame1Player();
         StringWriter output = new StringWriter();
 
         // Simulate pressing enter to switch to the next player
@@ -403,7 +411,7 @@ public class MainTest {
     @Test
     @DisplayName("Test that winners are displayed")
     void RESP_08_test_01() {
-        Main game = setupGame();
+        Main game = setupGame1Player();
         StringWriter output = new StringWriter();
 
         // Simulate pressing enter to switch to the next player
@@ -423,24 +431,18 @@ public class MainTest {
 
     @Test
     @DisplayName("Test that winners are displayed")
-    void RESP_09_test_01() {
-        // Code to run the game as normal
+    void RESP_10_test_01() {
+        // Test 9 doesn't exist
+        // The functionality was completed with Test 6
         Main game = setupGame();
         StringWriter output = new StringWriter();
+        game.currentPlayer.addToDeck("Foe", "F5", 5);
 
 
-        // Simulate pressing enter to switch to the next player
-        String input = "\n";
-
-        // Before we let the next player, we'll check if there are winners
-        // For the test, we'll grant player 1 some shields
-        game.currentPlayer.changeShields(7);
-        game.checkForWinners(new Scanner(System.in), new PrintWriter(output));
+        // Check if the game recognizes a card overload
+        assertTrue(output.toString().contains("too many cards"), "Player 1 should be notified of overload.");
 
 
-
-        // Check if Player 1 was declared as a winner
-        assertTrue(output.toString().contains("Player 1 is a winner"), "Player 1 should be a winner.");
     }
 
 

@@ -115,7 +115,14 @@ public class Main {
             return name;
         }
         public List<AdventureCard> getDeck() {return deck;}
-        public void addToDeck(AdventureCard card) {deck.add(card);}
+        public void addToDeck(AdventureCard card) {
+            deck.add(card);
+        }
+
+        public void addToDeck(String type, String name, int value) {
+            AdventureCard card = new AdventureCard(type, name, value);
+            deck.add(card);
+        }
         public void removeFromDeck(AdventureCard card) {deck.remove(card);}
 
         @Override
