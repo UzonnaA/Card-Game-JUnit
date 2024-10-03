@@ -187,13 +187,13 @@ public class MainTest {
         String input = "\n";
         StringWriter output = new StringWriter();
         game.Introduction(new PrintWriter(output));
-        game.PlayerStart();
+        game.StartGame();
 
         // Call sortCards to ensure the cards are in the correct order
-        game.sortCards(game.getPlayerHand("Player1"));
+        game.sortCards(game.getPlayerHand("Player 1"));
 
         // Now display the player's hand
-        game.PromptPlayer(new Scanner(input), new PrintWriter(output)); 
+        game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
 
         // Check if the hand is displayed correctly: foes first, then weapons
         boolean assertion = false;

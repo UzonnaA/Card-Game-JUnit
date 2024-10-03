@@ -59,33 +59,58 @@ public class Main {
 //        }
     }
 
-    private List<AdventureCard> deck;
+    private List<AdventureCard> advDeck;
+    private List<EventCard> eventDeck;
     private Map<String, List<AdventureCard>> players;
+    private String currentPlayer;
+
+    // Getter and Setter for the player whose turn it is
+    public String getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public void setCurrentPlayer(String player) {
+        this.currentPlayer = player;
+    }
 
     public void InitializeDeck() {
-
+        advDeck = init_Adv_Deck();
+        eventDeck = init_Event_Deck();
     }
 
     // Overwrite cards in deck for testing purposes
     public void OverwriteDeckCard(int index, String type, String name, int value) {
-
+        advDeck.set(index, new AdventureCard(type, name, value));
     }
 
     public void Introduction(PrintWriter output) {
-
+        output.println("Welcome to the card game!");
     }
 
-    public void PlayerStart() {
-
+    public void StartGame() {
+        players = distributeCards(advDeck, 4, 12);
+        setCurrentPlayer("Player 1");
     }
 
-    // Distribute cards to players (assumes 1 player for now)
-    private void distributeCardsToPlayers() {
 
-    }
 
-    public void PromptPlayer(Scanner input, PrintWriter output) {
+    public void PromptPlayer(Scanner input, PrintWriter output, String playerName) {
+        List<AdventureCard> playerHand = players.get(playerName);
 
+        // Ensure the hand is sorted
+        sortCards(playerHand);
+
+        // Output whose turn it is
+        output.println(playerName + "'s Turn:");
+
+        // This is the format I'll be using: (1)F5, (2)F10, (3)Sword, (4)Horse
+        for (int i = 0; i < playerHand.size(); i++) {
+            output.print("(" + (i + 1) + ")" + playerHand.get(i));
+            if (i < playerHand.size() - 1) {
+                output.print(", ");
+            }
+        }
+        output.println(); // Add newline after listing cards
     }
 
     // Need some quick helpers to add different cards to the deck
@@ -164,7 +189,13 @@ public class Main {
     }
 
     public void sortCards(List<AdventureCard> cards) {
-
+        // Simple sorting alg
+        cards.sort((a, b) -> {
+            if (a.getType().equals(b.getType())) {
+                return Integer.compare(a.getValue(), b.getValue());
+            }
+            return a.getType().equals("Foe") ? -1 : 1; // This line ensures that Foes come before weapons
+        });
     }
 
     public List<AdventureCard> getPlayerHand(String playerName) {
