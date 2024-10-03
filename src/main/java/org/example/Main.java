@@ -389,7 +389,11 @@ public class Main {
     }
 
     public void checkForWinners(Scanner input, PrintWriter output){
-
+        for(Player p: players.values()){
+            if(p.getShields() >= 7){
+                p.setWinner(true);
+            }
+        }
     }
 }
 
