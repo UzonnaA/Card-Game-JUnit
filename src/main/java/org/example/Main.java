@@ -64,6 +64,7 @@ public class Main {
     public List<EventCard> eventDeck;
     public Map<String, List<AdventureCard>> players;
     public String currentPlayer;
+    public String lastEventCard;
 
     // Getter and Setter for the player whose turn it is
     public String getCurrentPlayer() {
@@ -124,6 +125,11 @@ public class Main {
             }
         }
         output.println(); // Add newline after listing cards
+        drawEventCard(); // I'll probably need a condition for this later
+
+        if(lastEventCard != null){
+            output.print("Drew event card: "+lastEventCard);
+        }
     }
 
     // Need some quick helpers to add different cards to the deck
@@ -237,15 +243,31 @@ public class Main {
     }
 
     public void drawEventCard() {
-        // do nothing for now
+        if (!eventDeck.isEmpty()) {
+            Random rand = new Random();
+            int index = rand.nextInt(eventDeck.size());  // Randomly select a card from the event deck
+            EventCard drawnCard = eventDeck.remove(index);  // Remove the card from the deck
+            System.out.println("Drew event card: " + drawnCard.getName());
+            lastEventCard = drawnCard.getName();
+        } else {
+            System.out.println("The event deck is empty!");
+        }
     }
 
     public void drawSpecificEventCard(int index) {
-        // do nothing
+        if (!eventDeck.isEmpty() && index >= 0 && index < eventDeck.size()) {
+            EventCard drawnCard = eventDeck.remove(index);  // Remove the card from the deck
+            System.out.println("Drew event card: " + drawnCard.getName());  // Display the card name
+            lastEventCard = drawnCard.getName();
+        } else {
+            System.out.println("Invalid event card index or empty deck!");
+        }
     }
 
     public void setSpecificEventCard(int index, String type, String name) {
-        // do nothing
+        if (index >= 0 && index < eventDeck.size()) {
+            eventDeck.set(index, new EventCard(type, name));  // Overwrite the card in the deck
+        }
     }
 
 
