@@ -33,7 +33,7 @@ public class Main {
 
 
             // Wait for the player to press enter to switch to the next player
-            game.handleNextPlayer(input, output);
+            game.handleNextPlayer(input, output, null);
 
             input.nextLine();
         }
@@ -148,7 +148,12 @@ public class Main {
     public List<AdventureCard> advDeck;
     public List<EventCard> eventDeck;
     public Map<String, Player> players;
+    // Current player is whose turn it is
     public Player currentPlayer;
+
+    // Active player is whoever is in the hotseat
+    public Player activePlayer;
+
     public String lastEventCard;
     public boolean isQuest;
 
@@ -164,6 +169,16 @@ public class Main {
         currentPlayer = players.get(s);
     }
 
+
+    // Getter and Setter for the player whose in the hotseat
+    public Player getActivePlayer() {
+        return activePlayer;
+    }
+
+    public void setActivePlayer(String s) {
+        activePlayer = players.get(s);
+    }
+
     public void InitializeDeck() {
         advDeck = init_Adv_Deck();
         eventDeck = init_Event_Deck();
@@ -177,6 +192,7 @@ public class Main {
         }
         distributeCards();  // Distribute adventure cards to players' decks
         setCurrentPlayer("Player 1");
+        setActivePlayer("Player 1");
         isQuest = false;
     }
 
@@ -363,7 +379,7 @@ public class Main {
         }
 
         if(!isQuest){
-            output.println("Press enter to switch to the next player" + "\n");
+            output.println("Press enter to end your turn" + "\n");
         }
     }
 
@@ -396,15 +412,23 @@ public class Main {
     }
 
     // Handle switching to the next player after an event
-    public void handleNextPlayer(Scanner input, PrintWriter output) {
-        // Wait for the player to press enter
-        input.nextLine();  // Simulate pressing enter
+    public void handleNextPlayer(Scanner input, PrintWriter output, String playerName) {
+        // If you don't specify a player, then I'll assume we switch turns as normal
+        if(playerName == null){
+            input.nextLine();
+            currentPlayer = players.get(NextPlayerString(currentPlayer.getName()));
+            activePlayer = players.get(NextPlayerString(currentPlayer.getName()));
+            clearScreen(output);
+            output.println("Are you ready " + currentPlayer.getName() + "? Press enter to continue.");
+        }else{
+            // Otherwise, I'll assume that person will just be in the hotseast and not having a turn
+            input.nextLine();
+            activePlayer = players.get(playerName);
+            clearScreen(output);
+            output.println("Even though it's still " + currentPlayer.getName() + "'s turn");
+            output.println("Are you ready " + activePlayer.getName() + "? Press enter to continue.");
+        }
 
-        currentPlayer = players.get(NextPlayerString(currentPlayer.getName()));
-
-        // Prompt the next player
-        clearScreen(output);
-        output.println("Are you ready " + currentPlayer.getName() + "? Press enter to continue.");
     }
 
     // After the player confirms they are ready, prompt them to start their turn
@@ -435,6 +459,15 @@ public class Main {
         }
     }
 
+    // The idea here is that we check if there are any overloads
+    // If there are, we handle them 1 by 1 before resuming the game
+    public void handleAllOverload(Scanner input, PrintWriter output){
+        for(Player p: players.values()){
+            if(p.isOverloaded){
+                output.print("\n" + p.getName() + " has too many cards!");
+            }
+        }
+    }
 
 
 

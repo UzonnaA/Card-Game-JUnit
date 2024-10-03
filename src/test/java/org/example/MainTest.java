@@ -49,7 +49,7 @@ public class MainTest {
 
         // Simulate pressing enter to switch to the next player
         String input = "\n";
-        game.handleNextPlayer(new Scanner(input), new PrintWriter(output));
+        game.handleNextPlayer(new Scanner(input), new PrintWriter(output), null);
 
         // Simulate Player 2 pressing enter to start their turn
         game.PromptNextPlayer(new Scanner(input), new PrintWriter(output), game.NextPlayerString(game.currentPlayer.getName()));
@@ -349,7 +349,7 @@ public class MainTest {
 
 
         // Check for the transition message after event is processed
-        assertTrue(output.toString().contains("Press enter to switch to the next player"), "I see: " + output.toString());
+        assertTrue(output.toString().contains("Press enter to end your turn"), "I see: " + output.toString());
 
     }
 
@@ -361,7 +361,7 @@ public class MainTest {
 
         // Simulate pressing enter to switch to the next player
         String input = "\n";
-        game.handleNextPlayer(new Scanner(input), new PrintWriter(output));
+        game.handleNextPlayer(new Scanner(input), new PrintWriter(output), null);
 
         // Check for the "Are you ready Player 2" message
         assertTrue(output.toString().contains("Are you ready"), "I see: " + output.toString());
@@ -375,7 +375,7 @@ public class MainTest {
 
         // Simulate pressing enter to switch to the next player
         String input = "\n";
-        game.handleNextPlayer(new Scanner(input), new PrintWriter(output));
+        game.handleNextPlayer(new Scanner(input), new PrintWriter(output), null);
 
         String input2 = "\n";
         // Simulate Player 2 pressing enter to start their turn
@@ -430,7 +430,7 @@ public class MainTest {
 
 
     @Test
-    @DisplayName("Test that winners are displayed")
+    @DisplayName("Test that the game checks for too many cards")
     void RESP_10_test_01() {
         // Test 9 doesn't exist
         // The functionality was completed with Test 6
@@ -442,6 +442,25 @@ public class MainTest {
 
         // Check if the game recognizes a card overload
         assertTrue(output.toString().contains("too many cards"), "Player 1 should be notified of overload.");
+
+
+    }
+
+    @Test
+    @DisplayName("Test that the game allows the player to choose a card for deletion")
+    void RESP_11_test_01() {
+        // Test 9 doesn't exist
+        // The functionality was completed with Test 6
+        Main game = setupGame();
+        StringWriter output = new StringWriter();
+        game.currentPlayer.addToDeck("Foe", "F5", 5);
+
+        String input = "\n";
+        game.checkAllOverload(new Scanner(input), new PrintWriter(output));
+
+
+        // Check if the game recognizes a card overload
+        assertTrue(output.toString().contains("delete"), "Player 1 should be asked to delete cards.");
 
 
     }
