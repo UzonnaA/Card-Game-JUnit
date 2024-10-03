@@ -25,6 +25,13 @@ public class Main {
             // Draw and handle an event card (default event)
             game.DrawPlayEvents(input, output);
 
+            // Check for winners
+            game.checkForWinners(input, output);
+            if(game.finished){
+                break;
+            }
+
+
             // Wait for the player to press enter to switch to the next player
             game.handleNextPlayer(input, output);
 

@@ -10,7 +10,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+
+
+
 public class MainTest {
+    
+    private Main setupGame() {
+        // Create and set up the game
+        Main game = new Main();
+        game.InitializeDeck();
+        game.StartGame();
+
+        // Run the player's turn and draw an event
+        StringWriter output = new StringWriter();
+        game.PromptPlayer(new Scanner(System.in), new PrintWriter(output), game.currentPlayer.getName());
+        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output));
+
+
+
+        return game;
+    }
+
+
+
 
     @Test
     @DisplayName("Check the adventure deck has 50 Foe and 50 Weapon cards")
@@ -288,16 +310,8 @@ public class MainTest {
     @Test
     @DisplayName("Test that the display is cleared after event plays out (non-quest event)")
     void RESP_06_test_01() {
-        Main game = new Main();
-        game.InitializeDeck();  // Initialize both the adventure and event decks
-        game.StartGame();       // Start the game and distribute cards
-
-        // Simulate Player 1's turn
+        Main game = setupGame();
         StringWriter output = new StringWriter();
-        game.PromptPlayer(new Scanner(System.in), new PrintWriter(output), game.currentPlayer.getName());
-
-        // Simulate playing a non-quest event
-        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output), "Plague");
 
         // Check for the transition message after event is processed
         assertTrue(output.toString().contains("Press enter to switch to the next player"), "I see: " + output.toString());
@@ -307,17 +321,9 @@ public class MainTest {
     @Test
     @DisplayName("Test that switching to the next player works correctly")
     void RESP_06_test_02() {
-        Main game = new Main();
-        game.InitializeDeck();  // Initialize both the adventure and event decks
-        game.StartGame();       // Start the game and distribute cards
-
-        // Simulate Player 1's turn
+        Main game = setupGame();
         StringWriter output = new StringWriter();
-        game.PromptPlayer(new Scanner(System.in), new PrintWriter(output), game.currentPlayer.getName());
 
-        // Simulate playing a non-quest event
-
-        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output), "Plague");
         // Simulate pressing enter to switch to the next player
         String input = "\n";
         game.handleNextPlayer(new Scanner(input), new PrintWriter(output));
@@ -329,15 +335,8 @@ public class MainTest {
     @Test
     @DisplayName("Test that Player 2 is prompted to start after pressing enter")
     void RESP_06_test_03() {
-        Main game = new Main();
-        game.InitializeDeck();  // Initialize both the adventure and event decks
-        game.StartGame();       // Start the game and distribute cards
-
-        // Simulate Player 1's turn and event processing
+        Main game = setupGame();
         StringWriter output = new StringWriter();
-        game.PromptPlayer(new Scanner(System.in), new PrintWriter(output), game.currentPlayer.getName());
-
-        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output), "Plague");
 
         // Simulate pressing enter to switch to the next player
         String input = "\n";
@@ -354,13 +353,8 @@ public class MainTest {
     @Test
     @DisplayName("Test that a player with 7 shields is set to winner")
     void RESP_07_test_01() {
-        // Code to run the game as normal
-        Main game = new Main();
-        game.InitializeDeck();
-        game.StartGame();
+        Main game = setupGame();
         StringWriter output = new StringWriter();
-        game.PromptPlayer(new Scanner(System.in), new PrintWriter(output), game.currentPlayer.getName());
-        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output), "Plague");
 
         // Simulate pressing enter to switch to the next player
         String input = "\n";
@@ -380,13 +374,31 @@ public class MainTest {
     @Test
     @DisplayName("Test that winners are displayed")
     void RESP_08_test_01() {
-        // Code to run the game as normal
-        Main game = new Main();
-        game.InitializeDeck();
-        game.StartGame();
+        Main game = setupGame();
         StringWriter output = new StringWriter();
-        game.PromptPlayer(new Scanner(System.in), new PrintWriter(output), game.currentPlayer.getName());
-        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output), "Plague");
+
+        // Simulate pressing enter to switch to the next player
+        String input = "\n";
+
+        // Before we let the next player, we'll check if there are winners
+        // For the test, we'll grant player 1 some shields
+        game.currentPlayer.changeShields(7);
+        game.checkForWinners(new Scanner(System.in), new PrintWriter(output));
+
+
+
+        // Check if Player 1 was declared as a winner
+        assertTrue(output.toString().contains("Player 1 is a winner"), "Player 1 should be a winner.");
+    }
+
+
+    @Test
+    @DisplayName("Test that winners are displayed")
+    void RESP_09_test_01() {
+        // Code to run the game as normal
+        Main game = setupGame();
+        StringWriter output = new StringWriter();
+
 
         // Simulate pressing enter to switch to the next player
         String input = "\n";
