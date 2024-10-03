@@ -10,6 +10,26 @@ public class Main {
     public static void main(String[] args) {
 
         System.out.println("COMP 4004 - Card Game");
+
+        Main game = new Main();  // Create an instance of the Main game class
+        game.InitializeDeck();   // Initialize the adventure and event decks
+        game.StartGame();        // Start the game and distribute cards to players
+
+        Scanner input = new Scanner(System.in);
+        PrintWriter output = new PrintWriter(System.out, true);  // Output to console
+
+        while (true) {
+            // Prompt the current player
+            game.PromptPlayer(input, output, game.getCurrentPlayer().getName());
+
+            // Draw and handle an event card (default event)
+            game.DrawPlayEvents(input, output);
+
+            // Wait for the player to press enter to switch to the next player
+            game.handleNextPlayer(input, output);
+
+            input.nextLine();
+        }
     }
 
     public class AdventureCard {
@@ -97,7 +117,7 @@ public class Main {
     public Map<String, Player> players;
     public Player currentPlayer;
     public String lastEventCard;
-    public boolean isQuest = false;
+    public boolean isQuest;
 
     // Getter and Setter for the player whose turn it is
     public Player getCurrentPlayer() {
@@ -121,6 +141,7 @@ public class Main {
         }
         distributeCards();  // Distribute adventure cards to players' decks
         setCurrentPlayer("Player 1");
+        isQuest = false;
     }
 
     // This will allow us to overwrite a player's hand for testing
@@ -296,13 +317,17 @@ public class Main {
 
         // Output the event card
         if (lastEventCard != null) {
-            output.print("Drew event card: " + lastEventCard);
+            output.print("Drew event card: " + lastEventCard + "\n");
         }
 
         // Handle specific events
         if (lastEventCard.equals("Plague")) {
             currentPlayer.changeShields(-2);
-            output.print(currentPlayer.getName() + " lost 2 shields!");
+            output.print(currentPlayer.getName() + " lost 2 shields!" + "\n");
+        }
+
+        if(!isQuest){
+            output.println("Press enter to switch to the next player" + "\n");
         }
     }
 
@@ -327,24 +352,32 @@ public class Main {
         }
     }
 
-    // Hope this works (Just looked it up, but this small functionality shouldn't matter)
+
     public void clearScreen(PrintWriter output) {
-        final String ANSI_CLS = "\u001b[2J";
-        final String ANSI_HOME = "\u001b[H";
-        output.print(ANSI_CLS + ANSI_HOME);
-        output.flush();
+        for (int i = 0; i < 100; i++) {
+            output.println(); // Print 100 empty lines to simulate clearing the screen
+        }
     }
 
+    // Handle switching to the next player after an event
     public void handleNextPlayer(Scanner input, PrintWriter output) {
+        // Wait for the player to press enter
+        input.nextLine();  // Simulate pressing enter
 
+        currentPlayer = players.get(NextPlayerString(currentPlayer.getName()));
+
+        // Prompt the next player
+        clearScreen(output);
+        output.println("Are you ready " + currentPlayer.getName() + "? Press enter to continue.");
     }
 
+    // After the player confirms they are ready, prompt them to start their turn
     public void PromptNextPlayer(Scanner input, PrintWriter output, String playerName) {
+        // Wait for the player to press enter
+        //input.nextLine();
 
+        // Start the player's turn
+        PromptPlayer(input, output, playerName);
     }
-
-
-
-
 }
 
