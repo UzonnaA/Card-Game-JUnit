@@ -97,6 +97,7 @@ public class Main {
     public Map<String, Player> players;
     public Player currentPlayer;
     public String lastEventCard;
+    public boolean isQuest = false;
 
     // Getter and Setter for the player whose turn it is
     public Player getCurrentPlayer() {
@@ -308,6 +309,38 @@ public class Main {
     // This gets called when I want to draw a random event
     public void DrawPlayEvents(Scanner input, PrintWriter output) {
         DrawPlayEvents(input, output, null);
+    }
+
+
+    // I'm lazy, so we're making a function for this
+    // This will help when switching turns
+    // I know there are better ways of doing this
+    public String NextPlayerString(String s){
+        if(s.equals("Player 1")){
+            return "Player 2";
+        } else if (s.equals("Player 2")) {
+            return "Player 3";
+        } else if (s.equals("Player 3")) {
+            return "Player 4";
+        }else{
+            return "Player 1";
+        }
+    }
+
+    // Hope this works (Just looked it up, but this small functionality shouldn't matter)
+    public void clearScreen(PrintWriter output) {
+        final String ANSI_CLS = "\u001b[2J";
+        final String ANSI_HOME = "\u001b[H";
+        output.print(ANSI_CLS + ANSI_HOME);
+        output.flush();
+    }
+
+    public void handleNextPlayer(Scanner input, PrintWriter output) {
+
+    }
+
+    public void PromptNextPlayer(Scanner input, PrintWriter output, String playerName) {
+
     }
 
 

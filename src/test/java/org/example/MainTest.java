@@ -284,4 +284,70 @@ public class MainTest {
         // "The drawn event card's name should be displayed as 'Plague'."
         assertTrue(output.toString().contains("Drew event card: " + game.lastEventCard), "What I see: " + output.toString());
     }
+
+    @Test
+    @DisplayName("Test that the display is cleared after event plays out (non-quest event)")
+    void RESP_06_test_01() {
+        Main game = new Main();
+        game.InitializeDeck();  // Initialize both the adventure and event decks
+        game.StartGame();       // Start the game and distribute cards
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        game.PromptPlayer(new Scanner(System.in), new PrintWriter(output), "Player 1");
+
+        // Simulate playing a non-quest event
+        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output), "Plague");
+
+        // Check for the transition message after event is processed
+        assertTrue(output.toString().contains("Press enter to switch to next player"), "There should be a prompt to switch to the next player.");
+    }
+
+    @Test
+    @DisplayName("Test that switching to the next player works correctly")
+    void RESP_06_test_02() {
+        Main game = new Main();
+        game.InitializeDeck();  // Initialize both the adventure and event decks
+        game.StartGame();       // Start the game and distribute cards
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        game.PromptPlayer(new Scanner(System.in), new PrintWriter(output), "Player 1");
+
+        // Simulate playing a non-quest event
+
+        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output), "Plague");
+        // Simulate pressing enter to switch to the next player
+        String input = "\n";  // Simulating pressing enter
+        game.handleNextPlayer(new Scanner(input), new PrintWriter(output));
+
+        // Check for the "Are you ready Player 2" message
+        assertTrue(output.toString().contains("Are you ready Player 2"), "Player 2 should be prompted after Player 1.");
+    }
+
+    @Test
+    @DisplayName("Test that Player 2 is prompted to start after pressing enter")
+    void RESP_06_test_03() {
+        Main game = new Main();
+        game.InitializeDeck();  // Initialize both the adventure and event decks
+        game.StartGame();       // Start the game and distribute cards
+
+        // Simulate Player 1's turn and event processing
+        StringWriter output = new StringWriter();
+        game.PromptPlayer(new Scanner(System.in), new PrintWriter(output), game.currentPlayer.getName());
+
+        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output), "Plague");
+
+        // Simulate pressing enter to switch to the next player
+        String input = "\n";  // Simulating pressing enter
+        game.handleNextPlayer(new Scanner(input), new PrintWriter(output));
+
+        // Simulate Player 2 pressing enter to start their turn
+        game.PromptNextPlayer(new Scanner(input), new PrintWriter(output), game.NextPlayerString(game.currentPlayer.getName()));
+
+        // Check if Player 2 is prompted and shown their hand
+        assertTrue(output.toString().contains("Player 2's Turn:"), "Player 2 should be prompted after switching.");
+    }
+
+
 }
