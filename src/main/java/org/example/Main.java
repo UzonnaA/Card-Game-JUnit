@@ -25,17 +25,22 @@ public class Main {
             // Draw and handle an event card (default event)
             game.DrawPlayEvents(input, output);
 
+            input.nextLine();
+
             // Check for winners
             game.checkForWinners(input, output);
             if(game.finished){
                 break;
             }
 
+            game.checkAllOverload(input, output);
+
 
             // Wait for the player to press enter to switch to the next player
-            game.handleNextPlayer(input, output, null);
-
+            game.handleNextPlayer(input, output, null, null);
             input.nextLine();
+
+
         }
     }
 
@@ -137,7 +142,15 @@ public class Main {
                 isOverloaded = true;
             }
         }
-        public void removeFromDeck(AdventureCard card) {deck.remove(card);}
+
+        public void removeCardByIndex(int index) {
+            if (index >= 0 && index < deck.size()) {
+                deck.remove(index);
+                if (deck.size() <= 12) {
+                    isOverloaded = false;
+                }
+            }
+        }
 
         @Override
         public String toString() {
@@ -412,31 +425,36 @@ public class Main {
     }
 
     // Handle switching to the next player after an event
-    public void handleNextPlayer(Scanner input, PrintWriter output, String playerName) {
+    public void handleNextPlayer(Scanner input, PrintWriter output, String playerName, String reason) {
         // If you don't specify a player, then I'll assume we switch turns as normal
         if(playerName == null){
-            input.nextLine();
+
             currentPlayer = players.get(NextPlayerString(currentPlayer.getName()));
             activePlayer = players.get(NextPlayerString(currentPlayer.getName()));
             clearScreen(output);
             output.println("Are you ready " + currentPlayer.getName() + "? Press enter to continue.");
+
         }else{
             // Otherwise, I'll assume that person will just be in the hotseast and not having a turn
-            input.nextLine();
+
             activePlayer = players.get(playerName);
             clearScreen(output);
             output.println("Even though it's still " + currentPlayer.getName() + "'s turn");
             output.println("Are you ready " + activePlayer.getName() + "? Press enter to continue.");
+
+            if(reason.equals("delete")){
+                // Actually I shouldn't prompt here
+                // I'll fix it later
+                PromptPlayer(input, output, playerName);
+
+            }
         }
 
     }
 
-    // After the player confirms they are ready, prompt them to start their turn
+    // I'm only keeping this for the 2 tests that use it
+    // Don't call this again
     public void PromptNextPlayer(Scanner input, PrintWriter output, String playerName) {
-        // Wait for the player to press enter
-        //input.nextLine();
-
-        // Start the player's turn
         PromptPlayer(input, output, playerName);
     }
 
@@ -454,20 +472,48 @@ public class Main {
     public void checkAllOverload(Scanner input, PrintWriter output){
         for(Player p: players.values()){
             if(p.isOverloaded){
-                output.print("\n" + p.getName() + " has too many cards!");
+                handlePlayerOverload(input, output, p);
             }
         }
+
     }
 
-    // The idea here is that we check if there are any overloads
-    // If there are, we handle them 1 by 1 before resuming the game
-    public void handleAllOverload(Scanner input, PrintWriter output){
-        for(Player p: players.values()){
-            if(p.isOverloaded){
-                output.print("\n" + p.getName() + " has too many cards!");
+    public void handlePlayerOverload(Scanner input, PrintWriter output, Player player) {
+        while (player.getCardCount() > 12) {
+            int choice = 0;
+            output.println(player.getName() + "'s hand has too many cards. Choose a card to delete by its number:");
+
+            // Display the player's hand
+            List<AdventureCard> playerHand = player.getDeck();
+            for (int i = 0; i < playerHand.size(); i++) {
+                output.println("(" + (i + 1) + ") " + playerHand.get(i).getName());
             }
+
+            try {
+                if (input.hasNextInt()) {
+                    choice = input.nextInt() - 1;  // Read input and subtract 1 for 0-based indexing
+                } else {
+                    input.next();  // Clear invalid input
+                    output.println("Invalid input. Defaulting to choice 1.");
+                }
+            } catch (NoSuchElementException | IllegalStateException e) {
+                output.println("Error with input. Defaulting to choice 1.");
+                // choice remains 0 (which corresponds to the first card)
+            }
+
+            // Remove the chosen card
+            player.removeCardByIndex(choice);
+
+            // Clear the screen after the player deletes a card
+            clearScreen(output);
+
+            // If the player is still overloaded, this loop continues
         }
+
+        output.println(player.getName() + " no longer has too many cards.");
     }
+
+
 
 
 

@@ -49,7 +49,7 @@ public class MainTest {
 
         // Simulate pressing enter to switch to the next player
         String input = "\n";
-        game.handleNextPlayer(new Scanner(input), new PrintWriter(output), null);
+        game.handleNextPlayer(new Scanner(input), new PrintWriter(output), null, null);
 
         // Simulate Player 2 pressing enter to start their turn
         game.PromptNextPlayer(new Scanner(input), new PrintWriter(output), game.NextPlayerString(game.currentPlayer.getName()));
@@ -361,7 +361,7 @@ public class MainTest {
 
         // Simulate pressing enter to switch to the next player
         String input = "\n";
-        game.handleNextPlayer(new Scanner(input), new PrintWriter(output), null);
+        game.handleNextPlayer(new Scanner(input), new PrintWriter(output), null, null);
 
         // Check for the "Are you ready Player 2" message
         assertTrue(output.toString().contains("Are you ready"), "I see: " + output.toString());
@@ -375,7 +375,7 @@ public class MainTest {
 
         // Simulate pressing enter to switch to the next player
         String input = "\n";
-        game.handleNextPlayer(new Scanner(input), new PrintWriter(output), null);
+        game.handleNextPlayer(new Scanner(input), new PrintWriter(output), null, null);
 
         String input2 = "\n";
         // Simulate Player 2 pressing enter to start their turn
@@ -436,8 +436,9 @@ public class MainTest {
         // The functionality was completed with Test 6
         Main game = setupGame();
         StringWriter output = new StringWriter();
+        String input = "\n";
         game.currentPlayer.addToDeck("Foe", "F5", 5);
-        game.checkAllOverload(new Scanner(System.in), new PrintWriter(output));
+        game.checkAllOverload(new Scanner(input), new PrintWriter(output));
 
 
         // Check if the game recognizes a card overload
