@@ -155,10 +155,16 @@ public class MainTest {
     @DisplayName("Distribute 12 adventure cards to all players > check deck size")
     void RESP_02_test_01() {
         Main game = new Main();
-        List<Main.AdventureCard> deck = game.init_Adv_Deck();
+        game.InitializeDeck(); // Initialize the adventure deck with cards
 
-        // Distribute cards (I'll use 4 as the input in case I'm only giving cards to one player)
-        Map<String, List<Main.AdventureCard>> players = game.distributeCards(deck, 4, 12);
+        // Distribute cards to players
+        game.StartGame(); // This will distribute cards to 4 players (12 each)
+
+        // Retrieve the adventure deck after distribution
+        List<Main.AdventureCard> deck = game.advDeck;
+
+        // Retrieve the player hands
+        Map<String, List<Main.AdventureCard>> players = game.players;
 
         // Check each player has exactly 12 cards
         for (Map.Entry<String, List<Main.AdventureCard>> entry : players.entrySet()) {
@@ -166,8 +172,8 @@ public class MainTest {
         }
 
         // Check the deck has been updated correctly
-        int expectedRemainingCards = 52; // There are 100 cards - (4x12=48) = 52. Hard code but who cares
-        assertEquals(expectedRemainingCards, deck.size(), "The deck should be updated after distribution");
+        int expectedRemainingCards = 52; // 100 initial cards - 48 distributed cards = 52 remaining cards
+        assertEquals(expectedRemainingCards, deck.size(), "The deck should have 52 cards left after distribution.");
     }
 
 
@@ -176,21 +182,23 @@ public class MainTest {
     void RESP_03_test_01() {
         Main game = new Main();
         game.InitializeDeck();  // Initialize the deck
+        game.StartGame();       // Start the game and distribute cards
 
-        // Overwrite deck to give a specific set of cards to the player (in a mixed-up order)
-        game.OverwriteDeckCard(0, "Weapon", "Sword", 10); // Weapon card with value 10
-        game.OverwriteDeckCard(1, "Foe", "F10", 10);      // Foe card with value 10
-        game.OverwriteDeckCard(2, "Weapon", "Horse", 5);  // Weapon card with value 5
-        game.OverwriteDeckCard(3, "Foe", "F5", 5);        // Foe card with value 5
+        game.removeAllCardsFromPlayer("Player 1");
+
+        // Overwrite Player 1's hand with a specific set of cards (in a mixed-up order)
+        game.OverwriteDeckCard("Player 1", 0, "Weapon", "Sword", 10); // Weapon card with value 10
+        game.OverwriteDeckCard("Player 1", 1, "Foe", "F10", 10);      // Foe card with value 10
+        game.OverwriteDeckCard("Player 1", 2, "Weapon", "Horse", 5);  // Weapon card with value 5
+        game.OverwriteDeckCard("Player 1", 3, "Foe", "F5", 5);        // Foe card with value 5
 
         // Simulate player's interaction
         String input = "\n";
         StringWriter output = new StringWriter();
         game.Introduction(new PrintWriter(output));
-        game.StartGame();
 
         // Call sortCards to ensure the cards are in the correct order
-        game.sortCards(game.getPlayerHand("Player 1"));
+        //game.sortCards(game.getPlayerHand("Player 1"));
 
         // Now display the player's hand
         game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
@@ -201,6 +209,6 @@ public class MainTest {
             assertion = true;
         }
 
-        assertTrue(assertion, "Player's hand should display F5, F10, Sword, and Horse in the correct order.");
+        assertTrue(assertion, "The cards are not in the right order");
     }
 }

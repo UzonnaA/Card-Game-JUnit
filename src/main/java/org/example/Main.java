@@ -8,6 +8,7 @@ public class Main {
 
 
     public static void main(String[] args) {
+
         System.out.println("COMP 4004 - Card Game");
     }
 
@@ -30,10 +31,10 @@ public class Main {
             return name;
         }
 
-//        @Override
-//        public String toString() {
-//            return name;
-//        }
+        @Override
+        public String toString() {
+            return name;
+        }
     }
 
     public class EventCard {
@@ -59,9 +60,9 @@ public class Main {
 //        }
     }
 
-    private List<AdventureCard> advDeck;
+    public List<AdventureCard> advDeck;
     private List<EventCard> eventDeck;
-    private Map<String, List<AdventureCard>> players;
+    public Map<String, List<AdventureCard>> players;
     private String currentPlayer;
 
     // Getter and Setter for the player whose turn it is
@@ -78,9 +79,20 @@ public class Main {
         eventDeck = init_Event_Deck();
     }
 
-    // Overwrite cards in deck for testing purposes
-    public void OverwriteDeckCard(int index, String type, String name, int value) {
-        advDeck.set(index, new AdventureCard(type, name, value));
+    // This will allow us to overwrite a player's hand for testing
+    public void OverwriteDeckCard(String playerName, int index, String type, String name, int value) {
+        List<AdventureCard> playerHand = players.get(playerName);
+        if (playerHand != null) {
+            if (index < playerHand.size()) {
+                playerHand.set(index, new AdventureCard(type, name, value)); // Overwrite if the index exists
+            } else {
+                // Add new cards if the index doesn't exist
+                while (playerHand.size() <= index) {
+                    playerHand.add(null); // Fill in with nulls to maintain index positions
+                }
+                playerHand.set(index, new AdventureCard(type, name, value)); // Set the card at the correct index
+            }
+        }
     }
 
     public void Introduction(PrintWriter output) {
@@ -88,6 +100,7 @@ public class Main {
     }
 
     public void StartGame() {
+        players = new HashMap<>();
         players = distributeCards(advDeck, 4, 12);
         setCurrentPlayer("Player 1");
     }
@@ -172,7 +185,6 @@ public class Main {
 
 
     public Map<String, List<AdventureCard>> distributeCards(List<AdventureCard> deck, int numPlayers, int cardsPerPlayer) {
-        Map<String, List<AdventureCard>> players = new HashMap<>();
         Collections.shuffle(deck); // Here we shuffle to ensure random cards
 
         for (int i = 0; i < numPlayers; i++) {
@@ -182,24 +194,46 @@ public class Main {
                     playerHand.add(deck.remove(0)); // Make sure we actually remove from deck when we add to hand
                 }
             }
-            players.put("Player" + (i + 1), playerHand); // Assign hand to player
+            players.put("Player " + (i + 1), playerHand); // Assign hand to player
         }
 
         return players;
     }
 
     public void sortCards(List<AdventureCard> cards) {
-        // Simple sorting alg
         cards.sort((a, b) -> {
-            if (a.getType().equals(b.getType())) {
-                return Integer.compare(a.getValue(), b.getValue());
+            // First sort by type (Foe before Weapon)
+            if (!a.getType().equals(b.getType())) {
+                return a.getType().equals("Foe") ? -1 : 1;
             }
-            return a.getType().equals("Foe") ? -1 : 1; // This line ensures that Foes come before weapons
+
+            // If both cards are weapons, ensure Sword comes before Horse (can't sort by value here)
+            if (a.getType().equals("Weapon") && b.getType().equals("Weapon")) {
+                if (a.getName().equals("Sword") && b.getName().equals("Horse")) {
+                    return -1; // Sword comes before Horse
+                } else if (a.getName().equals("Horse") && b.getName().equals("Sword")) {
+                    return 1;  // Horse comes after Sword
+                }
+            }
+
+            // If both are of the same type (Foe or Weapon) but different names, sort by value
+            return Integer.compare(a.getValue(), b.getValue());
         });
     }
 
     public List<AdventureCard> getPlayerHand(String playerName) {
-        return new ArrayList<>();
+        return players.get(playerName);
+    }
+
+    public void removeAllCardsFromPlayer(String playerName) {
+        // Check if the player exists in the players map
+        if (players.containsKey(playerName)) {
+            // Clear the player's hand
+            players.get(playerName).clear();
+        } else {
+            // We'll do some error checking if I screwed up here
+            System.out.println("Player " + playerName + " does not exist.");
+        }
     }
 
 
