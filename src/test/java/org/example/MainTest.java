@@ -14,7 +14,7 @@ import java.util.Scanner;
 
 
 public class MainTest {
-    
+
     private Main setupGame() {
         // Create and set up the game
         Main game = new Main();
@@ -25,7 +25,26 @@ public class MainTest {
         StringWriter output = new StringWriter();
         game.PromptPlayer(new Scanner(System.in), new PrintWriter(output), game.currentPlayer.getName());
         game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output));
+        return game;
+    }
 
+    private Main setupGame2Players(){
+        // Create and set up the game
+        Main game = new Main();
+        game.InitializeDeck();
+        game.StartGame();
+
+        // Run the player's turn and draw an event
+        StringWriter output = new StringWriter();
+        game.PromptPlayer(new Scanner(System.in), new PrintWriter(output), game.currentPlayer.getName());
+        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output));
+
+        // Simulate pressing enter to switch to the next player
+        String input = "\n";
+        game.handleNextPlayer(new Scanner(input), new PrintWriter(output));
+
+        // Simulate Player 2 pressing enter to start their turn
+        game.PromptNextPlayer(new Scanner(input), new PrintWriter(output), game.NextPlayerString(game.currentPlayer.getName()));
 
 
         return game;
@@ -310,8 +329,16 @@ public class MainTest {
     @Test
     @DisplayName("Test that the display is cleared after event plays out (non-quest event)")
     void RESP_06_test_01() {
-        Main game = setupGame();
+        // Create and set up the game
+        Main game = new Main();
+        game.InitializeDeck();
+        game.StartGame();
+
+        // Run the player's turn and draw an event
         StringWriter output = new StringWriter();
+        game.PromptPlayer(new Scanner(System.in), new PrintWriter(output), game.currentPlayer.getName());
+        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output));
+
 
         // Check for the transition message after event is processed
         assertTrue(output.toString().contains("Press enter to switch to the next player"), "I see: " + output.toString());
@@ -342,11 +369,13 @@ public class MainTest {
         String input = "\n";
         game.handleNextPlayer(new Scanner(input), new PrintWriter(output));
 
+        String input2 = "\n";
         // Simulate Player 2 pressing enter to start their turn
-        game.PromptNextPlayer(new Scanner(input), new PrintWriter(output), game.NextPlayerString(game.currentPlayer.getName()));
+        game.PromptNextPlayer(new Scanner(input2), new PrintWriter(output), game.currentPlayer.getName());
+
 
         // Check if Player 2 is prompted and shown their hand
-        assertTrue(output.toString().contains("Turn:"), "Player 2 should be prompted after switching.");
+        assertTrue(output.toString().contains("Player 2's Turn:"), "I see: " + output.toString());
     }
 
 
