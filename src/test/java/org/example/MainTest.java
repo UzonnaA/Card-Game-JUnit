@@ -319,7 +319,7 @@ public class MainTest {
 
         game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output), "Plague");
         // Simulate pressing enter to switch to the next player
-        String input = "\n";  // Simulating pressing enter
+        String input = "\n";
         game.handleNextPlayer(new Scanner(input), new PrintWriter(output));
 
         // Check for the "Are you ready Player 2" message
@@ -340,7 +340,7 @@ public class MainTest {
         game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output), "Plague");
 
         // Simulate pressing enter to switch to the next player
-        String input = "\n";  // Simulating pressing enter
+        String input = "\n";
         game.handleNextPlayer(new Scanner(input), new PrintWriter(output));
 
         // Simulate Player 2 pressing enter to start their turn
@@ -349,6 +349,34 @@ public class MainTest {
         // Check if Player 2 is prompted and shown their hand
         assertTrue(output.toString().contains("Turn:"), "Player 2 should be prompted after switching.");
     }
+
+
+    @Test
+    @DisplayName("Test that a player with 7 shields is set to winner")
+    void RESP_07_test_01() {
+        // Code to run the game as normal
+        Main game = new Main();
+        game.InitializeDeck();
+        game.StartGame();
+        StringWriter output = new StringWriter();
+        game.PromptPlayer(new Scanner(System.in), new PrintWriter(output), game.currentPlayer.getName());
+        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output), "Plague");
+
+        // Simulate pressing enter to switch to the next player
+        String input = "\n";
+
+        // Before we let the next player, we'll check if there are winners
+        // For the test, we'll grant player 1 some shields
+        game.currentPlayer.changeShields(7);
+        game.checkForWinners(new Scanner(System.in), new PrintWriter(output));
+
+
+
+        // Check if Player 1 was declared as a winner
+        assertTrue(game.currentPlayer.checkWinner(), "Player 1 should be a winner.");
+    }
+
+
 
 
 }

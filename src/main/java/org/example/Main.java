@@ -18,7 +18,7 @@ public class Main {
         Scanner input = new Scanner(System.in);
         PrintWriter output = new PrintWriter(System.out, true);  // Output to console
 
-        while (true) {
+        while (!game.finished) {
             // Prompt the current player
             game.PromptPlayer(input, output, game.getCurrentPlayer().getName());
 
@@ -84,12 +84,17 @@ public class Main {
         private String name;
         private int shields;
         private List<AdventureCard> deck;
+        private boolean isWinner;
 
         public Player(String name, int shields) {
             this.name = name;
             this.shields = shields;
             this.deck = new ArrayList<>();
+            this.isWinner = false;
         }
+
+        public boolean checkWinner(){return isWinner;}
+        public void setWinner(boolean w){isWinner = w;}
 
 
         public int getShields(){return shields;}
@@ -118,6 +123,9 @@ public class Main {
     public Player currentPlayer;
     public String lastEventCard;
     public boolean isQuest;
+
+    // For when the game ends
+    public boolean finished = false;
 
     // Getter and Setter for the player whose turn it is
     public Player getCurrentPlayer() {
@@ -378,6 +386,10 @@ public class Main {
 
         // Start the player's turn
         PromptPlayer(input, output, playerName);
+    }
+
+    public void checkForWinners(Scanner input, PrintWriter output){
+
     }
 }
 
