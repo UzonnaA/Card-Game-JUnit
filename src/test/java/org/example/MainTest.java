@@ -158,17 +158,18 @@ public class MainTest {
         game.InitializeDeck(); // Initialize the adventure deck with cards
 
         // Distribute cards to players
-        game.StartGame(); // This will distribute cards to 4 players (12 each)
+        game.StartGame();
 
         // Retrieve the adventure deck after distribution
         List<Main.AdventureCard> deck = game.advDeck;
 
         // Retrieve the player hands
-        Map<String, List<Main.AdventureCard>> players = game.players;
+        Map<String, Main.Player> players = game.players;
 
         // Check each player has exactly 12 cards
-        for (Map.Entry<String, List<Main.AdventureCard>> entry : players.entrySet()) {
-            assertEquals(12, entry.getValue().size(), "Each player should have 12 cards");
+        for (Map.Entry<String, Main.Player> entry : players.entrySet()) {
+            Main.Player player = entry.getValue();
+            assertEquals(12, player.getDeck().size(), "Each player should have 12 cards");
         }
 
         // Check the deck has been updated correctly
@@ -195,7 +196,6 @@ public class MainTest {
         // Simulate player's interaction
         String input = "\n";
         StringWriter output = new StringWriter();
-        game.Introduction(new PrintWriter(output));
 
         // Call sortCards to ensure the cards are in the correct order
         //game.sortCards(game.getPlayerHand("Player 1"));

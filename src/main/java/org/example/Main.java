@@ -60,9 +60,35 @@ public class Main {
 //        }
     }
 
+    public class Player {
+        private String name;
+        private int shields;
+        private List<AdventureCard> deck;
+
+        public Player(String name, int shields) {
+            this.name = name;
+            this.shields = shields;
+            this.deck = new ArrayList<>();
+        }
+
+
+        public int getShields(){return shields;}
+        public String getName() {
+            return name;
+        }
+        public List<AdventureCard> getDeck() {return deck;}
+        public void addToDeck(AdventureCard card) {deck.add(card);}
+        public void removeFromDeck(AdventureCard card) {deck.remove(card);}
+
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
+
     public List<AdventureCard> advDeck;
     public List<EventCard> eventDeck;
-    public Map<String, List<AdventureCard>> players;
+    public Map<String, Player> players;
     public String currentPlayer;
     public String lastEventCard;
 
@@ -80,55 +106,59 @@ public class Main {
         eventDeck = init_Event_Deck();
     }
 
+    public void StartGame() {
+        players = new HashMap<>();
+        for (int i = 1; i <= 4; i++) {
+            Player player = new Player("Player " + i, 0);  // Create player with 0 shields initially
+            players.put(player.getName(), player);
+        }
+        distributeCards();  // Distribute adventure cards to players' decks
+        setCurrentPlayer("Player 1");
+    }
+
     // This will allow us to overwrite a player's hand for testing
     public void OverwriteDeckCard(String playerName, int index, String type, String name, int value) {
-        List<AdventureCard> playerHand = players.get(playerName);
+        Player player = players.get(playerName);
+        List<AdventureCard> playerHand = player.getDeck();
+
         if (playerHand != null) {
             if (index < playerHand.size()) {
-                playerHand.set(index, new AdventureCard(type, name, value)); // Overwrite if the index exists
+                playerHand.set(index, new AdventureCard(type, name, value));  // Overwrite if index exists
             } else {
                 // Add new cards if the index doesn't exist
                 while (playerHand.size() <= index) {
-                    playerHand.add(null); // Fill in with nulls to maintain index positions
+                    playerHand.add(null);  // Fill with nulls to maintain index positions
                 }
-                playerHand.set(index, new AdventureCard(type, name, value)); // Set the card at the correct index
+                playerHand.set(index, new AdventureCard(type, name, value));  // Set the card at the correct index
             }
         }
     }
 
-    public void Introduction(PrintWriter output) {
-        output.println("Welcome to the card game!");
-    }
-
-    public void StartGame() {
-        players = new HashMap<>();
-        players = distributeCards(advDeck, 4, 12);
-        setCurrentPlayer("Player 1");
-    }
 
 
 
     public void PromptPlayer(Scanner input, PrintWriter output, String playerName) {
-        List<AdventureCard> playerHand = players.get(playerName);
+        Player player = players.get(playerName);  // Get the player object
+        List<AdventureCard> playerHand = player.getDeck();  // Get player's deck
 
         // Ensure the hand is sorted
         sortCards(playerHand);
 
         // Output whose turn it is
-        output.println(playerName + "'s Turn:");
+        output.println(player.getName() + "'s Turn:");
 
-        // This is the format I'll be using: (1)F5, (2)F10, (3)Sword, (4)Horse
+        // Display the player's hand in the format: (1)F5, (2)F10, (3)Sword, (4)Horse
         for (int i = 0; i < playerHand.size(); i++) {
-            output.print("(" + (i + 1) + ")" + playerHand.get(i));
+            output.print("(" + (i + 1) + ")" + playerHand.get(i).getName());
             if (i < playerHand.size() - 1) {
                 output.print(", ");
             }
         }
-        output.println(); // Add newline after listing cards
-        drawEventCard(); // I'll probably need a condition for this later
+        output.println();  // Add newline after listing cards
+        drawEventCard();  // I'll probably need a condition for this later
 
-        if(lastEventCard != null){
-            output.print("Drew event card: "+lastEventCard);
+        if (lastEventCard != null) {
+            output.print("Drew event card: " + lastEventCard);
         }
     }
 
@@ -190,20 +220,17 @@ public class Main {
     }
 
 
-    public Map<String, List<AdventureCard>> distributeCards(List<AdventureCard> deck, int numPlayers, int cardsPerPlayer) {
-        Collections.shuffle(deck); // Here we shuffle to ensure random cards
+    public void distributeCards() {
+        Collections.shuffle(advDeck);  // Shuffle the adventure deck
 
-        for (int i = 0; i < numPlayers; i++) {
-            List<AdventureCard> playerHand = new ArrayList<>();
-            for (int j = 0; j < cardsPerPlayer; j++) {
-                if (!deck.isEmpty()) {
-                    playerHand.add(deck.remove(0)); // Make sure we actually remove from deck when we add to hand
+        // Iterate over the players and give each player 12 cards
+        for (Player player : players.values()) {
+            for (int i = 0; i < 12; i++) {
+                if (!advDeck.isEmpty()) {
+                    player.addToDeck(advDeck.remove(0));  // Remove card from advDeck and add it to player's deck
                 }
             }
-            players.put("Player " + (i + 1), playerHand); // Assign hand to player
         }
-
-        return players;
     }
 
     public void sortCards(List<AdventureCard> cards) {
@@ -228,16 +255,15 @@ public class Main {
     }
 
     public List<AdventureCard> getPlayerHand(String playerName) {
-        return players.get(playerName);
+        Player player = players.get(playerName);
+        return player.getDeck();
     }
 
     public void removeAllCardsFromPlayer(String playerName) {
-        // Check if the player exists in the players map
-        if (players.containsKey(playerName)) {
-            // Clear the player's hand
-            players.get(playerName).clear();
+        Player player = players.get(playerName);
+        if (player != null) {
+            player.getDeck().clear();
         } else {
-            // We'll do some error checking if I screwed up here
             System.out.println("Player " + playerName + " does not exist.");
         }
     }
