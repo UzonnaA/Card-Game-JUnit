@@ -399,7 +399,7 @@ public class MainTest {
 
 
         // Check if Player 1 was declared as a winner
-        assertTrue(output.toString().contains("winner"), "Player 1 should be a winner.");
+        assertTrue(output.toString().contains("Player 1 is a winner"), "Player 1 should be a winner.");
     }
 
 

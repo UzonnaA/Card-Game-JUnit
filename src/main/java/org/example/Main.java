@@ -392,8 +392,12 @@ public class Main {
         for(Player p: players.values()){
             if(p.getShields() >= 7){
                 p.setWinner(true);
+                output.print("\n" + p.getName() + " is a winner!");
+                finished = true;
             }
         }
+
+
     }
 }
 
