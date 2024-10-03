@@ -377,6 +377,32 @@ public class MainTest {
     }
 
 
+    @Test
+    @DisplayName("Test that winners are displayed")
+    void RESP_08_test_01() {
+        // Code to run the game as normal
+        Main game = new Main();
+        game.InitializeDeck();
+        game.StartGame();
+        StringWriter output = new StringWriter();
+        game.PromptPlayer(new Scanner(System.in), new PrintWriter(output), game.currentPlayer.getName());
+        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output), "Plague");
+
+        // Simulate pressing enter to switch to the next player
+        String input = "\n";
+
+        // Before we let the next player, we'll check if there are winners
+        // For the test, we'll grant player 1 some shields
+        game.currentPlayer.changeShields(7);
+        game.checkForWinners(new Scanner(System.in), new PrintWriter(output));
+
+
+
+        // Check if Player 1 was declared as a winner
+        assertTrue(output.toString().contains("winner"), "Player 1 should be a winner.");
+    }
+
+
 
 
 }
