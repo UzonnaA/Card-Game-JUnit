@@ -241,15 +241,42 @@ public class MainTest {
         game.InitializeDeck();  // Initialize both the adventure and event decks
         game.StartGame();       // Start the game and distribute cards
 
-        // Overwrite the first card in the event deck to a known card for testing
-        //game.setSpecificEventCard(0, "Event", "Plague");
+
 
         // Simulate Player 1's turn
         StringWriter output = new StringWriter();
         game.PromptPlayer(new Scanner(System.in), new PrintWriter(output), "Player 1");
 
-        // Draw the specific event card (Plague)
-        //game.drawSpecificEventCard(0);  // This will draw the first card in the deck (we set it to plague)
+
+
+        // Check if the name of the drawn card is displayed correctly
+        // "The drawn event card's name should be displayed as 'Plague'."
+        assertTrue(output.toString().contains("Drew event card: " + game.lastEventCard), "What I see: " + output.toString());
+    }
+
+
+    @Test
+    @DisplayName("Test that the Plague Event works correctly")
+    void RESP_05_test_01() {
+        Main game = new Main();
+        game.InitializeDeck();  // Initialize both the adventure and event decks
+        game.StartGame();       // Start the game and distribute cards
+
+
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        game.PromptPlayer(new Scanner(System.in), new PrintWriter(output), "Player 1");
+
+        // Give the player shields then take them away
+        game.players.get("Player 1").changeShields(5);
+        // Force a plague event
+        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output), "Plague");
+
+        int actualShields = game.players.get("Player 1").getShields();
+        assertEquals(3, actualShields, "Player 1 should have 3 shields after the Plague event.");
+
+
 
         // Check if the name of the drawn card is displayed correctly
         // "The drawn event card's name should be displayed as 'Plague'."

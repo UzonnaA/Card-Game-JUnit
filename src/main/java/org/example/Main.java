@@ -54,10 +54,10 @@ public class Main {
             return name;
         }
 
-//        @Override
-//        public String toString() {
-//            return name;
-//        }
+        @Override
+        public String toString() {
+            return name;
+        }
     }
 
     public class Player {
@@ -73,6 +73,12 @@ public class Main {
 
 
         public int getShields(){return shields;}
+        public void changeShields(int s){
+            shields += s;
+            if(shields < 0){
+                shields = 0;
+            }
+        }
         public String getName() {
             return name;
         }
@@ -89,16 +95,16 @@ public class Main {
     public List<AdventureCard> advDeck;
     public List<EventCard> eventDeck;
     public Map<String, Player> players;
-    public String currentPlayer;
+    public Player currentPlayer;
     public String lastEventCard;
 
     // Getter and Setter for the player whose turn it is
-    public String getCurrentPlayer() {
+    public Player getCurrentPlayer() {
         return currentPlayer;
     }
 
-    public void setCurrentPlayer(String player) {
-        this.currentPlayer = player;
+    public void setCurrentPlayer(String s) {
+        currentPlayer = players.get(s);
     }
 
     public void InitializeDeck() {
@@ -155,12 +161,14 @@ public class Main {
             }
         }
         output.println();  // Add newline after listing cards
-        drawEventCard();  // I'll probably need a condition for this later
 
+        drawEventCard();  // I'll probably need a condition for this later
         if (lastEventCard != null) {
             output.print("Drew event card: " + lastEventCard);
         }
     }
+
+
 
     // Need some quick helpers to add different cards to the deck
     private void addAdvCards(List<AdventureCard> deck, String type, String name, int value, int count) {
@@ -273,28 +281,18 @@ public class Main {
             Random rand = new Random();
             int index = rand.nextInt(eventDeck.size());  // Randomly select a card from the event deck
             EventCard drawnCard = eventDeck.remove(index);  // Remove the card from the deck
-            System.out.println("Drew event card: " + drawnCard.getName());
+            //System.out.println("Drew event card: " + drawnCard.getName());
             lastEventCard = drawnCard.getName();
         } else {
-            System.out.println("The event deck is empty!");
+            //System.out.println("The event deck is empty!");
         }
     }
 
-    public void drawSpecificEventCard(int index) {
-        if (!eventDeck.isEmpty() && index >= 0 && index < eventDeck.size()) {
-            EventCard drawnCard = eventDeck.remove(index);  // Remove the card from the deck
-            System.out.println("Drew event card: " + drawnCard.getName());  // Display the card name
-            lastEventCard = drawnCard.getName();
-        } else {
-            System.out.println("Invalid event card index or empty deck!");
-        }
+    public void DrawPlayEvents(Scanner input, PrintWriter output, String event){
+        // do nothing
     }
 
-    public void setSpecificEventCard(int index, String type, String name) {
-        if (index >= 0 && index < eventDeck.size()) {
-            eventDeck.set(index, new EventCard(type, name));  // Overwrite the card in the deck
-        }
-    }
+
 
 
 }
