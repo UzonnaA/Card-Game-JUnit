@@ -126,8 +126,8 @@ public class MainTest {
         assertEquals(1, PlagueCount, "Wrong number of Plague cards");
 
         // Check there are 2 cards named "Queen Favor"
-        long queenFavorCount = deck.stream().filter(card -> card.getName().equals("Queen Favor")).count();
-        assertEquals(2, queenFavorCount, "Wrong number of Queen Favor cards");
+        long queenFavorCount = deck.stream().filter(card -> card.getName().equals("Queen's Favor")).count();
+        assertEquals(2, queenFavorCount, "Wrong number of Queen's Favor cards");
 
         // Check there are 2 cards named "Prosperity"
         long prosperityCount = deck.stream().filter(card -> card.getName().equals("Prosperity")).count();
@@ -210,5 +210,49 @@ public class MainTest {
         }
 
         assertTrue(assertion, "The cards are not in the right order");
+    }
+
+
+    @Test
+    @DisplayName("Test drawing a card from the event deck reduces deck size by 1")
+    void RESP_04_test_01() {
+        Main game = new Main();
+        game.InitializeDeck();  // Initialize both the adventure and event decks
+        game.StartGame();       // Start the game and distribute cards
+
+        // Get the initial size of the event deck
+        int initialEventDeckSize = game.eventDeck.size();
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        game.PromptPlayer(new Scanner(System.in), new PrintWriter(output), "Player 1");
+
+        // Draw a card from the event deck
+        game.drawEventCard();  // This func will draw a card and remove it from the event deck
+
+        // Check if the event deck size has been reduced by 1
+        int finalEventDeckSize = game.eventDeck.size();
+        assertEquals(initialEventDeckSize - 1, finalEventDeckSize, "The event deck size should be reduced by 1 after drawing a card.");
+    }
+
+    @Test
+    @DisplayName("Test that the drawn event card is displayed correctly.")
+    void RESP_04_test_02() {
+        Main game = new Main();
+        game.InitializeDeck();  // Initialize both the adventure and event decks
+        game.StartGame();       // Start the game and distribute cards
+
+        // Overwrite the first card in the event deck to a known card for testing
+        game.setSpecificEventCard(0, "Event", "Plague");
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        game.PromptPlayer(new Scanner(System.in), new PrintWriter(output), "Player 1");
+
+        // Draw the specific event card (Plague)
+        game.drawSpecificEventCard(0);  // This will draw the first card in the deck (we set it to plague)
+
+        // Check if the name of the drawn card is displayed correctly
+        assertTrue(output.toString().contains("Drew event card: Plague"), "The drawn event card's name should be displayed as 'Plague'.");
     }
 }

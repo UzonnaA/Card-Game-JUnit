@@ -61,9 +61,9 @@ public class Main {
     }
 
     public List<AdventureCard> advDeck;
-    private List<EventCard> eventDeck;
+    public List<EventCard> eventDeck;
     public Map<String, List<AdventureCard>> players;
-    private String currentPlayer;
+    public String currentPlayer;
 
     // Getter and Setter for the player whose turn it is
     public String getCurrentPlayer() {
@@ -177,7 +177,7 @@ public class Main {
 
         // Adding Event cards
         addEventCards(deck, "Event", "Plague", 1);
-        addEventCards(deck, "Event", "Queen Favor", 2);
+        addEventCards(deck, "Event", "Queen's Favor", 2);
         addEventCards(deck, "Event", "Prosperity", 2);
 
         return deck;
@@ -234,6 +234,18 @@ public class Main {
             // We'll do some error checking if I screwed up here
             System.out.println("Player " + playerName + " does not exist.");
         }
+    }
+
+    public void drawEventCard() {
+        // do nothing for now
+    }
+
+    public void drawSpecificEventCard(int index) {
+        // do nothing
+    }
+
+    public void setSpecificEventCard(int index, String type, String name) {
+        // do nothing
     }
 
 
