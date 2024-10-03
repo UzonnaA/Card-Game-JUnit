@@ -3,8 +3,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 public class MainTest {
 
@@ -164,5 +168,39 @@ public class MainTest {
         // Check the deck has been updated correctly
         int expectedRemainingCards = 52; // There are 100 cards - (4x12=48) = 52. Hard code but who cares
         assertEquals(expectedRemainingCards, deck.size(), "The deck should be updated after distribution");
+    }
+
+
+    @Test
+    @DisplayName("Test that Player's card hand is displayed in correct order after sorting.")
+    void RESP_03_test_01() {
+        Main game = new Main();
+        game.InitializeDeck();  // Initialize the deck
+
+        // Overwrite deck to give a specific set of cards to the player (in a mixed-up order)
+        game.OverwriteDeckCard(0, "Weapon", "Sword", 10); // Weapon card with value 10
+        game.OverwriteDeckCard(1, "Foe", "F10", 10);      // Foe card with value 10
+        game.OverwriteDeckCard(2, "Weapon", "Horse", 5);  // Weapon card with value 5
+        game.OverwriteDeckCard(3, "Foe", "F5", 5);        // Foe card with value 5
+
+        // Simulate player's interaction
+        String input = "\n";
+        StringWriter output = new StringWriter();
+        game.Introduction(new PrintWriter(output));
+        game.PlayerStart();
+
+        // Call sortCards to ensure the cards are in the correct order
+        game.sortCards(game.getPlayerHand("Player1"));
+
+        // Now display the player's hand
+        game.PromptPlayer(new Scanner(input), new PrintWriter(output)); 
+
+        // Check if the hand is displayed correctly: foes first, then weapons
+        boolean assertion = false;
+        if (output.toString().contains("(1)F5, (2)F10, (3)Sword, (4)Horse")) {
+            assertion = true;
+        }
+
+        assertTrue(assertion, "Player's hand should display F5, F10, Sword, and Horse in the correct order.");
     }
 }

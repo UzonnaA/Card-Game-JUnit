@@ -1,6 +1,7 @@
 package org.example;
 
 
+import java.io.PrintWriter;
 import java.util.*;
 
 public class Main {
@@ -28,6 +29,11 @@ public class Main {
         public String getName() {
             return name;
         }
+
+//        @Override
+//        public String toString() {
+//            return name;
+//        }
     }
 
     public class EventCard {
@@ -46,6 +52,40 @@ public class Main {
         public String getName() {
             return name;
         }
+
+//        @Override
+//        public String toString() {
+//            return name;
+//        }
+    }
+
+    private List<AdventureCard> deck;
+    private Map<String, List<AdventureCard>> players;
+
+    public void InitializeDeck() {
+
+    }
+
+    // Overwrite cards in deck for testing purposes
+    public void OverwriteDeckCard(int index, String type, String name, int value) {
+
+    }
+
+    public void Introduction(PrintWriter output) {
+
+    }
+
+    public void PlayerStart() {
+
+    }
+
+    // Distribute cards to players (assumes 1 player for now)
+    private void distributeCardsToPlayers() {
+
+    }
+
+    public void PromptPlayer(Scanner input, PrintWriter output) {
+
     }
 
     // Need some quick helpers to add different cards to the deck
@@ -121,6 +161,14 @@ public class Main {
         }
 
         return players;
+    }
+
+    public void sortCards(List<AdventureCard> cards) {
+
+    }
+
+    public List<AdventureCard> getPlayerHand(String playerName) {
+        return new ArrayList<>();
     }
 
 
