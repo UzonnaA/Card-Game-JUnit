@@ -226,6 +226,7 @@ public class MainTest {
         // Simulate Player 1's turn
         StringWriter output = new StringWriter();
         game.PromptPlayer(new Scanner(System.in), new PrintWriter(output), "Player 1");
+        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output));
 
         // We call drawEventCard in promptPlayer, this line is not needed
 
@@ -246,6 +247,7 @@ public class MainTest {
         // Simulate Player 1's turn
         StringWriter output = new StringWriter();
         game.PromptPlayer(new Scanner(System.in), new PrintWriter(output), "Player 1");
+        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output));
 
 
 

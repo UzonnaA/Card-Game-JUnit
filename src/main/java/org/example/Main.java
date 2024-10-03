@@ -162,10 +162,7 @@ public class Main {
         }
         output.println();  // Add newline after listing cards
 
-        drawEventCard();  // I'll probably need a condition for this later
-        if (lastEventCard != null) {
-            output.print("Drew event card: " + lastEventCard);
-        }
+
     }
 
 
@@ -288,8 +285,29 @@ public class Main {
         }
     }
 
-    public void DrawPlayEvents(Scanner input, PrintWriter output, String event){
-        // do nothing
+    public void DrawPlayEvents(Scanner input, PrintWriter output, String event) {
+        // If the event is null, draw a card from the event deck (default behavior)
+        if (event == null) {
+            drawEventCard();
+        } else {
+            lastEventCard = event;  // Use the custom event if provided
+        }
+
+        // Output the event card
+        if (lastEventCard != null) {
+            output.print("Drew event card: " + lastEventCard);
+        }
+
+        // Handle specific events
+        if (lastEventCard.equals("Plague")) {
+            currentPlayer.changeShields(-2);
+            output.print(currentPlayer.getName() + " lost 2 shields!");
+        }
+    }
+
+    // This gets called when I want to draw a random event
+    public void DrawPlayEvents(Scanner input, PrintWriter output) {
+        DrawPlayEvents(input, output, null);
     }
 
 
