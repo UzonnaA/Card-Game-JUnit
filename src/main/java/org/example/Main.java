@@ -92,16 +92,23 @@ public class Main {
         private int shields;
         private List<AdventureCard> deck;
         private boolean isWinner;
+        private boolean isOverloaded;
 
         public Player(String name, int shields) {
             this.name = name;
             this.shields = shields;
             this.deck = new ArrayList<>();
             this.isWinner = false;
+            this.isOverloaded = false;
         }
 
         public boolean checkWinner(){return isWinner;}
         public void setWinner(boolean w){isWinner = w;}
+
+        public boolean checkOverload(){return isOverloaded;}
+        public void setOverloaded(boolean o){isOverloaded = o;}
+
+        public int getCardCount(){return deck.size();}
 
 
         public int getShields(){return shields;}
@@ -117,11 +124,18 @@ public class Main {
         public List<AdventureCard> getDeck() {return deck;}
         public void addToDeck(AdventureCard card) {
             deck.add(card);
+            if (deck.size() > 12){
+                isOverloaded = true;
+            }
         }
 
         public void addToDeck(String type, String name, int value) {
             AdventureCard card = new AdventureCard(type, name, value);
             deck.add(card);
+
+            if (deck.size() > 12){
+                isOverloaded = true;
+            }
         }
         public void removeFromDeck(AdventureCard card) {deck.remove(card);}
 
@@ -410,8 +424,19 @@ public class Main {
                 finished = true;
             }
         }
-
-
     }
+
+    // We'll check all players and see if any of them are overloaded
+    public void checkAllOverload(Scanner input, PrintWriter output){
+        for(Player p: players.values()){
+            if(p.isOverloaded){
+                output.print("\n" + p.getName() + " has too many cards!");
+            }
+        }
+    }
+
+
+
+
 }
 

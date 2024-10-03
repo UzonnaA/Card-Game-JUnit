@@ -437,6 +437,7 @@ public class MainTest {
         Main game = setupGame();
         StringWriter output = new StringWriter();
         game.currentPlayer.addToDeck("Foe", "F5", 5);
+        game.checkAllOverload(new Scanner(System.in), new PrintWriter(output));
 
 
         // Check if the game recognizes a card overload
