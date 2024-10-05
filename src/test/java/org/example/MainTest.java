@@ -621,9 +621,9 @@ public class MainTest {
         game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
 
         // Force a quest
-        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Q2");
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Quest_Test");
 
-        assertTrue(output.toString().contains("Player 1 cannot sponsor!"), "Player 1 shouldn't be able to sponsor");
+        assertTrue(output.toString().contains("cannot sponsor"), "Player 1 shouldn't be able to sponsor");
 
     }
 

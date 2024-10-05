@@ -72,16 +72,26 @@ public class Main {
     public class EventCard {
         private String type;
         private String name;
+        private int stages;
 
         public EventCard(String type, String name) {
             this.type = type;
             this.name = name;
+            this.stages = 0;
+        }
+
+        public EventCard(String type, String name, int stages) {
+            this.type = type;
+            this.name = name;
+            this.stages = stages;
         }
 
         public String getType() {
             return type;
         }
-
+        public int getStages() {
+            return stages;
+        }
         public String getName() {
             return name;
         }
@@ -262,7 +272,7 @@ public class Main {
     }
 
 
-    private void addEventCards(List<EventCard> deck, String type, String name, int count) {
+    private void addEventCards(List<EventCard> deck, String type, String name, int stages, int count) {
         for (int i = 0; i < count; i++) {
             deck.add(new EventCard(type, name));
         }
@@ -298,15 +308,15 @@ public class Main {
         List<EventCard> deck = new ArrayList<>();
 
         // Adding Quest cards
-        addEventCards(deck, "Quest", "Q2", 3);
-        addEventCards(deck, "Quest", "Q3", 4);
-        addEventCards(deck, "Quest", "Q4", 3);
-        addEventCards(deck, "Quest", "Q5", 2);
+        addEventCards(deck, "Quest", "Q2", 2, 3);
+        addEventCards(deck, "Quest", "Q3", 3, 4);
+        addEventCards(deck, "Quest", "Q4", 4,  3);
+        addEventCards(deck, "Quest", "Q5", 5, 2);
 
         // Adding Event cards
-        addEventCards(deck, "Event", "Plague", 1);
-        addEventCards(deck, "Event", "Queen's Favor", 2);
-        addEventCards(deck, "Event", "Prosperity", 2);
+        addEventCards(deck, "Event", "Plague", 0, 1);
+        addEventCards(deck, "Event", "Queen's Favor", 0, 2);
+        addEventCards(deck, "Event", "Prosperity", 0,2);
 
         return deck;
     }
@@ -388,12 +398,19 @@ public class Main {
 
     public void DrawPlayEvents(Scanner input, PrintWriter output, String event) {
         // If the event is null, draw a card from the event deck (default behavior)
+        String defaultAnswer = "NO";
         if (event == null) {
             drawEventCard();
         } else {
             lastEventCard = event;  // Use the custom event if provided
 
             if(lastEventCard.equals("Q2") || lastEventCard.equals("Q3") || lastEventCard.equals("Q4") || lastEventCard.equals("Q5")){
+                isQuest = true;
+            }
+
+            if(lastEventCard.equals("Quest_Test")){
+                defaultAnswer = "YES";
+                lastEventCard = "Q3";
                 isQuest = true;
             }
         }
@@ -427,7 +444,7 @@ public class Main {
             output.println("Press enter to end your turn" + "\n");
 
         }else{
-            AskForSponsor(input, output);
+            AskForSponsor(input, output, defaultAnswer);
         }
 
     }
@@ -437,7 +454,7 @@ public class Main {
         DrawPlayEvents(input, output, null);
     }
 
-    public void AskForSponsor(Scanner input, PrintWriter output) {
+    public void AskForSponsor(Scanner input, PrintWriter output, String defaultAnswer) {
         int denied = 0;
         Player currentAsk = currentPlayer;
 
@@ -445,7 +462,13 @@ public class Main {
             output.print(currentAsk.getName() + ": Would you like to sponsor the quest? (Enter 0 for No, 1 for Yes): ");
 
             // Default to no if something goes wrong
-            int choice = 0;
+            int choice;
+            if(defaultAnswer.equals("NO")){
+                choice = 0;
+            }else{
+                choice = 1;
+            }
+
 
 
             try {
@@ -453,10 +476,17 @@ public class Main {
                     choice = input.nextInt();
                 } else {
                     input.next();  // Clear invalid input
-                    output.println("Invalid input. Defaulting to 'No'.");
+                    output.println("Invalid input. Using default answer.");
                 }
             } catch (NoSuchElementException | IllegalStateException e) {
-                output.println("Error with input. Defaulting to 'No'.");
+                output.println("Error with input. Using default answer.");
+            }
+
+            int stages = Integer.parseInt(lastEventCard.substring(1));
+
+            if(choice == 1 && !canSponsorQuest(currentAsk, stages)){
+                output.println(currentAsk.getName() + " cannot sponsor a quest at this time.");
+                choice = 0;
             }
 
             // If the player says yes, we end the function
@@ -481,7 +511,64 @@ public class Main {
         }
     }
 
-    public boolean canSponsor(Player p, String quest){
+    // There was no easy way to do this
+    // I essentially have to simulate building a quest
+    // brutal
+    public boolean canSponsorQuest(Player player, int stages) {
+        List<AdventureCard> foes = new ArrayList<>(); // do I need this? Not really.
+        List<AdventureCard> weapons = new ArrayList<>();
+
+        // Separate the player's cards into foes and weapons
+        for (AdventureCard card : player.getDeck()) {
+            if (card.getType().equals("Foe")) {
+                foes.add(card);
+            } else if (card.getType().equals("Weapon")) {
+                weapons.add(card);
+            }
+        }
+
+        // Sort both lists by the value of the cards
+        foes.sort(Comparator.comparingInt(AdventureCard::getValue));
+        weapons.sort(Comparator.comparingInt(AdventureCard::getValue));
+
+        // Track used cards
+        List<AdventureCard> usedWeapons = new ArrayList<>();
+        List<AdventureCard> usedFoes = new ArrayList<>();
+
+        // We need to keep track of the current and last stage values
+        int lastStageValue = 0;
+
+        // Try to build each stage
+        for (int i = 0; i < stages; i++) {
+            if (foes.isEmpty()) {
+                return false;  // Not enough foe cards to build stages
+            }
+
+            // Pick the lowest-value foe card that hasn't been used yet
+            AdventureCard foe = foes.remove(0);
+            int currentStageValue = foe.getValue();
+            usedFoes.add(foe);  // Mark this Foe card as used
+
+            // Optionally add weapons to increase the stage value, ensuring no repeats
+            for (AdventureCard weapon : weapons) {
+                if (currentStageValue <= lastStageValue && !usedWeapons.contains(weapon)) {
+                    currentStageValue += weapon.getValue();
+                    usedWeapons.add(weapon);
+                }
+            }
+
+            // Ensure the stage value is strictly greater than the previous stage
+            if (currentStageValue <= lastStageValue) {
+                return false;  // This means we couldn't use weapons to get a better value
+            }
+
+            lastStageValue = currentStageValue;  // Update the stage value
+
+            // Remove weapons used in this stage from the available pool for future stages
+            weapons.removeAll(usedWeapons);
+        }
+
+        // If we managed to create the required number of stages, return true
         return true;
     }
 
