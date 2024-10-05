@@ -518,10 +518,33 @@ public class MainTest {
         game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
 
         // Force a Queen's favor event
-        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output), "Queen's Favor");
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Queen's Favor");
+        game.checkAllOverload(new Scanner(input), new PrintWriter(output));
 
 
         assertTrue(output.toString().contains("draw 2 cards"), "Player 1 should draw 2 cards from the event.");
+        assertTrue(output.toString().contains("no longer has too many cards"), "Player 1 should have <= 12 cards.");
+    }
+
+    @Test
+    @DisplayName("Test that the Prosperity Event works correctly")
+    void RESP_15_test_01() {
+        Main game = setupGame();
+
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        String input = "\n";
+        game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
+
+        // Force a Queen's favor event
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Prosperity");
+        game.checkAllOverload(new Scanner(input), new PrintWriter(output));
+
+
+
+        assertTrue(output.toString().contains("All players will draw 2 cards."), "All players should draw 2 cards from the event");
+        assertTrue(output.toString().contains("no longer has too many cards"), "Some player should have looped through deletion");
     }
 
 

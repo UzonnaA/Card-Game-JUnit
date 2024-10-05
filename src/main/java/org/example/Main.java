@@ -407,8 +407,9 @@ public class Main {
 
         // Handle specific events
         if (lastEventCard.equals("Queen's Favor")) {
-            giveCards(currentPlayer, 2);
             output.print(currentPlayer.getName() + " will draw 2 cards." + "\n");
+            giveCards(currentPlayer, 2);
+
         }
 
         if(!isQuest){
