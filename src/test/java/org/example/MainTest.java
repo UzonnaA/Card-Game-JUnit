@@ -489,6 +489,25 @@ public class MainTest {
 
     }
 
+    @Test
+    @DisplayName("Test that the game continues to prompt the player until <=12 cards")
+    void RESP_13_test_01() {
+        Main game = setupGame();
+        StringWriter output = new StringWriter();
+        game.currentPlayer.addToDeck("Foe", "F5", 5);
+        game.currentPlayer.addToDeck("Foe", "F5", 5);
+
+        String input = "\n";
+
+        game.checkAllOverload(new Scanner(input), new PrintWriter(output));
+
+
+        // Check if the game recognizes a card overload
+        assertTrue(output.toString().contains("no longer has too many cards"), "Player 1 should have <= 12 cards.");
+
+
+    }
+
 
 
 
