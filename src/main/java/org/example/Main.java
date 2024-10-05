@@ -475,10 +475,10 @@ public class Main {
         }
 
         // If all players deny, handle that case
-//        if (denied == 4) {
-//            output.println("All players have declined to sponsor the quest.");
-//            isQuest = false;
-//        }
+        if (denied == 4) {
+            output.println("All players have declined to sponsor the quest.");
+            isQuest = false;
+        }
     }
 
 
