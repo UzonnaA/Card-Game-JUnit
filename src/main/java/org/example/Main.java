@@ -502,7 +502,7 @@ public class Main {
             }
 
             // Remove the chosen card
-            //player.removeCardByIndex(choice);
+            player.removeCardByIndex(choice);
             break;
 
             // Clear the screen after the player deletes a card
