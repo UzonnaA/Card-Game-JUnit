@@ -399,22 +399,33 @@ public class Main {
             output.print("Drew event card: " + lastEventCard + "\n");
         }
 
-        // Handle specific events
-        if (lastEventCard.equals("Plague")) {
-            currentPlayer.changeShields(-2);
-            output.print(currentPlayer.getName() + " lost 2 shields!" + "\n");
-        }
-
-        // Handle specific events
-        if (lastEventCard.equals("Queen's Favor")) {
-            output.print(currentPlayer.getName() + " will draw 2 cards." + "\n");
-            giveCards(currentPlayer, 2);
-
-        }
-
         if(!isQuest){
+            // Handle specific events
+            if (lastEventCard.equals("Plague")) {
+                currentPlayer.changeShields(-2);
+                output.print(currentPlayer.getName() + " lost 2 shields!" + "\n");
+            }
+
+            // Handle specific events
+            if (lastEventCard.equals("Queen's Favor")) {
+                output.print(currentPlayer.getName() + " will draw 2 cards." + "\n");
+                giveCards(currentPlayer, 2);
+
+            }
+
+            // Handle specific events
+            if (lastEventCard.equals("Prosperity")) {
+                output.print("All players will draw 2 cards." + "\n");
+                for(Player p: players.values()){
+                    giveCards(p, 2);
+                }
+            }
             output.println("Press enter to end your turn" + "\n");
+
+        }else{
+            // do nothing for now
         }
+
     }
 
     // This gets called when I want to draw a random event
