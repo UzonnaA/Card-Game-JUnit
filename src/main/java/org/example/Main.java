@@ -325,6 +325,18 @@ public class Main {
         }
     }
 
+    public void giveCards(Player p, int numCards) {
+        Collections.shuffle(advDeck);  // Shuffle the adventure deck
+
+        // Give the player the needed number of cards from the adv deck
+        // Basically a copy of dist cards, but refactored for individual players
+        for(int i = 0; i < numCards; i++){
+            if (!advDeck.isEmpty()) {
+                p.addToDeck(advDeck.remove(0));
+            }
+        }
+    }
+
 
 
     public void sortCards(List<AdventureCard> cards) {
@@ -391,6 +403,12 @@ public class Main {
         if (lastEventCard.equals("Plague")) {
             currentPlayer.changeShields(-2);
             output.print(currentPlayer.getName() + " lost 2 shields!" + "\n");
+        }
+
+        // Handle specific events
+        if (lastEventCard.equals("Queen's Favor")) {
+            giveCards(currentPlayer, 2);
+            output.print(currentPlayer.getName() + " will draw 2 cards." + "\n");
         }
 
         if(!isQuest){
