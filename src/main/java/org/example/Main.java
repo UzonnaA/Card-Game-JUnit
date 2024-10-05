@@ -109,12 +109,18 @@ public class Main {
         private boolean isWinner;
         private boolean isOverloaded;
 
+        public boolean isSponsor;
+        public boolean isAttacker;
+
         public Player(String name, int shields) {
             this.name = name;
             this.shields = shields;
             this.deck = new ArrayList<>();
             this.isWinner = false;
             this.isOverloaded = false;
+
+            this.isSponsor = false;
+            this.isAttacker = true;
         }
 
         public boolean checkWinner(){return isWinner;}
@@ -410,7 +416,7 @@ public class Main {
 
             if(lastEventCard.equals("Quest_Test")){
                 defaultAnswer = "YES";
-                lastEventCard = "Q3";
+                lastEventCard = "Q2";
                 isQuest = true;
             }
         }

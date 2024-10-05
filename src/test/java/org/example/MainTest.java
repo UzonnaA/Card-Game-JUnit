@@ -628,6 +628,26 @@ public class MainTest {
     }
 
 
+    @Test
+    @DisplayName("Test that players can join the attack on a quest")
+    void RESP_20_test_01() {
+        Main game = setupGame();
+
+
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        String input = "\n";
+        game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
+
+        // Force a quest
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Quest_Test");
+
+        assertTrue(output.toString().contains("would you like to participate"), "Player 2 should be able to participate in the quest");
+
+    }
+
+
 
 
 }
