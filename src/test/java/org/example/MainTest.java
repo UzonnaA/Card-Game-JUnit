@@ -606,7 +606,7 @@ public class MainTest {
 
 
     @Test
-    @DisplayName("Test that sponsors CAN ACTUALLY sponsor")
+    @DisplayName("Test that only players that can sponsor are allowed to accept")
     void RESP_19_test_01() {
         Main game = setupGame();
 
@@ -643,7 +643,7 @@ public class MainTest {
         // Force a quest
         game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Quest_Test");
 
-        assertTrue(output.toString().contains("would you like to participate"), "Player 2 should be able to participate in the quest");
+        assertTrue(output.toString().contains("Would you like to attack"), "A player should be able to participate in the quest");
 
     }
 

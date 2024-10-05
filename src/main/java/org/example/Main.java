@@ -491,14 +491,14 @@ public class Main {
             int stages = Integer.parseInt(lastEventCard.substring(1));
 
             if(choice == 1 && !canSponsorQuest(currentAsk, stages)){
-                output.println(currentAsk.getName() + " cannot sponsor a quest at this time.");
+                output.println(currentAsk.getName() + " cannot sponsor this quest.");
                 choice = 0;
             }
 
             // If the player says yes, we end the function
             if (choice == 1) {
                 output.println(currentAsk.getName() + " has agreed to sponsor the quest!");
-                // Insert function call to start the quest later
+                AskForAttack(input, output, defaultAnswer);
                 break;
             } else if (choice == 0) {
                 // If they say no, move to the next player
@@ -576,6 +576,92 @@ public class Main {
 
         // If we managed to create the required number of stages, return true
         return true;
+    }
+
+    public void AskForAttack(Scanner input, PrintWriter output, String defaultAnswer){
+        int denied = 0;
+        Player currentAsk = players.get("Player 1");
+
+        for(int i = 0; i < 4; i++) {
+            if(!currentAsk.isSponsor){
+                output.print(currentAsk.getName() + ": Would you like to attack the quest? (Enter 0 for No, 1 for Yes): ");
+
+                // Default to no if something goes wrong
+                int choice;
+                if(defaultAnswer.equals("NO")){
+                    choice = 0;
+                }else{
+                    choice = 1;
+                }
+
+                try {
+                    if (input.hasNextInt()) {
+                        choice = input.nextInt();
+                    } else {
+                        input.next();  // Clear invalid input
+                        output.println("Invalid input. Using default answer.");
+                    }
+                } catch (NoSuchElementException | IllegalStateException e) {
+                    output.println("Error with input. Using default answer.");
+                }
+
+                int stages = Integer.parseInt(lastEventCard.substring(1));
+
+                if(choice == 1 && !canAttackQuest(currentAsk, stages)){
+                    output.println(currentAsk.getName() + " cannot attack this quest.");
+                    choice = 0;
+                }
+
+                // If the player says yes, we end the function
+                if (choice == 1) {
+                    output.println(currentAsk.getName() + " has agreed to attack the quest!");
+                    currentAsk.isAttacker = true;
+                } else if (choice == 0) {
+                    // If they say no, move to the next player
+                    output.println(currentAsk.getName() + " has declined to attack the quest.");
+                    denied++;
+                    currentAsk = NextPlayer(currentAsk);
+                }
+
+                clearScreen(output);
+
+            }
+
+
+
+
+             // Clear the screen after each player's response
+        }
+
+        // If all players deny, handle that case
+        if (denied == 3) {
+            output.println("All players have declined to attack the quest.");
+            isQuest = false;
+            // If we do nothing, it should send us all the way back to the function we call
+        }else{
+            // At least one person decided to attack
+            // Insert function to attack
+        }
+    }
+
+    public boolean canAttackQuest(Player player, int stages){
+        List<AdventureCard> foes = new ArrayList<>(); // do I need this? Not really.
+        List<AdventureCard> weapons = new ArrayList<>();
+
+        // Separate the player's cards into foes and weapons
+        for (AdventureCard card : player.getDeck()) {
+            if (card.getType().equals("Foe")) {
+                foes.add(card);
+            } else if (card.getType().equals("Weapon")) {
+                weapons.add(card);
+            }
+        }
+
+        if(weapons.size() < stages){
+            return false;
+        }else{
+            return true;
+        }
     }
 
 
