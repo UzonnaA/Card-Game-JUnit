@@ -467,7 +467,7 @@ public class Main {
                 // If they say no, move to the next player
                 output.println(currentAsk.getName() + " has declined to sponsor the quest.");
                 denied++;
-                //currentAsk = NextPlayer(currentAsk);
+                currentAsk = NextPlayer(currentAsk);
             }
 
             clearScreen(output);  // Clear the screen after each player's response
