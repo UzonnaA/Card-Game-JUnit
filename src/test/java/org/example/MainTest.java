@@ -567,7 +567,7 @@ public class MainTest {
     }
 
     @Test
-    @DisplayName("Test that the player is prompted to sponsor")
+    @DisplayName("Test that player 2 is prompted to sponsor")
     void RESP_17_test_01() {
         Main game = setupGame();
 
@@ -587,7 +587,7 @@ public class MainTest {
     }
 
     @Test
-    @DisplayName("Test that the player is prompted to sponsor")
+    @DisplayName("Test that players can all decline a sponsor")
     void RESP_18_test_01() {
         Main game = setupGame();
 
@@ -601,6 +601,29 @@ public class MainTest {
         game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Q2");
 
         assertTrue(output.toString().contains("All players have declined to sponsor the quest"), "When all players say no, we should enter quest decline logic");
+
+    }
+
+
+    @Test
+    @DisplayName("Test that sponsors CAN ACTUALLY sponsor")
+    void RESP_19_test_01() {
+        Main game = setupGame();
+
+        // This will ensure Player 1 cannot sponsor
+        game.removeAllCardsFromPlayer("Player 1");
+        game.OverwriteDeckCard("Player 1", 0, "Weapon", "Sword", 10);
+
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        String input = "\n";
+        game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
+
+        // Force a quest
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Q2");
+
+        assertTrue(output.toString().contains("Player 1 cannot sponsor!"), "Player 1 shouldn't be able to sponsor");
 
     }
 

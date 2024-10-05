@@ -481,6 +481,10 @@ public class Main {
         }
     }
 
+    public boolean canSponsor(Player p, String quest){
+        return true;
+    }
+
 
     // I'm lazy, so we're making a function for this
     // This will help when switching turns
