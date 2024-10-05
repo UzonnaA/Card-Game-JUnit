@@ -392,6 +392,10 @@ public class Main {
             drawEventCard();
         } else {
             lastEventCard = event;  // Use the custom event if provided
+
+            if(lastEventCard.equals("Q2") || lastEventCard.equals("Q3") || lastEventCard.equals("Q4") || lastEventCard.equals("Q5")){
+                isQuest = true;
+            }
         }
 
         // Output the event card
@@ -432,6 +436,8 @@ public class Main {
     public void DrawPlayEvents(Scanner input, PrintWriter output) {
         DrawPlayEvents(input, output, null);
     }
+
+
 
 
     // I'm lazy, so we're making a function for this

@@ -542,9 +542,28 @@ public class MainTest {
         game.checkAllOverload(new Scanner(input), new PrintWriter(output));
 
 
-
         assertTrue(output.toString().contains("All players will draw 2 cards."), "All players should draw 2 cards from the event");
         assertTrue(output.toString().contains("no longer has too many cards"), "Some player should have looped through deletion");
+    }
+
+    @Test
+    @DisplayName("Test that the player is prompted to sponsor")
+    void RESP_16_test_01() {
+        Main game = setupGame();
+
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        String input = "\n";
+        game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
+
+        // Force a Queen's favor event
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Q2");
+
+
+
+        assertTrue(output.toString().contains("Would you like to sponsor"), "Player should be allowed to sponsor or not");
+
     }
 
 
