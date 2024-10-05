@@ -504,8 +504,24 @@ public class MainTest {
 
         // Check if the game recognizes a card overload
         assertTrue(output.toString().contains("no longer has too many cards"), "Player 1 should have <= 12 cards.");
+    }
+
+    @Test
+    @DisplayName("Test that the Queen's Favor Event works correctly")
+    void RESP_14_test_01() {
+        Main game = setupGame();
 
 
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        String input = "\n";
+        game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
+
+        // Force a Queen's favor event
+        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output), "Queen's Favor");
+
+
+        assertTrue(output.toString().contains("draw 2 cards"), "Player 1 should draw 2 cards from the event.");
     }
 
 

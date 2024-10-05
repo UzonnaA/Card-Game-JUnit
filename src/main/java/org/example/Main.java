@@ -325,6 +325,8 @@ public class Main {
         }
     }
 
+
+
     public void sortCards(List<AdventureCard> cards) {
         cards.sort((a, b) -> {
             // First sort by type (Foe before Weapon)
