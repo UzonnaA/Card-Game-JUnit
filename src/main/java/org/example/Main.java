@@ -479,39 +479,39 @@ public class Main {
     }
 
     public void handlePlayerOverload(Scanner input, PrintWriter output, Player player) {
+        while (player.getCardCount() > 12) {
+            int choice = 0;
+            output.println(player.getName() + "'s hand has too many cards. Choose a card to delete by its number:");
 
-
-        int choice = 0;
-        output.println(player.getName() + "'s hand has too many cards. Choose a card to delete by its number:");
-
-        // Display the player's hand
-        List<AdventureCard> playerHand = player.getDeck();
-        for (int i = 0; i < playerHand.size(); i++) {
-            output.println("(" + (i + 1) + ") " + playerHand.get(i).getName());
-        }
-
-        try {
-            if (input.hasNextInt()) {
-                choice = input.nextInt() - 1;  // Read input and subtract 1 for 0-based indexing
-            } else {
-                input.next();  // Clear invalid input
-                output.println("Invalid input. Defaulting to choice 1.");
+            // Display the player's hand
+            List<AdventureCard> playerHand = player.getDeck();
+            for (int i = 0; i < playerHand.size(); i++) {
+                output.println("(" + (i + 1) + ") " + playerHand.get(i).getName());
             }
-        } catch (NoSuchElementException | IllegalStateException e) {
-            output.println("Error with input. Defaulting to choice 1.");
-            // choice remains 0 (which corresponds to the first card)
+
+            try {
+                if (input.hasNextInt()) {
+                    choice = input.nextInt() - 1;  // Read input and subtract 1 for 0-based indexing
+                } else {
+                    input.next();  // Clear invalid input
+                    output.println("Invalid input. Defaulting to choice 1.");
+                }
+            } catch (NoSuchElementException | IllegalStateException e) {
+                output.println("Error with input. Defaulting to choice 1.");
+                // choice remains 0 (which corresponds to the first card)
+            }
+
+            // Remove the chosen card
+            player.removeCardByIndex(choice);
+
+
+            // Clear the screen after the player deletes a card
+            clearScreen(output);
+
+            // If the player is still overloaded, this loop continues
         }
 
-        // Remove the chosen card
-        player.removeCardByIndex(choice);
-
-
-        // Clear the screen after the player deletes a card
-        //clearScreen(output);
-
-        // If the player is still overloaded, this loop continues
-
-        //output.println(player.getName() + " no longer has too many cards.");
+        output.println(player.getName() + " no longer has too many cards.");
     }
 
 
