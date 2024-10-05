@@ -450,8 +450,6 @@ public class MainTest {
     @Test
     @DisplayName("Test that the game allows the player to choose a card for deletion")
     void RESP_11_test_01() {
-        // Test 9 doesn't exist
-        // The functionality was completed with Test 6
         Main game = setupGame();
         StringWriter output = new StringWriter();
         game.currentPlayer.addToDeck("Foe", "F5", 5);
@@ -462,6 +460,31 @@ public class MainTest {
 
         // Check if the game recognizes a card overload
         assertTrue(output.toString().contains("delete"), "Player 1 should be asked to delete cards.");
+
+
+    }
+
+
+
+    @Test
+    @DisplayName("Test that the game deletes a card from the player's hand")
+    void RESP_12_test_01() {
+        Main game = setupGame();
+        StringWriter output = new StringWriter();
+        game.currentPlayer.addToDeck("Foe", "F5", 5);
+
+        String input = "\n";
+        int startHand = game.currentPlayer.getCardCount();
+
+        game.checkAllOverload(new Scanner(input), new PrintWriter(output));
+
+
+        // Check if the game recognizes a card overload
+        assertTrue(output.toString().contains("delete"), "Player 1 should be asked to delete cards.");
+        int endHand = game.currentPlayer.getCardCount();
+
+        // Check if the player has less cards
+        assertTrue(startHand > endHand, "Player 1 should have deleted some cards.");
 
 
     }
