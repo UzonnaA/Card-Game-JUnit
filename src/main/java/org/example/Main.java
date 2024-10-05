@@ -462,6 +462,7 @@ public class Main {
             // If the player says yes, we end the function
             if (choice == 1) {
                 output.println(currentAsk.getName() + " has agreed to sponsor the quest!");
+                // Insert function call to start the quest later
                 break;
             } else if (choice == 0) {
                 // If they say no, move to the next player
@@ -474,10 +475,10 @@ public class Main {
         }
 
         // If all players deny, handle that case
-        if (denied == 4) {
-            output.println("All players have declined to sponsor the quest.");
-            // Add no sponsor logic
-        }
+//        if (denied == 4) {
+//            output.println("All players have declined to sponsor the quest.");
+//            isQuest = false;
+//        }
     }
 
 

@@ -586,6 +586,24 @@ public class MainTest {
 
     }
 
+    @Test
+    @DisplayName("Test that the player is prompted to sponsor")
+    void RESP_18_test_01() {
+        Main game = setupGame();
+
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        String input = "\n";
+        game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
+
+        // Force a quest
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Q2");
+
+        assertTrue(output.toString().contains("All players have declined to sponsor the quest"), "When all players say no, we should enter quest decline logic");
+
+    }
+
 
 
 
