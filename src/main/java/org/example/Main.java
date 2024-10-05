@@ -427,7 +427,7 @@ public class Main {
             output.println("Press enter to end your turn" + "\n");
 
         }else{
-            // do nothing for now
+            AskForSponsor(input, output);
         }
 
     }
@@ -437,7 +437,48 @@ public class Main {
         DrawPlayEvents(input, output, null);
     }
 
+    public void AskForSponsor(Scanner input, PrintWriter output) {
+        int denied = 0;
+        Player currentAsk = currentPlayer;
 
+        while (denied < 4) {
+            output.print(currentAsk.getName() + ": Would you like to sponsor the quest? (Enter 0 for No, 1 for Yes): ");
+
+            // Default to no if something goes wrong
+            int choice = 0;
+
+
+            try {
+                if (input.hasNextInt()) {
+                    choice = input.nextInt();
+                } else {
+                    input.next();  // Clear invalid input
+                    output.println("Invalid input. Defaulting to 'No'.");
+                }
+            } catch (NoSuchElementException | IllegalStateException e) {
+                output.println("Error with input. Defaulting to 'No'.");
+            }
+
+            // If the player says yes, we end the function
+            if (choice == 1) {
+                output.println(currentAsk.getName() + " has agreed to sponsor the quest!");
+                break;
+            } else if (choice == 0) {
+                // If they say no, move to the next player
+                output.println(currentAsk.getName() + " has declined to sponsor the quest.");
+                denied++;
+                currentAsk = NextPlayer(currentAsk);
+            }
+
+            clearScreen(output);  // Clear the screen after each player's response
+        }
+
+        // If all players deny, handle that case
+        if (denied == 4) {
+            output.println("All players have declined to sponsor the quest.");
+            // Add no sponsor logic
+        }
+    }
 
 
     // I'm lazy, so we're making a function for this
@@ -453,6 +494,29 @@ public class Main {
         }else{
             return "Player 1";
         }
+    }
+
+    // Well now I need a function to get the next player object
+    // ugh
+
+    public Player NextPlayer(Player p){
+        if(p.getName().equals("Player 1")){
+            return players.get("Player 2");
+        }
+
+        if(p.getName().equals("Player 2")){
+            return players.get("Player 3");
+        }
+
+        if(p.getName().equals("Player 3")){
+            return players.get("Player 4");
+        }
+
+        if(p.getName().equals("Player 4")){
+            return players.get("Player 1");
+        }
+
+        return players.get("Player 1");
     }
 
 

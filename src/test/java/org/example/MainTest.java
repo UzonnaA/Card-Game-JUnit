@@ -557,7 +557,7 @@ public class MainTest {
         String input = "\n";
         game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
 
-        // Force a Queen's favor event
+        // Force a quest
         game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Q2");
 
 
