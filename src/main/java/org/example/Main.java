@@ -247,6 +247,7 @@ public class Main {
         testCodes.add("dropout");
         testCodes.add("InvalidNumber");
         testCodes.add("SelectCard");
+        testCodes.add("NoEmpty");
     }
 
     // This will allow us to overwrite a player's hand for testing
@@ -601,16 +602,31 @@ public class Main {
                             }
 
                             if(testKey.equals("SelectCard")){
-                                output.println("Testing a valid number");
+                                output.println("Testing selecting a normal card");
                                 choice = "1";
                             }
+
+                            if(testKey.equals("NoEmpty")){
+                                output.println("Testing an empty stage");
+                                choice = "Quit";
+                            }
+
+
                         }
 
 
 
                         // If the player chooses to "Quit"
                         if (choice.equalsIgnoreCase("Quit")) {
+                            if(currentStageValue == 0){
+                                output.println("A stage cannot be empty.");
 
+                                if(testKey.equals("NoEmpty")){
+                                    break;
+                                }else{
+                                    continue;
+                                }
+                            }
 
                             if (!hasFoe) {
                                 output.println("You must include at least one Foe card for this stage.");
