@@ -728,6 +728,19 @@ public class Main {
             }
         }
 
+        // Every round, decide if the quest ends based on if there are any attackers left
+        boolean endQuest = true;
+        for(Player p: players.values()){
+            if(!p.isSponsor && p.isAttacker){
+                endQuest = false;
+            }
+        }
+
+        if(endQuest){
+            output.println("There are no participants left. The quest will now end.");
+            isQuest = false;
+        }
+
 
 
 
