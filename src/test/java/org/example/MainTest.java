@@ -810,6 +810,23 @@ public class MainTest {
 
     }
 
+    @Test
+    @DisplayName("Test what happens when the stage value is inefficient")
+    void RESP_30_test_01() {
+        Main game = setupGame();
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        String input = "\n";
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
+
+        // Force a quest
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "BadValue");
+
+        assertTrue(output.toString().contains("Insufficient value for this stage"), "What I see: " + output.toString());
+
+    }
+
 
 
 
