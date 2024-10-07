@@ -733,9 +733,9 @@ public class MainTest {
         game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
 
         // Force a quest
-        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "dropout");
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Quest_Test");
 
-        assertTrue(output.toString().contains("build"), "What I see: " + output.toString());
+        assertTrue(output.toString().contains("Building Stage"), "What I see: " + output.toString());
 
     }
 

@@ -159,12 +159,19 @@ public class Main {
             }
         }
 
+        public void removeFromDeck(AdventureCard card){
+            if(deck.contains(card)){
+                deck.remove(card);
+            }
+            if (deck.size() <= 12) {
+                isOverloaded = false;
+            }
+        }
+
         public void removeCardByIndex(int index) {
             if (index >= 0 && index < deck.size()) {
                 deck.remove(index);
-                if (deck.size() <= 12) {
-                    isOverloaded = false;
-                }
+
             }
         }
 
@@ -259,6 +266,8 @@ public class Main {
         // Output whose turn it is
         if(newTurn){
             output.println(player.getName() + "'s Turn:");
+        }else{
+            output.println(player.getName() + "'s Hand (NOT their turn):");
         }
 
         // Display the player's hand in the format: (1)F5, (2)F10, (3)Sword, (4)Horse
@@ -507,7 +516,7 @@ public class Main {
                 output.println(currentAsk.getName() + " has agreed to sponsor the quest!");
                 currentAsk.isSponsor = true;
 
-                // BuildQuest() -> This must happen before we ask for attackers
+                BuildQuest(input, output, currentAsk, stages);
                 AskForAttack(input, output, defaultAnswer);
                 break;
             } else if (choice == 0) {
@@ -525,6 +534,24 @@ public class Main {
             output.println("All players have declined to sponsor the quest.");
             isQuest = false;
         }
+    }
+
+    public void BuildQuest(Scanner input, PrintWriter output, Player sponsor, int stages) {
+        List<AdventureCard> usedCards = new ArrayList<>();  // To store all used cards for the quest
+        List<Integer> stageValues = new ArrayList<>();  // To store the value of each stage
+
+        int previousStageValue = 0;  // Initialize the previous stage value
+
+        for (int stage = 1; stage <= stages; stage++) {
+            List<AdventureCard> currentStage = new ArrayList<>();  // Cards for the current stage
+            int currentStageValue = 0;  // Track the total value of this stage
+            boolean hasFoe = false;  // Ensure at least one Foe card is used
+
+            output.println("Building Stage " + stage + " for " + sponsor.getName() + ":");
+
+        }
+
+        output.println("Quest built successfully! Stages: " + stageValues);
     }
 
     // There was no easy way to do this
@@ -853,10 +880,7 @@ public class Main {
             output.println(player.getName() + "'s hand has too many cards. Choose a card to delete by its number:");
 
             // Display the player's hand
-            List<AdventureCard> playerHand = player.getDeck();
-            for (int i = 0; i < playerHand.size(); i++) {
-                output.println("(" + (i + 1) + ") " + playerHand.get(i).getName());
-            }
+            ShowHand(input, output, player.getName(), false);
 
             try {
                 if (input.hasNextInt()) {
