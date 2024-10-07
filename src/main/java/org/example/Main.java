@@ -503,6 +503,8 @@ public class Main {
             if (choice == 1) {
                 output.println(currentAsk.getName() + " has agreed to sponsor the quest!");
                 currentAsk.isSponsor = true;
+
+                // BuildQuest() -> This must happen before we ask for attackers
                 AskForAttack(input, output, defaultAnswer);
                 break;
             } else if (choice == 0) {
@@ -662,23 +664,34 @@ public class Main {
         }
     }
 
+    // All the "every round" code needs to be a loop from 0 > stages
     public void doQuest(Scanner input, PrintWriter output, String defaultAnswer){
-        // All this needs to do right now is print attacking players
 
+        // Once, print all the players in the quest
         for(Player p: players.values()){
             if(p.isAttacker){
                 output.println(p.getName() + " will be attacking the quest.");
             }
         }
 
-        // I have responsibilities in an odd order
-        // So let's assume that right here would be code to allow the sponsor to build
+        // Every round, give all attackers a card
+        for(Player p: players.values()){
+            if(p.isAttacker){
+                giveCards(p,1);
+                output.println(p.getName() + " has received a card for agreeing to attack the stage.");
+            }
+        }
 
-        // Which means here would be code to allow each player to attack
+        // Every round, allow attackers to choose cards
+        for(Player p: players.values()){
+            if(p.isAttacker){
+                // Here would be code to allow each player to attack
+            }
+        }
 
-        // Then here would be code that shows who won and lost that attacking round
+        // Every round, display who won / lost that round
 
-        // Then finally, the winners can choose to continue (or not)
+        // Every round, the winners can choose to continue (or not)
         for(Player p: players.values()){
             if(p.isAttacker){
                 output.print(p.getName() + ": Would you like to attack the next stage? (Enter 0 for No, 1 for Yes): ");

@@ -684,6 +684,25 @@ public class MainTest {
 
     }
 
+    @Test
+    @DisplayName("Test that attacking players get cards")
+    void RESP_23_test_01() {
+        Main game = setupGame();
+
+
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        String input = "\n";
+        game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
+
+        // Force a quest
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Dropout_Test");
+
+        assertTrue(output.toString().contains("has received a card for agreeing to attack the stage"), "What I see: " + output.toString());
+
+    }
+
 
 
 
