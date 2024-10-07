@@ -644,6 +644,24 @@ public class MainTest {
         game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Quest_Test");
 
         assertTrue(output.toString().contains("Would you like to attack"), "A player should be able to participate in the quest");
+    }
+
+    @Test
+    @DisplayName("Test that attacking players are displayed")
+    void RESP_21_test_01() {
+        Main game = setupGame();
+
+
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        String input = "\n";
+        game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
+
+        // Force a quest
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Quest_Test");
+
+        assertTrue(output.toString().contains("is will be attacking the quest"), "Players that are attacking should be displayed");
 
     }
 
