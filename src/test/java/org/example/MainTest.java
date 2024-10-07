@@ -704,7 +704,22 @@ public class MainTest {
     }
 
 
+    @Test
+    @DisplayName("Test that the quest ends without participants")
+    void RESP_24_test_01() {
+        Main game = setupGame();
 
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        String input = "\n";
+        game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
+
+        // Force a quest
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "dropout");
+
+        assertTrue(output.toString().contains("There are no participants left"), "What I see: " + output.toString());
+
+    }
 
 
 
