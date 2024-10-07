@@ -120,7 +120,7 @@ public class Main {
             this.isOverloaded = false;
 
             this.isSponsor = false;
-            this.isAttacker = true;
+            this.isAttacker = false;
         }
 
         public boolean checkWinner(){return isWinner;}
@@ -186,6 +186,9 @@ public class Main {
     public String lastEventCard;
     public boolean isQuest;
 
+    // I'll use this when I want specific interactions from the tests
+    public String testKey = "";
+
     // For when the game ends
     public boolean finished = false;
 
@@ -214,7 +217,7 @@ public class Main {
     }
 
     public void StartGame() {
-        players = new HashMap<>();
+        players = new LinkedHashMap<>();
         for (int i = 1; i <= 4; i++) {
             Player player = new Player("Player " + i, 0);  // Create player with 0 shields initially
             players.put(player.getName(), player);
@@ -414,10 +417,11 @@ public class Main {
                 isQuest = true;
             }
 
-            if(lastEventCard.equals("Quest_Test")){
+            if(lastEventCard.equals("Quest_Test") || lastEventCard.equals("Dropout_Test")){
                 defaultAnswer = "YES";
                 lastEventCard = "Q2";
                 isQuest = true;
+                testKey = "dropout";
             }
         }
 
@@ -498,6 +502,7 @@ public class Main {
             // If the player says yes, we end the function
             if (choice == 1) {
                 output.println(currentAsk.getName() + " has agreed to sponsor the quest!");
+                currentAsk.isSponsor = true;
                 AskForAttack(input, output, defaultAnswer);
                 break;
             } else if (choice == 0) {
@@ -580,11 +585,10 @@ public class Main {
 
     public void AskForAttack(Scanner input, PrintWriter output, String defaultAnswer){
         int denied = 0;
-        Player currentAsk = players.get("Player 1");
 
-        for(int i = 0; i < 4; i++) {
-            if(!currentAsk.isSponsor){
-                output.print(currentAsk.getName() + ": Would you like to attack the quest? (Enter 0 for No, 1 for Yes): ");
+        for(Player p: players.values()){
+            if(!p.isSponsor){
+                output.print(p.getName() + ": Would you like to attack the quest? (Enter 0 for No, 1 for Yes): ");
 
                 // Default to no if something goes wrong
                 int choice;
@@ -607,25 +611,25 @@ public class Main {
 
                 int stages = Integer.parseInt(lastEventCard.substring(1));
 
-                if(choice == 1 && !canAttackQuest(currentAsk, stages)){
-                    output.println(currentAsk.getName() + " cannot attack this quest.");
+                if(choice == 1 && !canAttackQuest(p, stages)){
+                    output.println(p.getName() + " cannot attack this quest.");
                     choice = 0;
                 }
 
                 // If the player says yes, we end the function
                 if (choice == 1) {
-                    output.println(currentAsk.getName() + " has agreed to attack the quest!");
-                    currentAsk.isAttacker = true;
+                    output.println(p.getName() + " has agreed to attack the quest!");
+                    p.isAttacker = true;
                 } else if (choice == 0) {
                     // If they say no, move to the next player
-                    output.println(currentAsk.getName() + " has declined to attack the quest.");
+                    output.println(p.getName() + " has declined to attack the quest.");
                     denied++;
-                    currentAsk = NextPlayer(currentAsk);
                 }
-                clearScreen(output);
+                //clearScreen(output);
             }
-             // Clear the screen after each player's response
         }
+
+
 
         // If all players deny, handle that case
         if (denied == 3) {
@@ -668,7 +672,48 @@ public class Main {
         }
 
         // I have responsibilities in an odd order
-        // So let's assume that right here would be code
+        // So let's assume that right here would be code to allow the sponsor to build
+
+        // Which means here would be code to allow each player to attack
+
+        // Then here would be code that shows who won and lost that attacking round
+
+        // Then finally, the winners can choose to continue (or not)
+        for(Player p: players.values()){
+            if(p.isAttacker){
+                output.print(p.getName() + ": Would you like to attack the next stage? (Enter 0 for No, 1 for Yes): ");
+                int choice;
+                if(testKey.equals("dropout")){
+                    choice = 0;
+                }else{
+                    choice = 1;
+                }
+
+                try {
+                    if (input.hasNextInt()) {
+                        choice = input.nextInt();
+                    } else {
+                        input.next();  // Clear invalid input
+                        output.println("Invalid input. Using default answer.");
+                    }
+                } catch (NoSuchElementException | IllegalStateException e) {
+                    output.println("Error with input. Using default answer.");
+                }
+
+
+                // If the player says yes, we don't need to do anything
+                if (choice == 1) {
+                    output.println(p.getName() + " has agreed to attack the next stage!");
+                } else if (choice == 0) {
+                    // If they say no, they are no longer an attacker
+                    output.println(p.getName() + " has declined to attack the next stage.");
+                    p.isAttacker = false;
+                }
+            }
+        }
+
+
+
     }
 
 

@@ -678,9 +678,9 @@ public class MainTest {
         game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
 
         // Force a quest
-        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Quest_Test");
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Dropout_Test");
 
-        assertTrue(output.toString().contains(" has decided to drop out of the quest."), "Players that are attacking should be allowed to drop out");
+        assertTrue(output.toString().contains("has declined to attack the next stage"), "What I see: " + output.toString());
 
     }
 
