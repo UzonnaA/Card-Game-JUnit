@@ -610,6 +610,8 @@ public class Main {
 
                         // If the player chooses to "Quit"
                         if (choice.equalsIgnoreCase("Quit")) {
+
+
                             if (!hasFoe) {
                                 output.println("You must include at least one Foe card for this stage.");
                                 continue;  // Force them to choose a Foe card

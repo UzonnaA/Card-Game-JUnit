@@ -793,6 +793,24 @@ public class MainTest {
     }
 
 
+    @Test
+    @DisplayName("Test that the stage cannot be empty and that error is displayed")
+    void RESP_29_test_01() {
+        Main game = setupGame();
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        String input = "\n";
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
+
+        // Force a quest
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "NoEmpty");
+
+        assertTrue(output.toString().contains("A stage cannot be empty"), "What I see: " + output.toString());
+
+    }
+
+
 
 
 }
