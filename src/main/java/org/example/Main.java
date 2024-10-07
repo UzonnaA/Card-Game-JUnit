@@ -549,10 +549,68 @@ public class Main {
 
             output.println("Building Stage " + stage + " for " + sponsor.getName() + ":");
 
+            while (true) {
+                // Show sponsor's hand
+                ShowHand(input, output, sponsor.getName(), false);
+
+                output.println("Choose a card by its number to add to Stage " + stage + " or type 'Quit' to finish this stage:");
+
+
+                String choice;
+
+                try{
+                    // Read the input (number or "Quit")
+                    choice = input.nextLine().trim();
+                    boolean test = choice.equalsIgnoreCase("test");
+                } catch (NoSuchElementException e) {
+                    choice = "20";
+                }
+
+                // If the player chooses to "Quit"
+                if (choice.equalsIgnoreCase("Quit")) {
+                    if (!hasFoe) {
+                        continue;
+                    }
+                    if (currentStageValue <= previousStageValue) {
+                        continue;
+                    }
+                    break;  // Stage is valid, so exit the loop
+                }
+
+                // Try to parse the input as a number
+                try {
+                    int cardIndex = Integer.parseInt(choice) - 1;
+
+                    // Get the selected card from the sponsor's hand
+                    AdventureCard chosenCard = sponsor.getDeck().get(cardIndex);
+
+                    // Check if the card is a Foe (need at least 1 per stage)
+                    if (chosenCard.getType().equals("Foe")) {
+                        hasFoe = true;  // Mark that we have a Foe card
+                    }
+
+                    // Add the card to the current stage and update its value
+                    currentStage.add(chosenCard);
+                    currentStageValue += chosenCard.getValue();
+
+                    // Remove the card from the sponsor's hand
+                    sponsor.removeFromDeck(chosenCard);
+
+
+
+                } catch (NumberFormatException | IndexOutOfBoundsException e) {
+                    output.println("Invalid input. Please choose a valid card number.");
+                    break;
+                }
+
+                break;
+            }
+
         }
 
         output.println("Quest built successfully! Stages: " + stageValues);
     }
+
 
     // There was no easy way to do this
     // I essentially have to simulate building a quest
