@@ -649,9 +649,9 @@ public class Main {
                             sponsor.removeFromDeck(chosenCard);
 
                             // Re-display the player's hand and the cards used for this stage
-                            clearScreen(output);
-                            ShowHand(input, output, sponsor.getName(), false);
-                            output.println("Stage " + stage + " cards: " + currentStage.stream().map(AdventureCard::getName).toList());
+//                            clearScreen(output);
+//                            ShowHand(input, output, sponsor.getName(), false);
+//                            output.println("Stage " + stage + " cards: " + currentStage.stream().map(AdventureCard::getName).toList());
 
                         } catch (NumberFormatException | IndexOutOfBoundsException e) {
                             output.println("Invalid input. Please choose a valid card number.");

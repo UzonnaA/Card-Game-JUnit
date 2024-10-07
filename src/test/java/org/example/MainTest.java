@@ -775,6 +775,24 @@ public class MainTest {
     }
 
 
+    @Test
+    @DisplayName("Test that the selected card is displayed")
+    void RESP_28_test_01() {
+        Main game = setupGame();
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        String input = "\n";
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
+
+        // Force a quest
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "SameWeapon");
+
+        assertTrue(output.toString().contains("cards:"), "What I see: " + output.toString());
+
+    }
+
+
 
 
 }
