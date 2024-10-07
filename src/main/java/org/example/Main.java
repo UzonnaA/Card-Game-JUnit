@@ -248,6 +248,7 @@ public class Main {
         testCodes.add("InvalidNumber");
         testCodes.add("SelectCard");
         testCodes.add("NoEmpty");
+        testCodes.add("BadValue");
     }
 
     // This will allow us to overwrite a player's hand for testing
@@ -566,6 +567,8 @@ public class Main {
         List<AdventureCard> usedCards = new ArrayList<>();  // To store all used cards for the quest
         List<Integer> stageValues = new ArrayList<>();  // To store the value of each stage
 
+        int testValueTracker = 0; // This is strictly for testing
+
         int previousStageValue = 0;  // Initialize the previous stage value
 
         // This for a test and does not impact the game
@@ -611,6 +614,29 @@ public class Main {
                                 choice = "Quit";
                             }
 
+                            if(testKey.equals("BadValue")){
+                                if(testValueTracker == 0){
+                                    choice = "3";
+                                    testValueTracker++;
+                                } else if(testValueTracker == 1){
+                                    choice = "Quit";
+                                    testValueTracker++;
+                                } else if(testValueTracker == 2){
+                                    choice = "1";
+                                    testValueTracker++;
+                                } else if(testValueTracker == 3){
+                                    choice = "Quit";
+                                    testValueTracker++;
+                                }
+
+
+
+
+
+
+
+                            }
+
 
                         }
 
@@ -633,8 +659,13 @@ public class Main {
                                 continue;  // Force them to choose a Foe card
                             }
                             if (currentStageValue <= previousStageValue) {
+                                output.println("Insufficient value for this stage.");
                                 output.println("The total value of this stage must be higher than the previous stage (" + previousStageValue + ").");
-                                continue;  // Force them to choose a higher value stage
+                                if(testKey.equals("BadValue")){
+                                    break;
+                                }else{
+                                    continue;
+                                }
                             }
                             break;  // Stage is valid, so exit the loop
                         }
