@@ -678,7 +678,7 @@ public class MainTest {
         game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
 
         // Force a quest
-        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Dropout_Test");
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "dropout");
 
         assertTrue(output.toString().contains("has declined to attack the next stage"), "What I see: " + output.toString());
 
@@ -697,11 +697,14 @@ public class MainTest {
         game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
 
         // Force a quest
-        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Dropout_Test");
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "dropout");
 
         assertTrue(output.toString().contains("has received a card for agreeing to attack the stage"), "What I see: " + output.toString());
 
     }
+
+
+
 
 
 

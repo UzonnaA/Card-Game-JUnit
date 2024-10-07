@@ -405,6 +405,10 @@ public class Main {
         }
     }
 
+    public void handleTestKey(String key){
+        testKey = key;
+    }
+
     public void DrawPlayEvents(Scanner input, PrintWriter output, String event) {
         // If the event is null, draw a card from the event deck (default behavior)
         String defaultAnswer = "NO";
@@ -415,13 +419,12 @@ public class Main {
 
             if(lastEventCard.equals("Q2") || lastEventCard.equals("Q3") || lastEventCard.equals("Q4") || lastEventCard.equals("Q5")){
                 isQuest = true;
-            }
-
-            if(lastEventCard.equals("Quest_Test") || lastEventCard.equals("Dropout_Test")){
+            }else if(lastEventCard.equals("dropout") || lastEventCard.equals("Quest_Test")){
                 defaultAnswer = "YES";
+                handleTestKey(lastEventCard);
                 lastEventCard = "Q2";
                 isQuest = true;
-                testKey = "dropout";
+
             }
         }
 
@@ -724,6 +727,8 @@ public class Main {
                 }
             }
         }
+
+        
 
 
 
