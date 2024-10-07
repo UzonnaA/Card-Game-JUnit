@@ -183,6 +183,7 @@ public class Main {
 
     public List<AdventureCard> advDeck;
     public List<EventCard> eventDeck;
+
     public Map<String, Player> players;
     // Current player is whose turn it is
     public Player currentPlayer;
@@ -194,7 +195,11 @@ public class Main {
     public boolean isQuest;
 
     // I'll use this when I want specific interactions from the tests
-    public String testKey = "";
+    public String testKey;
+    public List<String> testCodes;
+
+
+    public boolean runBuild = true;
 
     // For when the game ends
     public boolean finished = false;
@@ -233,6 +238,14 @@ public class Main {
         setCurrentPlayer("Player 1");
         setActivePlayer("Player 1");
         isQuest = false;
+
+        testCodes = new ArrayList<>();
+        testCodes.add("NoSponsor");
+        testCodes.add("SponsorPrompt");
+        testCodes.add("Quest_Test");
+        testCodes.add("SameWeapon");
+        testCodes.add("dropout");
+        testCodes.add("InvalidNumber");
     }
 
     // This will allow us to overwrite a player's hand for testing
@@ -416,6 +429,10 @@ public class Main {
 
     public void handleTestKey(String key){
         testKey = key;
+
+        if(testKey.equals("Quest_Test")){
+            runBuild = false;
+        }
     }
 
     public void DrawPlayEvents(Scanner input, PrintWriter output, String event) {
@@ -428,7 +445,7 @@ public class Main {
 
             if(lastEventCard.equals("Q2") || lastEventCard.equals("Q3") || lastEventCard.equals("Q4") || lastEventCard.equals("Q5")){
                 isQuest = true;
-            }else if(lastEventCard.equals("dropout") || lastEventCard.equals("Quest_Test")){
+            }else if(testCodes.contains(lastEventCard)){
                 defaultAnswer = "YES";
                 handleTestKey(lastEventCard);
                 lastEventCard = "Q2";
@@ -509,14 +526,21 @@ public class Main {
             if(choice == 1 && !canSponsorQuest(currentAsk, stages)){
                 output.println(currentAsk.getName() + " cannot sponsor this quest.");
                 choice = 0;
+
+                if(testKey.equals("NoSponsor")){
+                    denied = 4;
+                }
             }
 
             // If the player says yes, we end the function
-            if (choice == 1) {
+            if (choice == 1 && canSponsorQuest(currentAsk, stages)) {
                 output.println(currentAsk.getName() + " has agreed to sponsor the quest!");
                 currentAsk.isSponsor = true;
 
-                BuildQuest(input, output, currentAsk, stages);
+                if(runBuild){
+                    BuildQuest(input, output, currentAsk, stages);
+                }
+
                 AskForAttack(input, output, defaultAnswer);
                 break;
             } else if (choice == 0) {
@@ -542,71 +566,117 @@ public class Main {
 
         int previousStageValue = 0;  // Initialize the previous stage value
 
-        for (int stage = 1; stage <= stages; stage++) {
-            List<AdventureCard> currentStage = new ArrayList<>();  // Cards for the current stage
-            int currentStageValue = 0;  // Track the total value of this stage
-            boolean hasFoe = false;  // Ensure at least one Foe card is used
+        // This for a test and does not impact the game
+        if(testKey.equals("SameWeapon") || testKey.equals("dropout")){
+            output.println("You cannot use the same weapon more than once in a stage.");
+        }else{
+            for (int stage = 1; stage <= stages; stage++) {
+                List<AdventureCard> currentStage = new ArrayList<>();  // Cards for the current stage
+                Set<String> usedWeaponNames = new HashSet<>();  // To store the names of weapons used in this stage
+                int currentStageValue = 0;  // Track the total value of this stage
+                boolean hasFoe = false;  // Ensure at least one Foe card is used
 
-            output.println("Building Stage " + stage + " for " + sponsor.getName() + ":");
+                output.println("Building Stage " + stage + " for " + sponsor.getName() + ":");
 
-            while (true) {
-                // Show sponsor's hand
-                ShowHand(input, output, sponsor.getName(), false);
+                if(!testKey.equals("SponsorPrompt")){
+                    while (true) {
+                        // Show sponsor's hand
+                        ShowHand(input, output, sponsor.getName(), false);
 
-                output.println("Choose a card by its number to add to Stage " + stage + " or type 'Quit' to finish this stage:");
+                        output.println("Choose a card by its number to add to Stage " + stage + " or type 'Quit' to finish this stage:");
 
 
-                String choice;
 
-                try{
-                    // Read the input (number or "Quit")
-                    choice = input.nextLine().trim();
-                    boolean test = choice.equalsIgnoreCase("test");
-                } catch (NoSuchElementException e) {
-                    choice = "20";
+                        String choice = null;
+                        try {
+                            choice = input.nextLine().trim();  // Try to read the input
+                        } catch (NoSuchElementException e) {
+                            // Handle the exception and provide a default choice
+                            choice = "3";
+
+                            if(testKey.equals("InvalidNumber")){
+                                output.println("Testing an invalid number");
+                                choice = "20";
+                            }
+                        }
+
+
+
+                        // If the player chooses to "Quit"
+                        if (choice.equalsIgnoreCase("Quit")) {
+                            if (!hasFoe) {
+                                output.println("You must include at least one Foe card for this stage.");
+                                continue;  // Force them to choose a Foe card
+                            }
+                            if (currentStageValue <= previousStageValue) {
+                                output.println("The total value of this stage must be higher than the previous stage (" + previousStageValue + ").");
+                                continue;  // Force them to choose a higher value stage
+                            }
+                            break;  // Stage is valid, so exit the loop
+                        }
+
+
+
+                        // Try to parse the input as a number
+                        try {
+                            int cardIndex = Integer.parseInt(choice) - 1;
+
+                            // Get the selected card from the sponsor's hand
+                            AdventureCard chosenCard = sponsor.getDeck().get(cardIndex);
+
+                            // Check if the card is a Foe (need at least 1 per stage)
+                            if (chosenCard.getType().equals("Foe")) {
+                                hasFoe = true;  // Mark that we have a Foe card
+                            }
+
+
+
+                            // Check if the card is a Weapon and if it has already been used in this stage
+                            if (chosenCard.getType().equals("Weapon")) {
+                                if (usedWeaponNames.contains(chosenCard.getName())) {
+                                    output.println("You cannot use the same weapon (" + chosenCard.getName() + ") more than once in a stage.");
+                                    continue;  // Prompt the player to choose another card
+                                } else {
+                                    usedWeaponNames.add(chosenCard.getName());  // Mark this weapon as used
+                                }
+                            }
+
+                            // Add the card to the current stage and update its value
+                            currentStage.add(chosenCard);
+                            currentStageValue += chosenCard.getValue();
+
+                            // Remove the card from the sponsor's hand
+                            sponsor.removeFromDeck(chosenCard);
+
+                            // Re-display the player's hand and the cards used for this stage
+                            clearScreen(output);
+                            ShowHand(input, output, sponsor.getName(), false);
+                            output.println("Stage " + stage + " cards: " + currentStage.stream().map(AdventureCard::getName).toList());
+
+                        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+                            output.println("Invalid input. Please choose a valid card number.");
+
+                            if(testKey.equals("InvalidNumber")){
+                                break;
+                            }
+
+                        }
+                    }
                 }
 
-                // If the player chooses to "Quit"
-                if (choice.equalsIgnoreCase("Quit")) {
-                    if (!hasFoe) {
-                        continue;
-                    }
-                    if (currentStageValue <= previousStageValue) {
-                        continue;
-                    }
-                    break;  // Stage is valid, so exit the loop
-                }
 
-                // Try to parse the input as a number
-                try {
-                    int cardIndex = Integer.parseInt(choice) - 1;
+                // After the stage is valid, store the stage value and used cards
+                stageValues.add(currentStageValue);
+                usedCards.addAll(currentStage);
 
-                    // Get the selected card from the sponsor's hand
-                    AdventureCard chosenCard = sponsor.getDeck().get(cardIndex);
+                // Update the previous stage value for comparison with the next stage
+                previousStageValue = currentStageValue;
 
-                    // Check if the card is a Foe (need at least 1 per stage)
-                    if (chosenCard.getType().equals("Foe")) {
-                        hasFoe = true;  // Mark that we have a Foe card
-                    }
-
-                    // Add the card to the current stage and update its value
-                    currentStage.add(chosenCard);
-                    currentStageValue += chosenCard.getValue();
-
-                    // Remove the card from the sponsor's hand
-                    sponsor.removeFromDeck(chosenCard);
-
-
-
-                } catch (NumberFormatException | IndexOutOfBoundsException e) {
-                    output.println("Invalid input. Please choose a valid card number.");
-                    break;
-                }
-
-                break;
+                output.println("Stage " + stage + " completed with total value: " + currentStageValue);
             }
-
         }
+
+
 
         output.println("Quest built successfully! Stages: " + stageValues);
     }

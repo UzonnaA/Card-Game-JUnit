@@ -621,7 +621,7 @@ public class MainTest {
         game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
 
         // Force a quest
-        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Quest_Test");
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "NoSponsor");
 
         assertTrue(output.toString().contains("cannot sponsor"), "Player 1 shouldn't be able to sponsor");
 
@@ -733,7 +733,7 @@ public class MainTest {
         game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
 
         // Force a quest
-        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Quest_Test");
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "SponsorPrompt");
 
         assertTrue(output.toString().contains("Building Stage"), "What I see: " + output.toString());
 
@@ -751,7 +751,7 @@ public class MainTest {
         game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
 
         // Force a quest
-        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Quest_Test");
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "InvalidNumber");
 
         assertTrue(output.toString().contains("Please choose a valid card number"), "What I see: " + output.toString());
 
@@ -768,7 +768,7 @@ public class MainTest {
         game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
 
         // Force a quest
-        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Quest_Test");
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "SameWeapon");
 
         assertTrue(output.toString().contains("You cannot use the same weapon"), "What I see: " + output.toString());
 
