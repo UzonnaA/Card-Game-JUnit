@@ -757,7 +757,25 @@ public class MainTest {
 
     }
 
+    @Test
+    @DisplayName("Test that we can't use repeated weapons when building")
+    void RESP_27_test_01() {
+        Main game = setupGame();
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        String input = "\n";
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
+
+        // Force a quest
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Quest_Test");
+
+        assertTrue(output.toString().contains("You cannot use the same weapon"), "What I see: " + output.toString());
+
+    }
+
 
 
 
 }
+
