@@ -20,7 +20,7 @@ public class Main {
 
         while (!game.finished) {
             // Prompt the current player
-            game.PromptPlayer(input, output, game.getCurrentPlayer().getName());
+            game.ShowHand(input, output, game.getCurrentPlayer().getName(), true);
 
             // Draw and handle an event card (default event)
             game.DrawPlayEvents(input, output);
@@ -249,7 +249,7 @@ public class Main {
 
 
 
-    public void PromptPlayer(Scanner input, PrintWriter output, String playerName) {
+    public void ShowHand(Scanner input, PrintWriter output, String playerName, boolean newTurn) {
         Player player = players.get(playerName);  // Get the player object
         List<AdventureCard> playerHand = player.getDeck();  // Get player's deck
 
@@ -257,7 +257,9 @@ public class Main {
         sortCards(playerHand);
 
         // Output whose turn it is
-        output.println(player.getName() + "'s Turn:");
+        if(newTurn){
+            output.println(player.getName() + "'s Turn:");
+        }
 
         // Display the player's hand in the format: (1)F5, (2)F10, (3)Sword, (4)Horse
         for (int i = 0; i < playerHand.size(); i++) {
@@ -267,8 +269,6 @@ public class Main {
             }
         }
         output.println();  // Add newline after listing cards
-
-
     }
 
 
@@ -814,7 +814,7 @@ public class Main {
             if(reason.equals("delete")){
                 // Actually I shouldn't prompt here
                 // I'll fix it later
-                PromptPlayer(input, output, playerName);
+                ShowHand(input, output, playerName, true);
 
             }
         }
@@ -824,7 +824,7 @@ public class Main {
     // I'm only keeping this for the 2 tests that use it
     // Don't call this again
     public void PromptNextPlayer(Scanner input, PrintWriter output, String playerName) {
-        PromptPlayer(input, output, playerName);
+        ShowHand(input, output, playerName, true);
     }
 
     public void checkForWinners(Scanner input, PrintWriter output){

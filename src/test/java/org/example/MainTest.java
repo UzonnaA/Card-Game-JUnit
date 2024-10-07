@@ -23,7 +23,7 @@ public class MainTest {
 
         // Run the player's turn and draw an event
         StringWriter output = new StringWriter();
-        game.PromptPlayer(new Scanner(System.in), new PrintWriter(output), game.currentPlayer.getName());
+        game.ShowHand(new Scanner(System.in), new PrintWriter(output), game.currentPlayer.getName(), true);
         game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output));
         return game;
     }
@@ -44,7 +44,7 @@ public class MainTest {
 
         // Run the player's turn and draw an event
         StringWriter output = new StringWriter();
-        game.PromptPlayer(new Scanner(System.in), new PrintWriter(output), game.currentPlayer.getName());
+        game.ShowHand(new Scanner(System.in), new PrintWriter(output), game.currentPlayer.getName(), true);
         game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output));
 
         // Simulate pressing enter to switch to the next player
@@ -250,7 +250,7 @@ public class MainTest {
         //game.sortCards(game.getPlayerHand("Player 1"));
 
         // Now display the player's hand
-        game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
 
         // Check if the hand is displayed correctly: foes first, then weapons
         boolean assertion = false;
@@ -274,10 +274,10 @@ public class MainTest {
 
         // Simulate Player 1's turn
         StringWriter output = new StringWriter();
-        game.PromptPlayer(new Scanner(System.in), new PrintWriter(output), "Player 1");
+        game.ShowHand(new Scanner(System.in), new PrintWriter(output), "Player 1", true);
         game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output));
 
-        // We call drawEventCard in promptPlayer, this line is not needed
+        // We call drawEventCard in ShowHand, this line is not needed
 
         // Check if the event deck size has been reduced by 1
         int finalEventDeckSize = game.eventDeck.size();
@@ -295,7 +295,7 @@ public class MainTest {
 
         // Simulate Player 1's turn
         StringWriter output = new StringWriter();
-        game.PromptPlayer(new Scanner(System.in), new PrintWriter(output), "Player 1");
+        game.ShowHand(new Scanner(System.in), new PrintWriter(output), "Player 1", true);
         game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output));
 
 
@@ -317,7 +317,7 @@ public class MainTest {
 
         // Simulate Player 1's turn
         StringWriter output = new StringWriter();
-        game.PromptPlayer(new Scanner(System.in), new PrintWriter(output), "Player 1");
+        game.ShowHand(new Scanner(System.in), new PrintWriter(output), "Player 1", true);
 
         // Give the player shields then take them away
         game.players.get("Player 1").changeShields(5);
@@ -344,7 +344,7 @@ public class MainTest {
 
         // Run the player's turn and draw an event
         StringWriter output = new StringWriter();
-        game.PromptPlayer(new Scanner(System.in), new PrintWriter(output), game.currentPlayer.getName());
+        game.ShowHand(new Scanner(System.in), new PrintWriter(output), game.currentPlayer.getName(), true);
         game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output));
 
 
@@ -515,7 +515,7 @@ public class MainTest {
         // Simulate Player 1's turn
         StringWriter output = new StringWriter();
         String input = "\n";
-        game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
 
         // Force a Queen's favor event
         game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Queen's Favor");
@@ -535,7 +535,7 @@ public class MainTest {
         // Simulate Player 1's turn
         StringWriter output = new StringWriter();
         String input = "\n";
-        game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
 
         // Force a Queen's favor event
         game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Prosperity");
@@ -555,7 +555,7 @@ public class MainTest {
         // Simulate Player 1's turn
         StringWriter output = new StringWriter();
         String input = "\n";
-        game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
 
         // Force a quest
         game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Q2");
@@ -575,7 +575,7 @@ public class MainTest {
         // Simulate Player 1's turn
         StringWriter output = new StringWriter();
         String input = "\n";
-        game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
 
         // Force a quest
         game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Q2");
@@ -595,7 +595,7 @@ public class MainTest {
         // Simulate Player 1's turn
         StringWriter output = new StringWriter();
         String input = "\n";
-        game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
 
         // Force a quest
         game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Q2");
@@ -618,7 +618,7 @@ public class MainTest {
         // Simulate Player 1's turn
         StringWriter output = new StringWriter();
         String input = "\n";
-        game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
 
         // Force a quest
         game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Quest_Test");
@@ -638,7 +638,7 @@ public class MainTest {
         // Simulate Player 1's turn
         StringWriter output = new StringWriter();
         String input = "\n";
-        game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
 
         // Force a quest
         game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Quest_Test");
@@ -656,7 +656,7 @@ public class MainTest {
         // Simulate Player 1's turn
         StringWriter output = new StringWriter();
         String input = "\n";
-        game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
 
         // Force a quest
         game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Quest_Test");
@@ -675,7 +675,7 @@ public class MainTest {
         // Simulate Player 1's turn
         StringWriter output = new StringWriter();
         String input = "\n";
-        game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
 
         // Force a quest
         game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "dropout");
@@ -694,7 +694,7 @@ public class MainTest {
         // Simulate Player 1's turn
         StringWriter output = new StringWriter();
         String input = "\n";
-        game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
 
         // Force a quest
         game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "dropout");
@@ -712,12 +712,30 @@ public class MainTest {
         // Simulate Player 1's turn
         StringWriter output = new StringWriter();
         String input = "\n";
-        game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
 
         // Force a quest
         game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "dropout");
 
         assertTrue(output.toString().contains("There are no participants left"), "What I see: " + output.toString());
+
+    }
+
+
+    @Test
+    @DisplayName("Test that the sponsor is prompted to build the quest")
+    void RESP_25_test_01() {
+        Main game = setupGame();
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        String input = "\n";
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
+
+        // Force a quest
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "dropout");
+
+        assertTrue(output.toString().contains("build"), "What I see: " + output.toString());
 
     }
 
