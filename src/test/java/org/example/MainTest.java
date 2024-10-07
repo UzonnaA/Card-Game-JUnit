@@ -740,6 +740,24 @@ public class MainTest {
     }
 
 
+    @Test
+    @DisplayName("Test that we get an error when an incorrect value is used for a card")
+    void RESP_26_test_01() {
+        Main game = setupGame();
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        String input = "\n";
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
+
+        // Force a quest
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Quest_Test");
+
+        assertTrue(output.toString().contains("Please choose a valid card number"), "What I see: " + output.toString());
+
+    }
+
+
 
 
 }
