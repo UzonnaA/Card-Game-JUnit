@@ -246,6 +246,7 @@ public class Main {
         testCodes.add("SameWeapon");
         testCodes.add("dropout");
         testCodes.add("InvalidNumber");
+        testCodes.add("SelectCard");
     }
 
     // This will allow us to overwrite a player's hand for testing
@@ -598,6 +599,11 @@ public class Main {
                                 output.println("Testing an invalid number");
                                 choice = "20";
                             }
+
+                            if(testKey.equals("SelectCard")){
+                                output.println("Testing a valid number");
+                                choice = "1";
+                            }
                         }
 
 
@@ -649,9 +655,13 @@ public class Main {
                             sponsor.removeFromDeck(chosenCard);
 
                             // Re-display the player's hand and the cards used for this stage
-//                            clearScreen(output);
-//                            ShowHand(input, output, sponsor.getName(), false);
-//                            output.println("Stage " + stage + " cards: " + currentStage.stream().map(AdventureCard::getName).toList());
+                            clearScreen(output);
+                            ShowHand(input, output, sponsor.getName(), false);
+                            output.println("Stage " + stage + " cards: " + currentStage.stream().map(AdventureCard::getName).toList());
+
+                            if(testKey.equals("SelectCard")){
+                                break;
+                            }
 
                         } catch (NumberFormatException | IndexOutOfBoundsException e) {
                             output.println("Invalid input. Please choose a valid card number.");

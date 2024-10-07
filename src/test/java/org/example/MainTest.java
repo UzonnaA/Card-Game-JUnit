@@ -786,7 +786,7 @@ public class MainTest {
         game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
 
         // Force a quest
-        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "SameWeapon");
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "SelectCard");
 
         assertTrue(output.toString().contains("cards:"), "What I see: " + output.toString());
 
