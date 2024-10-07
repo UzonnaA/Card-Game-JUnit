@@ -665,6 +665,25 @@ public class MainTest {
 
     }
 
+    @Test
+    @DisplayName("Test that attacking players can drop out")
+    void RESP_22_test_01() {
+        Main game = setupGame();
+
+
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        String input = "\n";
+        game.PromptPlayer(new Scanner(input), new PrintWriter(output), "Player 1");
+
+        // Force a quest
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Quest_Test");
+
+        assertTrue(output.toString().contains(" has decided to drop out of the quest."), "Players that are attacking should be allowed to drop out");
+
+    }
+
 
 
 

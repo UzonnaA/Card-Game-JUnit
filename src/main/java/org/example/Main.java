@@ -666,6 +666,9 @@ public class Main {
                 output.println(p.getName() + " will be attacking the quest.");
             }
         }
+
+        // I have responsibilities in an odd order
+        // So let's assume that right here would be code
     }
 
 
