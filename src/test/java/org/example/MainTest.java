@@ -661,7 +661,7 @@ public class MainTest {
         // Force a quest
         game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Quest_Test");
 
-        assertTrue(output.toString().contains("is will be attacking the quest"), "Players that are attacking should be displayed");
+        assertTrue(output.toString().contains("will be attacking the quest"), "Players that are attacking should be displayed");
 
     }
 

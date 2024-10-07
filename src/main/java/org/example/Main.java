@@ -622,14 +622,8 @@ public class Main {
                     denied++;
                     currentAsk = NextPlayer(currentAsk);
                 }
-
                 clearScreen(output);
-
             }
-
-
-
-
              // Clear the screen after each player's response
         }
 
@@ -640,7 +634,7 @@ public class Main {
             // If we do nothing, it should send us all the way back to the function we call
         }else{
             // At least one person decided to attack
-            // Insert function to attack
+            doQuest(input, output, defaultAnswer);
         }
     }
 
@@ -661,6 +655,16 @@ public class Main {
             return false;
         }else{
             return true;
+        }
+    }
+
+    public void doQuest(Scanner input, PrintWriter output, String defaultAnswer){
+        // All this needs to do right now is print attacking players
+
+        for(Player p: players.values()){
+            if(p.isAttacker){
+                output.println(p.getName() + " will be attacking the quest.");
+            }
         }
     }
 
