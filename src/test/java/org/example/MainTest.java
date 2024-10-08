@@ -865,6 +865,21 @@ public class MainTest {
     }
 
 
+    @Test
+    @DisplayName("Test that attacking players are re-prompted after an invalid card selection")
+    void RESP_33_test_01() {
+        Main game = setupGame();
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        String input = "\n";
+
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "BadAttackNumber");
+
+        // Assert that the game asks the player to choose a valid card number again
+        assertTrue(output.toString().contains("Now re-prompting ..."),"What I see: " + output.toString());
+    }
 
 
 }

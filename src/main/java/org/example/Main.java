@@ -724,6 +724,7 @@ public class Main {
                 previousStageValue = currentStageValue;
 
                 output.println("Stage " + stage + " completed with total value: " + currentStageValue);
+
             }
         }
 
@@ -918,6 +919,7 @@ public class Main {
                     AdventureCard chosenCard = p.getDeck().get(cardIndex);
                 } catch (NumberFormatException | IndexOutOfBoundsException e) {
                     output.println("Invalid input. Please choose a valid card number for attack.");
+
                 }
 
 
@@ -980,6 +982,7 @@ public class Main {
 
 
     }
+
 
 
     // I'm lazy, so we're making a function for this
