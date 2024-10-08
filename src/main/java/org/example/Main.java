@@ -804,6 +804,7 @@ public class Main {
 
     public void AskForAttack(Scanner input, PrintWriter output, String defaultAnswer){
         int denied = 0;
+        int stages;
 
         for(Player p: players.values()){
             if(!p.isSponsor){
@@ -828,7 +829,7 @@ public class Main {
                     output.println("Error with input. Using default answer.");
                 }
 
-                int stages = Integer.parseInt(lastEventCard.substring(1));
+                stages = Integer.parseInt(lastEventCard.substring(1));
 
                 if(choice == 1 && !canAttackQuest(p, stages)){
                     output.println(p.getName() + " cannot attack this quest.");
@@ -857,7 +858,8 @@ public class Main {
             // If we do nothing, it should send us all the way back to the function we call
         }else{
             // At least one person decided to attack
-            doQuest(input, output, defaultAnswer);
+            stages = Integer.parseInt(lastEventCard.substring(1));
+            doQuest(input, output, defaultAnswer, stages);
         }
     }
 
@@ -882,7 +884,7 @@ public class Main {
     }
 
     // All the "every round" code needs to be a loop from 0 > stages
-    public void doQuest(Scanner input, PrintWriter output, String defaultAnswer){
+    public void doQuest(Scanner input, PrintWriter output, String defaultAnswer, int stage){
 
         // Once, print all the players in the quest
         for(Player p: players.values()){
@@ -903,6 +905,7 @@ public class Main {
         for(Player p: players.values()){
             if(p.isAttacker){
                 // Here would be code to allow each player to attack
+                output.println("Choose a card by its number to attack Stage 1 or type 'Quit' to finish your attack:");
             }
         }
 

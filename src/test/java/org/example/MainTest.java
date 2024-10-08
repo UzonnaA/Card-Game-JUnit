@@ -842,7 +842,7 @@ public class MainTest {
         // Force a quest
         game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "dropout");
 
-        assertTrue(output.toString().contains("Choose a card by its number to add to"), "What I see: " + output.toString());
+        assertTrue(output.toString().contains("Choose a card by its number to attack"), "What I see: " + output.toString());
 
     }
 
