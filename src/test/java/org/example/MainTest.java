@@ -858,7 +858,7 @@ public class MainTest {
         game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
 
         // Force a quest
-        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "dropout");
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "BadAttackNumber");
 
         assertTrue(output.toString().contains("Please choose a valid card number for attack"), "What I see: " + output.toString());
 

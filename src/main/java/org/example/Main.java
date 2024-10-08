@@ -245,6 +245,7 @@ public class Main {
         testCodes.add("Quest_Test");
         testCodes.add("SameWeapon");
         testCodes.add("dropout");
+        testCodes.add("BadAttackNumber");
         testCodes.add("InvalidNumber");
         testCodes.add("SelectCard");
         testCodes.add("NoEmpty");
@@ -433,7 +434,7 @@ public class Main {
     public void handleTestKey(String key){
         testKey = key;
 
-        if(testKey.equals("Quest_Test")){
+        if(testKey.equals("Quest_Test") || testKey.equals("BadAttackNumber")){
             runBuild = false;
         }
     }
@@ -875,7 +876,7 @@ public class Main {
     }
 
     // All the "every round" code needs to be a loop from 0 > stages
-    public void doQuest(Scanner input, PrintWriter output, String defaultAnswer, int stage){
+    public void doQuest(Scanner input, PrintWriter output, String defaultAnswer, int stages){
 
         // Once, print all the players in the quest
         for(Player p: players.values()){
@@ -896,7 +897,32 @@ public class Main {
         for(Player p: players.values()){
             if(p.isAttacker){
                 // Here would be code to allow each player to attack
+
+                ShowHand(input, output, p.getName(), false);
                 output.println("Choose a card by its number to attack Stage 1 or type 'Quit' to finish your attack:");
+
+                String choice = null;
+                try {
+                    choice = input.nextLine().trim();  // Try to read the input
+                } catch (NoSuchElementException e) {
+                    // Handle the exception and provide a default choice
+                    if(testKey.equals("BadAttackNumber")){
+                        choice = "200";
+                    }
+
+                }
+
+                try {
+                    int cardIndex = Integer.parseInt(choice) - 1;
+                    // Get the selected card from the attacker's hand
+                    AdventureCard chosenCard = p.getDeck().get(cardIndex);
+                } catch (NumberFormatException | IndexOutOfBoundsException e) {
+                    output.println("Invalid input. Please choose a valid card number for attack.");
+                }
+
+
+
+
             }
         }
 
