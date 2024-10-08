@@ -589,10 +589,9 @@ public class Main {
                 if(!testKey.equals("SponsorPrompt")){
                     while (true) {
                         // Show sponsor's hand
-                        ShowHand(input, output, sponsor.getName(), false);
-
                         output.println("Choose a card by its number to add to Stage " + stage + " or type 'Quit' to finish this stage:");
-
+                        ShowHand(input, output, sponsor.getName(), false);
+                        output.println("Stage " + stage + " cards: " + currentStage.stream().map(AdventureCard::getName).toList());
 
 
                         String choice = null;
@@ -700,7 +699,7 @@ public class Main {
                             // Re-display the player's hand and the cards used for this stage
                             clearScreen(output);
                             ShowHand(input, output, sponsor.getName(), false);
-                            output.println("Stage " + stage + " cards: " + currentStage.stream().map(AdventureCard::getName).toList());
+
 
                             if(testKey.equals("SelectCard")){
                                 break;
@@ -916,12 +915,139 @@ public class Main {
             // Here, we'll do the attack for each player
 
             for(Player p: players.values()){
-                if(p.isAttacker){
+                if(p.isAttacker && (testKey.equals("BadAttackNumber") || testKey.equals("dropout") ) ){
                     giveCards(p,1);
                     output.println(p.getName() + " has received a card for agreeing to attack the stage.");
                     boolean attackReady = false;
                     Set<String> usedWeaponNames = new HashSet<>();
+                    List<AdventureCard> currentStage = new ArrayList<>();
                     int attackValue = 0;
+
+                    while(!attackReady){
+                        // Show hand and let player select cards
+                        output.println("Choose a card by its number to attack Stage " + stage + " or type 'Quit' to finish your attack:");
+                        ShowHand(input, output, p.getName(), false);
+                        output.println("Stage " + stage + " attacking cards: " + currentStage.stream().map(AdventureCard::getName).toList());
+
+                        // Choice logic
+                        String choice = null;
+                        try {
+                            choice = input.nextLine().trim();  // Try to read the input
+                        } catch (NoSuchElementException e) {
+                            // Handle the exception and provide a default choice
+                            choice = "2";
+                            if(testKey.equals("BadAttackNumber")){
+                                output.println("Invalid input. Please choose a valid card number for attack.");
+                                output.println("Now re-prompting ... ");
+                                break;
+                            }
+
+                            if(testKey.equals("dropout")){
+                                output.println(p.getName() + " has declined to attack the next stage.");
+                                break;
+                            }
+                        }
+
+                        // Quit logic
+                        if (choice.equalsIgnoreCase("Quit")) {
+                            if (attackValue == 0) {
+                                output.println("You need at least one weapon card to attack.");
+                                continue;
+                            }
+                            attackReady = true;
+                            output.println(p.getName() + "'s attack is ready with a value of " + attackValue);
+                        }else{
+                            try {
+                                int cardIndex = Integer.parseInt(choice) - 1;
+                                AdventureCard chosenCard = p.getDeck().get(cardIndex);
+
+                                if (chosenCard.getType().equals("Foe")) {
+                                    output.println("You cannot use a Foe card to attack.");
+                                    continue;  // Restart the logic
+                                }
+
+                                if (usedWeaponNames.contains(chosenCard.getName())) {
+                                    output.println("You cannot use the same weapon (" + chosenCard.getName() + ") more than once.");
+                                    continue;  // Restart the logic
+                                }
+
+                                // Add the card to the attack
+                                usedWeaponNames.add(chosenCard.getName());
+                                attackValue += chosenCard.getValue();
+                                p.removeFromDeck(chosenCard);
+                                output.println(p.getName() + " added " + chosenCard.getName() + " to their attack.");
+                                currentStage.add(chosenCard);
+
+
+
+                            } catch (NumberFormatException | IndexOutOfBoundsException e) {
+                                output.println("Invalid input. Please choose a valid card number.");
+                            }
+                        }
+
+                        if (attackValue < stageValue) {
+                            output.println(p.getName() + " failed to match the stage value and is eliminated.");
+                            p.isAttacker = false;  // Mark as ineligible for further stages
+                        } else {
+                            output.println(p.getName() + " passed the stage with an attack value of " + attackValue + ".");
+                        }
+                    } // While loop
+
+
+
+                    // At the end of each stage, discard all used cards
+                    for (Player play : players.values()) {
+                        if (play.isAttacker) {
+                            // Remove any cards used
+                            // We're still in the for loop for each player
+                            // Therefore, we can just delete used weapons
+                            // I shouldn't forget to add deleted cards back to the pile (For all functions)
+                            output.println(p.getName() + "'s used attack cards are discarded.");
+                        }
+                    }
+
+                    // Check if there are any attackers left for the next stage
+                    boolean attackersRemain = false;
+                    for (Player play : players.values()) {
+                        if (play.isAttacker) {
+                            attackersRemain = true;
+                        }
+                    }
+
+                    if (!attackersRemain) {
+                        output.println("No more attackers. The quest ends here.");
+                        isQuest = false;
+                        break;
+                    }
+
+                    // Every round, the winners can choose to continue (or not)
+                    output.print(p.getName() + ": Would you like to attack the next stage? (Enter 0 for No, 1 for Yes): ");
+                    int choice;
+                    if(testKey.equals("dropout")){
+                        choice = 0;
+                    }else{
+                        choice = 1;
+                    }
+
+                    try {
+                        if (input.hasNextInt()) {
+                            choice = input.nextInt();
+                        } else {
+                            input.next();  // Clear invalid input
+                            output.println("Invalid input. Using default answer.");
+                        }
+                    } catch (NoSuchElementException | IllegalStateException e) {
+                        output.println("Error with input. Using default answer.");
+                    }
+                    // If the player says yes, we don't need to do anything
+                    if (choice == 1) {
+                        output.println(p.getName() + " has agreed to attack the next stage!");
+                    } else if (choice == 0) {
+                        // If they say no, they are no longer an attacker
+                        output.println(p.getName() + " has declined to attack the next stage.");
+                        p.isAttacker = false;
+                    }
+
 
 
                 }
@@ -930,103 +1056,16 @@ public class Main {
 
         } // Main For Loop End
 
-
-//        // Every round, give all attackers a card
-//        for(Player p: players.values()){
-//            if(p.isAttacker){
-//                giveCards(p,1);
-//                output.println(p.getName() + " has received a card for agreeing to attack the stage.");
-//            }
-//        }
-
-        // Every round, allow attackers to choose cards
-        for(Player p: players.values()){
-            if(p.isAttacker){
-                // Here would be code to allow each player to attack
-
-                ShowHand(input, output, p.getName(), false);
-                output.println("Choose a card by its number to attack Stage 1 or type 'Quit' to finish your attack:");
-
-                String choice = null;
-                try {
-                    choice = input.nextLine().trim();  // Try to read the input
-                } catch (NoSuchElementException e) {
-                    // Handle the exception and provide a default choice
-                    if(testKey.equals("BadAttackNumber")){
-                        choice = "200";
-                    }
-
-                }
-
-                try {
-                    int cardIndex = Integer.parseInt(choice) - 1;
-                    // Get the selected card from the attacker's hand
-                    AdventureCard chosenCard = p.getDeck().get(cardIndex);
-                } catch (NumberFormatException | IndexOutOfBoundsException e) {
-                    output.println("Invalid input. Please choose a valid card number for attack.");
-                    output.println("Now re-prompting ... ");
-
-                }
-
-
-
-
+        // After all stages, award shields to those who completed the quest
+        for (Player p : players.values()) {
+            if (p.isAttacker) {
+                p.changeShields(stages);  // Award shields equal to the number of stages
+                output.println(p.getName() + " is awarded " + stages + " shields for completing the quest.");
+                p.isAttacker = false;
             }
         }
-
-        // Every round, display who won / lost that round
-
-        // Every round, the winners can choose to continue (or not)
-        for(Player p: players.values()){
-            if(p.isAttacker){
-                output.print(p.getName() + ": Would you like to attack the next stage? (Enter 0 for No, 1 for Yes): ");
-                int choice;
-                if(testKey.equals("dropout")){
-                    choice = 0;
-                }else{
-                    choice = 1;
-                }
-
-                try {
-                    if (input.hasNextInt()) {
-                        choice = input.nextInt();
-                    } else {
-                        input.next();  // Clear invalid input
-                        output.println("Invalid input. Using default answer.");
-                    }
-                } catch (NoSuchElementException | IllegalStateException e) {
-                    output.println("Error with input. Using default answer.");
-                }
-
-
-                // If the player says yes, we don't need to do anything
-                if (choice == 1) {
-                    output.println(p.getName() + " has agreed to attack the next stage!");
-                } else if (choice == 0) {
-                    // If they say no, they are no longer an attacker
-                    output.println(p.getName() + " has declined to attack the next stage.");
-                    p.isAttacker = false;
-                }
-            }
-        }
-
-        // Every round, decide if the quest ends based on if there are any attackers left
-        boolean endQuest = true;
-        for(Player p: players.values()){
-            if(!p.isSponsor && p.isAttacker){
-                endQuest = false;
-            }
-        }
-
-        if(endQuest){
-            output.println("There are no participants left. The quest will now end.");
-            isQuest = false;
-        }
-
-
-
-
-
+        output.println("The quest has ended.");
+        // The function should end here
     }
 
 

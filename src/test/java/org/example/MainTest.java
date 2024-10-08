@@ -717,7 +717,7 @@ public class MainTest {
         // Force a quest
         game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "dropout");
 
-        assertTrue(output.toString().contains("There are no participants left"), "What I see: " + output.toString());
+        assertTrue(output.toString().contains("No more attackers"), "What I see: " + output.toString());
 
     }
 
