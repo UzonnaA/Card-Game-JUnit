@@ -629,19 +629,10 @@ public class Main {
                                     testValueTracker++;
                                 }
 
-
-
-
-
-
-
                             }
 
 
                         }
-
-
-
                         // If the player chooses to "Quit"
                         if (choice.equalsIgnoreCase("Quit")) {
                             if(currentStageValue == 0){

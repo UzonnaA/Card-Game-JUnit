@@ -847,6 +847,24 @@ public class MainTest {
     }
 
 
+    @Test
+    @DisplayName("Test that attacking players MUST choose a valid card")
+    void RESP_32_test_01() {
+        Main game = setupGame();
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        String input = "\n";
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
+
+        // Force a quest
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "dropout");
+
+        assertTrue(output.toString().contains("Please choose a valid card number for attack"), "What I see: " + output.toString());
+
+    }
+
+
 
 
 }
