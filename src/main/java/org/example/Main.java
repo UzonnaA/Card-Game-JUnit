@@ -919,6 +919,7 @@ public class Main {
                     AdventureCard chosenCard = p.getDeck().get(cardIndex);
                 } catch (NumberFormatException | IndexOutOfBoundsException e) {
                     output.println("Invalid input. Please choose a valid card number for attack.");
+                    output.println("Now re-prompting ... ");
 
                 }
 
