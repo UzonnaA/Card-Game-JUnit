@@ -183,6 +183,7 @@ public class Main {
 
     public List<AdventureCard> advDeck;
     public List<EventCard> eventDeck;
+    public List<Integer> stageValues;
 
     public Map<String, Player> players;
     // Current player is whose turn it is
@@ -230,6 +231,7 @@ public class Main {
 
     public void StartGame() {
         players = new LinkedHashMap<>();
+        stageValues = new ArrayList<>();
         for (int i = 1; i <= 4; i++) {
             Player player = new Player("Player " + i, 0);  // Create player with 0 shields initially
             players.put(player.getName(), player);
@@ -566,7 +568,7 @@ public class Main {
 
     public void BuildQuest(Scanner input, PrintWriter output, Player sponsor, int stages) {
         List<AdventureCard> usedCards = new ArrayList<>();  // To store all used cards for the quest
-        List<Integer> stageValues = new ArrayList<>();  // To store the value of each stage
+        stageValues.clear();
 
         int testValueTracker = 0; // This is strictly for testing
 
@@ -852,7 +854,7 @@ public class Main {
         }else{
             // At least one person decided to attack
             stages = Integer.parseInt(lastEventCard.substring(1));
-            doQuest(input, output, defaultAnswer, stages);
+            doQuest(input, output, defaultAnswer);
         }
     }
 
@@ -877,7 +879,13 @@ public class Main {
     }
 
     // All the "every round" code needs to be a loop from 0 > stages
-    public void doQuest(Scanner input, PrintWriter output, String defaultAnswer, int stages){
+    public void doQuest(Scanner input, PrintWriter output, String defaultAnswer){
+        int stages = stageValues.size();
+        if(stages == 0){
+            stageValues.add(5);
+            stageValues.add(10);
+            stages = stageValues.size();
+        }
 
         // Once, print all the players in the quest
         for(Player p: players.values()){
@@ -886,13 +894,50 @@ public class Main {
             }
         }
 
-        // Every round, give all attackers a card
-        for(Player p: players.values()){
-            if(p.isAttacker){
-                giveCards(p,1);
-                output.println(p.getName() + " has received a card for agreeing to attack the stage.");
+        // This for loop forces things to happen every round
+        for(int stage = 1; stage <= stages; stage++){
+            output.println("\n--- Stage " + stage + " ---");
+
+            // Here we check if there are attackers left
+            int attackers_left = 0;
+            for(Player p: players.values()){
+                if(p.isAttacker){
+                    attackers_left++;
+                }
             }
-        }
+            if(attackers_left == 0){
+                output.println("No more attackers. The quest ends here.");
+                isQuest = false;
+                break;
+            }
+
+            int stageValue = stageValues.get(stage - 1);
+
+            // Here, we'll do the attack for each player
+
+            for(Player p: players.values()){
+                if(p.isAttacker){
+                    giveCards(p,1);
+                    output.println(p.getName() + " has received a card for agreeing to attack the stage.");
+                    boolean attackReady = false;
+                    Set<String> usedWeaponNames = new HashSet<>();
+                    int attackValue = 0;
+
+
+                }
+                // Nothing should go here
+            }
+
+        } // Main For Loop End
+
+
+//        // Every round, give all attackers a card
+//        for(Player p: players.values()){
+//            if(p.isAttacker){
+//                giveCards(p,1);
+//                output.println(p.getName() + " has received a card for agreeing to attack the stage.");
+//            }
+//        }
 
         // Every round, allow attackers to choose cards
         for(Player p: players.values()){

@@ -882,5 +882,22 @@ public class MainTest {
     }
 
 
+    @Test
+    @DisplayName("Test that attacking players can see which cards they have selected")
+    void RESP_34_test_01() {
+        Main game = setupGame();
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        String input = "\n";
+
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "BadAttackNumber");
+
+        // Assert that the game asks the player to choose a valid card number again
+        assertTrue(output.toString().contains("attacking cards:"),"What I see: " + output.toString());
+    }
+
+
 }
 
