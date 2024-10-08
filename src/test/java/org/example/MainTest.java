@@ -825,6 +825,25 @@ public class MainTest {
 
         assertTrue(output.toString().contains("Insufficient value for this stage"), "What I see: " + output.toString());
 
+
+    }
+
+
+    @Test
+    @DisplayName("Test that attacking players are prompted to choose cards")
+    void RESP_31_test_01() {
+        Main game = setupGame();
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        String input = "\n";
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
+
+        // Force a quest
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "dropout");
+
+        assertTrue(output.toString().contains("Choose a card by its number to add to"), "What I see: " + output.toString());
+
     }
 
 
