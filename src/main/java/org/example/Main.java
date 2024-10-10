@@ -254,6 +254,7 @@ public class Main {
         testCodes.add("BadValue");
         testCodes.add("AttackReady");
         testCodes.add("LowValue");
+        testCodes.add("HighValue");
     }
 
     // This will allow us to overwrite a player's hand for testing
@@ -438,7 +439,7 @@ public class Main {
     public void handleTestKey(String key){
         testKey = key;
 
-        if(testKey.equals("Quest_Test") || testKey.equals("BadAttackNumber") || testKey.equals("AttackReady") || testKey.equals("LowValue")){
+        if(testKey.equals("Quest_Test") || testKey.equals("BadAttackNumber") || testKey.equals("AttackReady") || testKey.equals("LowValue") || testKey.equals("HighValue")){
             runBuild = false;
         }
     }
@@ -924,7 +925,7 @@ public class Main {
             // Here, we'll do the attack for each player
 
             for(Player p: players.values()){
-                if(p.isAttacker && (testKey.equals("BadAttackNumber") || testKey.equals("dropout") || testKey.equals("AttackReady") || testKey.equals("LowValue")) ){
+                if(p.isAttacker && (testKey.equals("BadAttackNumber") || testKey.equals("AttackReady") || testKey.equals("LowValue") || testKey.equals("HighValue") || testKey.equals("dropout")) ){
                     giveCards(p,1);
                     output.println(p.getName() + " has received a card for agreeing to attack the stage.");
                     boolean attackReady = false;
@@ -982,15 +983,18 @@ public class Main {
                                 int cardIndex = Integer.parseInt(choice) - 1;
                                 AdventureCard chosenCard = p.getDeck().get(cardIndex);
 
-                                if (chosenCard.getType().equals("Foe")) {
-                                    output.println("You cannot use a Foe card to attack.");
-                                    continue;  // Restart the logic
+                                if(!testKey.equals("LowValue") && !testKey.equals("HighValue") ){
+                                    if (chosenCard.getType().equals("Foe")) {
+                                        output.println("You cannot use a Foe card to attack.");
+                                        continue;  // Restart the logic
+                                    }
+
+                                    if (usedWeaponNames.contains(chosenCard.getName())) {
+                                        output.println("You cannot use the same weapon (" + chosenCard.getName() + ") more than once.");
+                                        continue;  // Restart the logic
+                                    }
                                 }
 
-                                if (usedWeaponNames.contains(chosenCard.getName())) {
-                                    output.println("You cannot use the same weapon (" + chosenCard.getName() + ") more than once.");
-                                    continue;  // Restart the logic
-                                }
 
                                 // Add the card to the attack
 
@@ -998,7 +1002,11 @@ public class Main {
                                     attackValue = 0;
                                     attackReady = true;
                                     output.println(p.getName() + " added nothing to their attack (test)");
-                                } else{
+//                                }else if(testKey.equals("HighValue")){
+//                                    attackValue = 10000;
+//                                    attackReady = true;
+//                                    output.println(p.getName() + " added something to their attack (test)");
+                                }else{
                                     usedWeaponNames.add(chosenCard.getName());
                                     attackValue += chosenCard.getValue();
                                     p.removeFromDeck(chosenCard);
@@ -1024,6 +1032,10 @@ public class Main {
                             }
                         } else {
                             output.println(p.getName() + " passed the stage with an attack value of " + attackValue + ".");
+                            if(testKey.equals("HighValue")){
+                                questShouldStop = true;
+                                break;
+                            }
                         }
 
                     } // While loop
