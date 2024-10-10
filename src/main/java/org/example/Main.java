@@ -253,6 +253,7 @@ public class Main {
         testCodes.add("NoEmpty");
         testCodes.add("BadValue");
         testCodes.add("AttackReady");
+        testCodes.add("LowValue");
     }
 
     // This will allow us to overwrite a player's hand for testing
@@ -437,7 +438,7 @@ public class Main {
     public void handleTestKey(String key){
         testKey = key;
 
-        if(testKey.equals("Quest_Test") || testKey.equals("BadAttackNumber") || testKey.equals("AttackReady") ){
+        if(testKey.equals("Quest_Test") || testKey.equals("BadAttackNumber") || testKey.equals("AttackReady") || testKey.equals("LowValue")){
             runBuild = false;
         }
     }
