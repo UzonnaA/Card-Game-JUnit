@@ -899,9 +899,10 @@ public class Main {
         }
 
         int testValue = 0;
+        boolean questShouldStop = false;
 
         // This for loop forces things to happen every round
-        for(int stage = 1; stage <= stages; stage++){
+        for(int stage = 1; stage <= stages && !questShouldStop; stage++){
             output.println("\n--- Stage " + stage + " ---");
 
             // Here we check if there are attackers left
@@ -923,13 +924,15 @@ public class Main {
             // Here, we'll do the attack for each player
 
             for(Player p: players.values()){
-                if(p.isAttacker && (testKey.equals("BadAttackNumber") || testKey.equals("dropout") || testKey.equals("AttackReady")) ){
+                if(p.isAttacker && (testKey.equals("BadAttackNumber") || testKey.equals("dropout") || testKey.equals("AttackReady") || testKey.equals("LowValue")) ){
                     giveCards(p,1);
                     output.println(p.getName() + " has received a card for agreeing to attack the stage.");
                     boolean attackReady = false;
                     Set<String> usedWeaponNames = new HashSet<>();
                     List<AdventureCard> currentStage = new ArrayList<>();
                     int attackValue = 0;
+
+
 
                     while(!attackReady){
                         // Show hand and let player select cards
@@ -960,6 +963,8 @@ public class Main {
                                 output.println(p.getName() + "'s attack is ready with a value of " + attackValue);
                                 break;
                             }
+
+
                         }
 
                         // Quit logic
@@ -988,11 +993,19 @@ public class Main {
                                 }
 
                                 // Add the card to the attack
-                                usedWeaponNames.add(chosenCard.getName());
-                                attackValue += chosenCard.getValue();
-                                p.removeFromDeck(chosenCard);
-                                output.println(p.getName() + " added " + chosenCard.getName() + " to their attack.");
-                                currentStage.add(chosenCard);
+
+                                if(testKey.equals("LowValue")){
+                                    attackValue = 0;
+                                    attackReady = true;
+                                    output.println(p.getName() + " added nothing to their attack (test)");
+                                }else{
+                                    usedWeaponNames.add(chosenCard.getName());
+                                    attackValue += chosenCard.getValue();
+                                    p.removeFromDeck(chosenCard);
+                                    output.println(p.getName() + " added " + chosenCard.getName() + " to their attack.");
+                                    currentStage.add(chosenCard);
+                                }
+
 
 
 
@@ -1004,9 +1017,15 @@ public class Main {
                         if (attackValue < stageValue) {
                             output.println(p.getName() + " failed to match the stage value and is eliminated.");
                             p.isAttacker = false;  // Mark as ineligible for further stages
+
+                            if(testKey.equals("LowValue")){
+                                questShouldStop = true;
+                                break;
+                            }
                         } else {
                             output.println(p.getName() + " passed the stage with an attack value of " + attackValue + ".");
                         }
+
                     } // While loop
 
 
@@ -1069,6 +1088,8 @@ public class Main {
                 }
                 // Nothing should go here
             }
+
+
 
         } // Main For Loop End
 

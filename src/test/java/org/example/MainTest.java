@@ -926,7 +926,7 @@ public class MainTest {
         String input = "\n";
 
         game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
-        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "LowAttack");
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "LowValue");
 
         // Assert that the game asks the player to choose a valid card number again
         assertTrue(output.toString().contains("failed to match the stage value"),"What I see: " + output.toString());
