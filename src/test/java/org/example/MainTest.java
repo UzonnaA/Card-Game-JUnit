@@ -949,6 +949,22 @@ public class MainTest {
         assertTrue(output.toString().contains("passed the stage with an attack"),"What I see: " + output.toString());
     }
 
+    @Test
+    @DisplayName("Test that attackers who play a high enough value can continue")
+    void RESP_38_test_01() {
+        Main game = setupGame();
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        String input = "\n";
+
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "HighValue");
+
+        // Assert that the game asks the player to choose a valid card number again
+        assertTrue(output.toString().contains("shields for completing the quest"),"What I see: " + output.toString());
+    }
+
 
 }
 

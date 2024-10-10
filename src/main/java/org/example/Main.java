@@ -1109,7 +1109,7 @@ public class Main {
         for (Player p : players.values()) {
             if (p.isAttacker) {
                 p.changeShields(stages);  // Award shields equal to the number of stages
-                output.println(p.getName() + " is awarded " + stages + " shields for completing the quest.");
+                //output.println(p.getName() + " is awarded " + stages + " shields for completing the quest.");
                 p.isAttacker = false;
             }
         }
