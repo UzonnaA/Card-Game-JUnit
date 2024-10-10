@@ -917,7 +917,7 @@ public class MainTest {
 
 
     @Test
-    @DisplayName("Test that attackers who attack with attack with too low a value are eliminated")
+    @DisplayName("Test that attackers who play too low a value are eliminated")
     void RESP_36_test_01() {
         Main game = setupGame();
 
@@ -930,6 +930,23 @@ public class MainTest {
 
         // Assert that the game asks the player to choose a valid card number again
         assertTrue(output.toString().contains("failed to match the stage value"),"What I see: " + output.toString());
+    }
+
+
+    @Test
+    @DisplayName("Test that attackers who play a high enough value can continue")
+    void RESP_37_test_01() {
+        Main game = setupGame();
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        String input = "\n";
+
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "HighValue");
+
+        // Assert that the game asks the player to choose a valid card number again
+        assertTrue(output.toString().contains("passed the stage with an attack"),"What I see: " + output.toString());
     }
 
 

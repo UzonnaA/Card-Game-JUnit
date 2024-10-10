@@ -998,7 +998,7 @@ public class Main {
                                     attackValue = 0;
                                     attackReady = true;
                                     output.println(p.getName() + " added nothing to their attack (test)");
-                                }else{
+                                } else{
                                     usedWeaponNames.add(chosenCard.getName());
                                     attackValue += chosenCard.getValue();
                                     p.removeFromDeck(chosenCard);
