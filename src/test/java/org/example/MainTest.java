@@ -978,7 +978,7 @@ public class MainTest {
         game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "HighValue");
 
         // Assert that the game asks the player to choose a valid card number again
-        assertTrue(output.toString().contains("The sponsor will now gain"),"What I see: " + output.toString());
+        assertTrue(output.toString().contains("cards for sponsoring the quest"),"What I see: " + output.toString());
     }
 
 

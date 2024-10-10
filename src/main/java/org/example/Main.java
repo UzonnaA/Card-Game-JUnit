@@ -190,11 +190,15 @@ public class Main {
     public List<Integer> stageValues;
 
     public Map<String, Player> players;
+
     // Current player is whose turn it is
     public Player currentPlayer;
 
     // Active player is whoever is in the hotseat
+    // May not use this var
     public Player activePlayer;
+
+    public Player currentSponsor;
 
     public String lastEventCard;
     public boolean isQuest;
@@ -550,6 +554,7 @@ public class Main {
             if (choice == 1 && canSponsorQuest(currentAsk, stages)) {
                 output.println(currentAsk.getName() + " has agreed to sponsor the quest!");
                 currentAsk.isSponsor = true;
+                currentSponsor = currentAsk;
 
                 if(runBuild){
                     BuildQuest(input, output, currentAsk, stages);
@@ -1113,9 +1118,24 @@ public class Main {
         }
 
         // Finally, we'll handle giving the sponsor cards before ending the quest
+        int sponsorCards = builtQuestCards.size() + stages;
+        output.println(currentSponsor.getName() + " will now gain " + sponsorCards + " cards for sponsoring the quest.");
+        giveCards(currentSponsor, sponsorCards);
+
+
+        // Reset all variables that deal with quests
+        isQuest = false;
+        builtQuestCards.clear();
+        for(Player p: players.values()){
+            p.isAttacker = false;
+            p.isSponsor = false;
+        }
+        currentSponsor = null;
+        stageValues.clear();
+
 
         output.println("The quest has ended.");
-        isQuest = false;
+
         // The function should end here
     }
 
