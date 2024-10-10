@@ -19,13 +19,20 @@ public class Main {
         PrintWriter output = new PrintWriter(System.out, true);  // Output to console
 
         while (!game.finished) {
+
+            game.clearScreen(output);
+
+            output.println("Are you ready, " + game.getCurrentPlayer().getName() + "? Press Enter to continue.");
+            input.nextLine();
+
+
             // Prompt the current player
             game.ShowHand(input, output, game.getCurrentPlayer().getName(), true);
 
             // Draw and handle an event card (default event)
-            game.DrawPlayEvents(input, output);
+            game.DrawPlayEvents(input, output, null);
 
-            input.nextLine();
+            
 
             // Check for winners
             game.checkForWinners(input, output);
@@ -34,14 +41,14 @@ public class Main {
             }
 
             game.checkAllOverload(input, output);
-
-
             // Wait for the player to press enter to switch to the next player
             game.handleNextPlayer(input, output, null, null);
-            input.nextLine();
+
 
 
         }
+        input.close();  // Close the scanner after the game ends
+        output.close();
     }
 
     public class AdventureCard {
@@ -162,6 +169,7 @@ public class Main {
         public void removeFromDeck(AdventureCard card){
             if(deck.contains(card)){
                 deck.remove(card);
+                advDeck.add(card);
             }
             if (deck.size() <= 12) {
                 isOverloaded = false;
@@ -204,7 +212,7 @@ public class Main {
     public boolean isQuest;
 
     // I'll use this when I want specific interactions from the tests
-    public String testKey;
+    public String testKey = "Default";
     public List<String> testCodes;
 
 
@@ -264,6 +272,7 @@ public class Main {
         testCodes.add("AttackReady");
         testCodes.add("LowValue");
         testCodes.add("HighValue");
+        testCodes.add("SimpleTest");
     }
 
     // This will allow us to overwrite a player's hand for testing
@@ -435,35 +444,42 @@ public class Main {
 
     public void drawEventCard() {
         if (!eventDeck.isEmpty()) {
-            Random rand = new Random();
-            int index = rand.nextInt(eventDeck.size());  // Randomly select a card from the event deck
-            EventCard drawnCard = eventDeck.remove(index);  // Remove the card from the deck
-            //System.out.println("Drew event card: " + drawnCard.getName());
+            Collections.shuffle(eventDeck);
+            EventCard drawnCard = eventDeck.remove(0);
             lastEventCard = drawnCard.getName();
         } else {
-            //System.out.println("The event deck is empty!");
+            // This should never happen
+            System.out.println("The event deck is empty!");
         }
     }
 
     public void handleTestKey(String key){
         testKey = key;
 
-        if(testKey.equals("Quest_Test") || testKey.equals("BadAttackNumber") || testKey.equals("AttackReady") || testKey.equals("LowValue") || testKey.equals("HighValue")){
+        if(testKey.equals("Quest_Test") || testKey.equals("BadAttackNumber") || testKey.equals("AttackReady") || testKey.equals("LowValue") || testKey.equals("HighValue") || testKey.equals("SimpleTest")){
             runBuild = false;
         }
     }
 
     public void DrawPlayEvents(Scanner input, PrintWriter output, String event) {
         // If the event is null, draw a card from the event deck (default behavior)
+        ArrayList<String> questNames = new ArrayList<>();
+        questNames.add("Q2"); questNames.add("Q3"); questNames.add("Q4"); questNames.add("Q5");
+
         String defaultAnswer = "NO";
         if (event == null) {
             drawEventCard();
+        } else if(event.equals("SimpleTest")){
+            drawEventCard();
+            handleTestKey(event);
         } else {
-            lastEventCard = event;  // Use the custom event if provided
+            lastEventCard = event; // Use the custom event if provided
 
-            if(lastEventCard.equals("Q2") || lastEventCard.equals("Q3") || lastEventCard.equals("Q4") || lastEventCard.equals("Q5")){
-                isQuest = true;
-            }else if(testCodes.contains(lastEventCard)){
+//            if(questNames.contains(lastEventCard)){
+//                isQuest = true;
+//            }
+
+            if(testCodes.contains(lastEventCard)){
                 defaultAnswer = "YES";
                 handleTestKey(lastEventCard);
                 lastEventCard = "Q2";
@@ -472,36 +488,46 @@ public class Main {
             }
         }
 
-        // Output the event card
-        if (lastEventCard != null) {
-            output.print("Drew event card: " + lastEventCard + "\n");
+        if(questNames.contains(lastEventCard)){
+            isQuest = true;
         }
+
+
+
+
+
+        // Output the event card
+        output.println("Drew event card: " + lastEventCard);
 
         if(!isQuest){
             // Handle specific events
             if (lastEventCard.equals("Plague")) {
                 currentPlayer.changeShields(-2);
-                output.print(currentPlayer.getName() + " lost 2 shields!" + "\n");
+                output.println(currentPlayer.getName() + " lost 2 shields!");
             }
 
             // Handle specific events
             if (lastEventCard.equals("Queen's Favor")) {
-                output.print(currentPlayer.getName() + " will draw 2 cards." + "\n");
+                output.println(currentPlayer.getName() + " will draw 2 cards.");
                 giveCards(currentPlayer, 2);
 
             }
 
             // Handle specific events
             if (lastEventCard.equals("Prosperity")) {
-                output.print("All players will draw 2 cards." + "\n");
+                output.print("All players will draw 2 cards.");
                 for(Player p: players.values()){
                     giveCards(p, 2);
                 }
             }
-            output.println("Press enter to end your turn" + "\n");
+            output.println("Press enter to end your turn" );
 
         }else{
-            AskForSponsor(input, output, defaultAnswer);
+            output.println("We will now look for sponsors." );
+            if(!testKey.equals("SimpleTest")){
+                AskForSponsor(input, output, defaultAnswer);
+            }
+
         }
 
     }
@@ -516,7 +542,7 @@ public class Main {
         Player currentAsk = currentPlayer;
 
         while (denied < 4) {
-            output.print(currentAsk.getName() + ": Would you like to sponsor the quest? (Enter 0 for No, 1 for Yes): ");
+            output.println(currentAsk.getName() + ": Would you like to sponsor the quest? (Enter 0 for No, 1 for Yes): ");
 
             // Default to no if something goes wrong
             int choice;
@@ -531,12 +557,15 @@ public class Main {
             try {
                 if (input.hasNextInt()) {
                     choice = input.nextInt();
+                    input.nextLine();
                 } else {
                     input.next();  // Clear invalid input
                     output.println("Invalid input. Using default answer.");
+                    
                 }
             } catch (NoSuchElementException | IllegalStateException e) {
                 output.println("Error with input. Using default answer.");
+                
             }
 
             int stages = Integer.parseInt(lastEventCard.substring(1));
@@ -559,6 +588,7 @@ public class Main {
                 if(runBuild){
                     BuildQuest(input, output, currentAsk, stages);
                 }
+
 
                 AskForAttack(input, output, defaultAnswer);
                 break;
@@ -605,6 +635,7 @@ public class Main {
                 if(!testKey.equals("SponsorPrompt")){
                     while (true) {
                         // Show sponsor's hand
+                        output.println("");
                         output.println("Choose a card by its number to add to Stage " + stage + " or type 'Quit' to finish this stage:");
                         ShowHand(input, output, sponsor.getName(), false);
                         output.println("Stage " + stage + " cards: " + currentStage.stream().map(AdventureCard::getName).toList());
@@ -612,7 +643,8 @@ public class Main {
 
                         String choice = null;
                         try {
-                            choice = input.nextLine().trim();  // Try to read the input
+                            choice = input.nextLine().trim();
+                                // Try to read the input
                         } catch (NoSuchElementException e) {
                             // Handle the exception and provide a default choice
                             choice = "3";
@@ -818,7 +850,8 @@ public class Main {
 
         for(Player p: players.values()){
             if(!p.isSponsor){
-                output.print(p.getName() + ": Would you like to attack the quest? (Enter 0 for No, 1 for Yes): ");
+                clearScreen(output);
+                output.println(p.getName() + ": Would you like to attack the quest? (Enter 0 for No, 1 for Yes): ");
 
                 // Default to no if something goes wrong
                 int choice;
@@ -831,12 +864,16 @@ public class Main {
                 try {
                     if (input.hasNextInt()) {
                         choice = input.nextInt();
+                        input.nextLine();
                     } else {
                         input.next();  // Clear invalid input
                         output.println("Invalid input. Using default answer.");
+                        
                     }
                 } catch (NoSuchElementException | IllegalStateException e) {
                     output.println("Error with input. Using default answer.");
+                    //
+                    
                 }
 
                 stages = Integer.parseInt(lastEventCard.substring(1));
@@ -914,7 +951,7 @@ public class Main {
 
         // This for loop forces things to happen every round
         for(int stage = 1; stage <= stages && !questShouldStop; stage++){
-            output.println("\n--- Stage " + stage + " ---");
+            output.println("--- Stage " + stage + " ---");
 
             // Here we check if there are attackers left
             int attackers_left = 0;
@@ -935,7 +972,7 @@ public class Main {
             // Here, we'll do the attack for each player
 
             for(Player p: players.values()){
-                if(p.isAttacker && (testKey.equals("BadAttackNumber") || testKey.equals("AttackReady") || testKey.equals("LowValue") || testKey.equals("HighValue") || testKey.equals("dropout")) ){
+                if(p.isAttacker && (testKey.equals("BadAttackNumber") || testKey.equals("AttackReady") || testKey.equals("LowValue") || testKey.equals("HighValue") || testKey.equals("dropout") || testKey.equals("Default")) ){
                     giveCards(p,1);
                     output.println(p.getName() + " has received a card for agreeing to attack the stage.");
                     boolean attackReady = false;
@@ -955,6 +992,7 @@ public class Main {
                         String choice = null;
                         try {
                             choice = input.nextLine().trim();  // Try to read the input
+                            
                         } catch (NoSuchElementException e) {
                             // Handle the exception and provide a default choice
                             choice = "8";
@@ -1082,12 +1120,15 @@ public class Main {
                     try {
                         if (input.hasNextInt()) {
                             choice = input.nextInt();
+                            input.nextLine();
                         } else {
                             input.next();  // Clear invalid input
                             output.println("Invalid input. Using default answer.");
+                            
                         }
                     } catch (NoSuchElementException | IllegalStateException e) {
                         output.println("Error with input. Using default answer.");
+                        
                     }
                     // If the player says yes, we don't need to do anything
                     if (choice == 1) {
@@ -1193,8 +1234,8 @@ public class Main {
 
             currentPlayer = players.get(NextPlayerString(currentPlayer.getName()));
             activePlayer = players.get(NextPlayerString(currentPlayer.getName()));
-            clearScreen(output);
-            output.println("Are you ready " + currentPlayer.getName() + "? Press enter to continue.");
+//            clearScreen(output);
+//            output.println("Are you ready " + currentPlayer.getName() + "? Press enter to continue.");
 
         }else{
             // Otherwise, I'll assume that person will just be in the hotseast and not having a turn
@@ -1224,7 +1265,7 @@ public class Main {
         for(Player p: players.values()){
             if(p.getShields() >= 7){
                 p.setWinner(true);
-                output.print("\n" + p.getName() + " is a winner!");
+                output.println(p.getName() + " is a winner!");
                 finished = true;
             }
         }
@@ -1251,12 +1292,15 @@ public class Main {
             try {
                 if (input.hasNextInt()) {
                     choice = input.nextInt() - 1;  // Read input and subtract 1 for 0-based indexing
+                    input.nextLine();
                 } else {
                     input.next();  // Clear invalid input
                     output.println("Invalid input. Defaulting to choice 1.");
+                    
                 }
             } catch (NoSuchElementException | IllegalStateException e) {
                 output.println("Error with input. Defaulting to choice 1.");
+                
                 // choice remains 0 (which corresponds to the first card)
             }
 
@@ -1271,6 +1315,7 @@ public class Main {
         }
 
         output.println(player.getName() + " no longer has too many cards.");
+        player.setOverloaded(false);
     }
 
 

@@ -24,7 +24,7 @@ public class MainTest {
         // Run the player's turn and draw an event
         StringWriter output = new StringWriter();
         game.ShowHand(new Scanner(System.in), new PrintWriter(output), game.currentPlayer.getName(), true);
-        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output));
+        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output), "SimpleTest");
         return game;
     }
 
@@ -275,7 +275,7 @@ public class MainTest {
         // Simulate Player 1's turn
         StringWriter output = new StringWriter();
         game.ShowHand(new Scanner(System.in), new PrintWriter(output), "Player 1", true);
-        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output));
+        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output), "SimpleTest");
 
         // We call drawEventCard in ShowHand, this line is not needed
 
@@ -296,7 +296,7 @@ public class MainTest {
         // Simulate Player 1's turn
         StringWriter output = new StringWriter();
         game.ShowHand(new Scanner(System.in), new PrintWriter(output), "Player 1", true);
-        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output));
+        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output), "SimpleTest");
 
 
 
@@ -345,7 +345,7 @@ public class MainTest {
         // Run the player's turn and draw an event
         StringWriter output = new StringWriter();
         game.ShowHand(new Scanner(System.in), new PrintWriter(output), game.currentPlayer.getName(), true);
-        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output));
+        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output), "Plague");
 
 
         // Check for the transition message after event is processed
@@ -361,7 +361,7 @@ public class MainTest {
 
         // Simulate pressing enter to switch to the next player
         String input = "\n";
-        game.handleNextPlayer(new Scanner(input), new PrintWriter(output), null, null);
+        game.handleNextPlayer(new Scanner(input), new PrintWriter(output), "Player 1", " ");
 
         // Check for the "Are you ready Player 2" message
         assertTrue(output.toString().contains("Are you ready"), "I see: " + output.toString());
