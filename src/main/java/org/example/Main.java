@@ -183,6 +183,10 @@ public class Main {
 
     public List<AdventureCard> advDeck;
     public List<EventCard> eventDeck;
+
+    // This is how I'll pass info from BuildQuest to doQuest
+    // Not how I should, but eh
+    public List<AdventureCard> builtQuestCards;
     public List<Integer> stageValues;
 
     public Map<String, Player> players;
@@ -232,6 +236,7 @@ public class Main {
     public void StartGame() {
         players = new LinkedHashMap<>();
         stageValues = new ArrayList<>();
+        builtQuestCards = new ArrayList<>();
         for (int i = 1; i <= 4; i++) {
             Player player = new Player("Player " + i, 0);  // Create player with 0 shields initially
             players.put(player.getName(), player);
@@ -570,7 +575,7 @@ public class Main {
     }
 
     public void BuildQuest(Scanner input, PrintWriter output, Player sponsor, int stages) {
-        List<AdventureCard> usedCards = new ArrayList<>();  // To store all used cards for the quest
+        //List<AdventureCard> usedCards = new ArrayList<>();  // To store all used cards for the quest
         stageValues.clear();
 
         int testValueTracker = 0; // This is strictly for testing
@@ -725,7 +730,7 @@ public class Main {
 
                 // After the stage is valid, store the stage value and used cards
                 stageValues.add(currentStageValue);
-                usedCards.addAll(currentStage);
+                builtQuestCards.addAll(currentStage);
 
                 // Update the previous stage value for comparison with the next stage
                 previousStageValue = currentStageValue;
@@ -1002,13 +1007,15 @@ public class Main {
                                     attackValue = 0;
                                     attackReady = true;
                                     output.println(p.getName() + " added nothing to their attack (test)");
-//                                }else if(testKey.equals("HighValue")){
-//                                    attackValue = 10000;
-//                                    attackReady = true;
-//                                    output.println(p.getName() + " added something to their attack (test)");
+                                }else if(testKey.equals("HighValue")){
+                                    attackValue = 10000;
+                                    attackReady = true;
+                                    output.println(p.getName() + " added something to their attack (test)");
                                 }else{
                                     usedWeaponNames.add(chosenCard.getName());
                                     attackValue += chosenCard.getValue();
+                                    // Once you choose a valid card, you lose it forever
+                                    // I'll need code so that removefromdeck() adds back to the OG deck
                                     p.removeFromDeck(chosenCard);
                                     output.println(p.getName() + " added " + chosenCard.getName() + " to their attack.");
                                     currentStage.add(chosenCard);
@@ -1042,16 +1049,7 @@ public class Main {
 
 
 
-                    // At the end of each stage, discard all used cards
-                    for (Player play : players.values()) {
-                        if (play.isAttacker) {
-                            // Remove any cards used
-                            // We're still in the for loop for each player
-                            // Therefore, we can just delete used weapons
-                            // I shouldn't forget to add deleted cards back to the pile (For all functions)
-                            output.println(p.getName() + "'s used attack cards are discarded.");
-                        }
-                    }
+
 
                     // Check if there are any attackers left for the next stage
                     boolean attackersRemain = false;
@@ -1113,7 +1111,11 @@ public class Main {
                 p.isAttacker = false;
             }
         }
+
+        // Finally, we'll handle giving the sponsor cards before ending the quest
+
         output.println("The quest has ended.");
+        isQuest = false;
         // The function should end here
     }
 

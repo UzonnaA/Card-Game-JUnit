@@ -950,7 +950,7 @@ public class MainTest {
     }
 
     @Test
-    @DisplayName("Test that attackers who play a high enough value can continue")
+    @DisplayName("Test that attackers who win get their shields")
     void RESP_38_test_01() {
         Main game = setupGame();
 
@@ -963,6 +963,22 @@ public class MainTest {
 
         // Assert that the game asks the player to choose a valid card number again
         assertTrue(output.toString().contains("shields for completing the quest"),"What I see: " + output.toString());
+    }
+
+    @Test
+    @DisplayName("Test that the sponsor gets their cards when the quest ends")
+    void RESP_39_test_01() {
+        Main game = setupGame();
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        String input = "\n";
+
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "HighValue");
+
+        // Assert that the game asks the player to choose a valid card number again
+        assertTrue(output.toString().contains("The sponsor will now gain"),"What I see: " + output.toString());
     }
 
 
