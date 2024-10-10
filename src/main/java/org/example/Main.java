@@ -252,6 +252,7 @@ public class Main {
         testCodes.add("SelectCard");
         testCodes.add("NoEmpty");
         testCodes.add("BadValue");
+        testCodes.add("AttackReady");
     }
 
     // This will allow us to overwrite a player's hand for testing
@@ -436,7 +437,7 @@ public class Main {
     public void handleTestKey(String key){
         testKey = key;
 
-        if(testKey.equals("Quest_Test") || testKey.equals("BadAttackNumber")){
+        if(testKey.equals("Quest_Test") || testKey.equals("BadAttackNumber") || testKey.equals("AttackReady") ){
             runBuild = false;
         }
     }
@@ -896,6 +897,8 @@ public class Main {
             }
         }
 
+        int testValue = 0;
+
         // This for loop forces things to happen every round
         for(int stage = 1; stage <= stages; stage++){
             output.println("\n--- Stage " + stage + " ---");
@@ -915,10 +918,11 @@ public class Main {
 
             int stageValue = stageValues.get(stage - 1);
 
+
             // Here, we'll do the attack for each player
 
             for(Player p: players.values()){
-                if(p.isAttacker && (testKey.equals("BadAttackNumber") || testKey.equals("dropout") ) ){
+                if(p.isAttacker && (testKey.equals("BadAttackNumber") || testKey.equals("dropout") || testKey.equals("AttackReady")) ){
                     giveCards(p,1);
                     output.println(p.getName() + " has received a card for agreeing to attack the stage.");
                     boolean attackReady = false;
@@ -938,7 +942,8 @@ public class Main {
                             choice = input.nextLine().trim();  // Try to read the input
                         } catch (NoSuchElementException e) {
                             // Handle the exception and provide a default choice
-                            choice = "2";
+                            choice = "8";
+                            // Again, I need all of these here because going into loop gets stuck
                             if(testKey.equals("BadAttackNumber")){
                                 output.println("Invalid input. Please choose a valid card number for attack.");
                                 output.println("Now re-prompting ... ");
@@ -947,6 +952,11 @@ public class Main {
 
                             if(testKey.equals("dropout")){
                                 output.println(p.getName() + " has declined to attack the next stage.");
+                                break;
+                            }
+
+                            if(testKey.equals("AttackReady") ){
+                                output.println(p.getName() + "'s attack is ready with a value of " + attackValue);
                                 break;
                             }
                         }
@@ -958,6 +968,9 @@ public class Main {
                                 continue;
                             }
                             attackReady = true;
+                            output.println(p.getName() + "'s attack is ready with a value of " + attackValue);
+
+
                         }else{
                             try {
                                 int cardIndex = Integer.parseInt(choice) - 1;

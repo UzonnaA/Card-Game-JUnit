@@ -909,7 +909,7 @@ public class MainTest {
         String input = "\n";
 
         game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
-        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "BadAttackNumber");
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "AttackReady");
 
         // Assert that the game asks the player to choose a valid card number again
         assertTrue(output.toString().contains("attack is ready"),"What I see: " + output.toString());
