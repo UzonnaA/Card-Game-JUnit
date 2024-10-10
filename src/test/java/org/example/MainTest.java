@@ -899,5 +899,22 @@ public class MainTest {
     }
 
 
+    @Test
+    @DisplayName("Test that players can ready their attack")
+    void RESP_35_test_01() {
+        Main game = setupGame();
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        String input = "\n";
+
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "BadAttackNumber");
+
+        // Assert that the game asks the player to choose a valid card number again
+        assertTrue(output.toString().contains("attack is ready"),"What I see: " + output.toString());
+    }
+
+
 }
 

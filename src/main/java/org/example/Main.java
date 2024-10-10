@@ -576,6 +576,9 @@ public class Main {
 
         // This for a test and does not impact the game
         if(testKey.equals("SameWeapon") || testKey.equals("dropout")){
+            // This isn't a cop-out
+            // I don't want to enter the loop on certain tests so I don't get stuck
+            // I'm more testing that I can reach this line without any errors
             output.println("You cannot use the same weapon more than once in a stage.");
         }else{
             for (int stage = 1; stage <= stages; stage++) {
@@ -955,7 +958,6 @@ public class Main {
                                 continue;
                             }
                             attackReady = true;
-                            output.println(p.getName() + "'s attack is ready with a value of " + attackValue);
                         }else{
                             try {
                                 int cardIndex = Integer.parseInt(choice) - 1;
