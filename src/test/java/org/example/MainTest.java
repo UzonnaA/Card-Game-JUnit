@@ -20,11 +20,13 @@ public class MainTest {
         Main game = new Main();
         game.InitializeDeck();
         game.StartGame();
+        game.testingOverload = true;
+        String input = "\n";
 
         // Run the player's turn and draw an event
         StringWriter output = new StringWriter();
-        game.ShowHand(new Scanner(System.in), new PrintWriter(output), game.currentPlayer.getName(), true);
-        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output), "SimpleTest");
+        game.ShowHand(new Scanner(input), new PrintWriter(output), game.currentPlayer.getName(), true);
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "SimpleTest");
         return game;
     }
 
@@ -33,30 +35,10 @@ public class MainTest {
         Main game = new Main();
         game.InitializeDeck();
         game.StartGame();
+        game.testingOverload = true;
         return game;
     }
 
-    private Main setupGame2Players(){
-        // Create and set up the game
-        Main game = new Main();
-        game.InitializeDeck();
-        game.StartGame();
-
-        // Run the player's turn and draw an event
-        StringWriter output = new StringWriter();
-        game.ShowHand(new Scanner(System.in), new PrintWriter(output), game.currentPlayer.getName(), true);
-        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output));
-
-        // Simulate pressing enter to switch to the next player
-        String input = "\n";
-        game.handleNextPlayer(new Scanner(input), new PrintWriter(output), null, null);
-
-        // Simulate Player 2 pressing enter to start their turn
-        game.PromptNextPlayer(new Scanner(input), new PrintWriter(output), game.NextPlayerString(game.currentPlayer.getName()));
-
-
-        return game;
-    }
 
 
 
@@ -65,6 +47,7 @@ public class MainTest {
     @DisplayName("Check the adventure deck has 50 Foe and 50 Weapon cards")
     void RESP_01_test_01() {
         Main game = new Main();
+        game.testingOverload = true;
         List<Main.AdventureCard> deck = game.init_Adv_Deck();
 
         // Check there are 50 Foe cards
@@ -80,6 +63,7 @@ public class MainTest {
     @DisplayName("Check the adventure deck has the correct amount of specific cards")
     void RESP_01_test_02() {
         Main game = new Main();
+        game.testingOverload = true;
         List<Main.AdventureCard> deck = game.init_Adv_Deck();
 
         // Check there are 8 cards named "F5"
@@ -153,6 +137,7 @@ public class MainTest {
     @DisplayName("Check the event deck has 12 Quest and 5 Event cards")
     void RESP_01_test_03() {
         Main game = new Main();
+        game.testingOverload = true;
         List<Main.EventCard> deck = game.init_Event_Deck();
 
         // Check there are 12 Quest cards
@@ -168,6 +153,7 @@ public class MainTest {
     @DisplayName("Check the event deck has the correct amount of specific cards")
     void RESP_01_test_04() {
         Main game = new Main();
+        game.testingOverload = true;
         List<Main.EventCard> deck = game.init_Event_Deck();
 
         // Check there is 1 card named "Plague"
@@ -204,6 +190,7 @@ public class MainTest {
     @DisplayName("Distribute 12 adventure cards to all players > check deck size")
     void RESP_02_test_01() {
         Main game = new Main();
+        game.testingOverload = true;
         game.InitializeDeck(); // Initialize the adventure deck with cards
 
         // Distribute cards to players
@@ -231,6 +218,7 @@ public class MainTest {
     @DisplayName("Test that Player's card hand is displayed in correct order after sorting.")
     void RESP_03_test_01() {
         Main game = new Main();
+        game.testingOverload = true;
         game.InitializeDeck();  // Initialize the deck
         game.StartGame();       // Start the game and distribute cards
 
@@ -266,6 +254,7 @@ public class MainTest {
     @DisplayName("Test drawing a card from the event deck reduces deck size by 1")
     void RESP_04_test_01() {
         Main game = new Main();
+        game.testingOverload = true;
         game.InitializeDeck();  // Initialize both the adventure and event decks
         game.StartGame();       // Start the game and distribute cards
 
@@ -273,9 +262,10 @@ public class MainTest {
         int initialEventDeckSize = game.eventDeck.size();
 
         // Simulate Player 1's turn
+        String input = "\n";
         StringWriter output = new StringWriter();
-        game.ShowHand(new Scanner(System.in), new PrintWriter(output), "Player 1", true);
-        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output), "SimpleTest");
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "SimpleTest");
 
         // We call drawEventCard in ShowHand, this line is not needed
 
@@ -288,15 +278,16 @@ public class MainTest {
     @DisplayName("Test that the drawn event card is displayed correctly.")
     void RESP_04_test_02() {
         Main game = new Main();
+        game.testingOverload = true;
         game.InitializeDeck();  // Initialize both the adventure and event decks
         game.StartGame();       // Start the game and distribute cards
 
 
-
+        String input = "\n";
         // Simulate Player 1's turn
         StringWriter output = new StringWriter();
-        game.ShowHand(new Scanner(System.in), new PrintWriter(output), "Player 1", true);
-        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output), "SimpleTest");
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "SimpleTest");
 
 
 
@@ -310,19 +301,20 @@ public class MainTest {
     @DisplayName("Test that the Plague Event works correctly")
     void RESP_05_test_01() {
         Main game = new Main();
+        game.testingOverload = true;
         game.InitializeDeck();  // Initialize both the adventure and event decks
         game.StartGame();       // Start the game and distribute cards
 
 
-
+        String input = "\n";
         // Simulate Player 1's turn
         StringWriter output = new StringWriter();
-        game.ShowHand(new Scanner(System.in), new PrintWriter(output), "Player 1", true);
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", true);
 
         // Give the player shields then take them away
         game.players.get("Player 1").changeShields(5);
         // Force a plague event
-        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output), "Plague");
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Plague");
 
         int actualShields = game.players.get("Player 1").getShields();
         assertEquals(3, actualShields, "Player 1 should have 3 shields after the Plague event.");
@@ -339,17 +331,20 @@ public class MainTest {
     void RESP_06_test_01() {
         // Create and set up the game
         Main game = new Main();
+        game.testingOverload = true;
         game.InitializeDeck();
         game.StartGame();
 
+        String input = "\n";
         // Run the player's turn and draw an event
         StringWriter output = new StringWriter();
-        game.ShowHand(new Scanner(System.in), new PrintWriter(output), game.currentPlayer.getName(), true);
-        game.DrawPlayEvents(new Scanner(System.in), new PrintWriter(output), "Plague");
+        game.ShowHand(new Scanner(input), new PrintWriter(output), game.currentPlayer.getName(), true);
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Plague");
+        game.areYouReady(new Scanner(input), new PrintWriter(output), game.currentPlayer);
 
 
         // Check for the transition message after event is processed
-        assertTrue(output.toString().contains("Press enter to end your turn"), "I see: " + output.toString());
+        assertTrue(output.toString().contains("Press Enter to continue."), "I see: " + output.toString());
 
     }
 
@@ -358,10 +353,9 @@ public class MainTest {
     void RESP_06_test_02() {
         Main game = setupGame1Player();
         StringWriter output = new StringWriter();
-
         // Simulate pressing enter to switch to the next player
         String input = "\n";
-        game.handleNextPlayer(new Scanner(input), new PrintWriter(output), "Player 1", " ");
+        game.areYouReady(new Scanner(input), new PrintWriter(output), game.currentPlayer);
 
         // Check for the "Are you ready Player 2" message
         assertTrue(output.toString().contains("Are you ready"), "I see: " + output.toString());
@@ -399,7 +393,7 @@ public class MainTest {
         // Before we let the next player, we'll check if there are winners
         // For the test, we'll grant player 1 some shields
         game.currentPlayer.changeShields(7);
-        game.checkForWinners(new Scanner(System.in), new PrintWriter(output));
+        game.checkForWinners(new Scanner(input), new PrintWriter(output));
 
 
 
@@ -437,8 +431,8 @@ public class MainTest {
         Main game = setupGame();
         StringWriter output = new StringWriter();
         String input = "\n";
-        game.currentPlayer.addToDeck("Foe", "F5", 5);
-        game.checkAllOverload(new Scanner(input), new PrintWriter(output));
+        game.currentPlayer.addToDeck("Foe", "F5", 5, new Scanner(input), new PrintWriter(output));
+        //game.checkAllOverload(new Scanner(input), new PrintWriter(output));
 
 
         // Check if the game recognizes a card overload
@@ -452,10 +446,11 @@ public class MainTest {
     void RESP_11_test_01() {
         Main game = setupGame();
         StringWriter output = new StringWriter();
-        game.currentPlayer.addToDeck("Foe", "F5", 5);
-
         String input = "\n";
-        game.checkAllOverload(new Scanner(input), new PrintWriter(output));
+        game.currentPlayer.addToDeck("Foe", "F5", 5, new Scanner(input), new PrintWriter(output));
+
+
+        //game.checkAllOverload(new Scanner(input), new PrintWriter(output));
 
 
         // Check if the game recognizes a card overload
@@ -470,21 +465,19 @@ public class MainTest {
     @DisplayName("Test that the game deletes a card from the player's hand")
     void RESP_12_test_01() {
         Main game = setupGame();
+        game.testingOverload = true;
         StringWriter output = new StringWriter();
-        game.currentPlayer.addToDeck("Foe", "F5", 5);
-
         String input = "\n";
         int startHand = game.currentPlayer.getCardCount();
-
-        game.checkAllOverload(new Scanner(input), new PrintWriter(output));
-
+        game.currentPlayer.addToDeck("Foe", "F5", 5, new Scanner(input), new PrintWriter(output));
 
         // Check if the game recognizes a card overload
         assertTrue(output.toString().contains("delete"), "Player 1 should be asked to delete cards.");
         int endHand = game.currentPlayer.getCardCount();
 
-        // Check if the player has less cards
-        assertTrue(startHand > endHand, "Player 1 should have deleted some cards.");
+        // This used to be a bad check, why should the player have fewer cards?
+        // If "delete" is in the output and the player has exactly 12 cards, then its fine
+        assertTrue(endHand == 12, "Player 1 should have deleted some cards.");
 
 
     }
@@ -494,12 +487,13 @@ public class MainTest {
     void RESP_13_test_01() {
         Main game = setupGame();
         StringWriter output = new StringWriter();
-        game.currentPlayer.addToDeck("Foe", "F5", 5);
-        game.currentPlayer.addToDeck("Foe", "F5", 5);
-
         String input = "\n";
+        game.currentPlayer.addToDeck("Foe", "F5", 5, new Scanner(input), new PrintWriter(output));
+        game.currentPlayer.addToDeck("Foe", "F5", 5, new Scanner(input), new PrintWriter(output));
 
-        game.checkAllOverload(new Scanner(input), new PrintWriter(output));
+
+
+        //game.checkAllOverload(new Scanner(input), new PrintWriter(output));
 
 
         // Check if the game recognizes a card overload
@@ -519,7 +513,7 @@ public class MainTest {
 
         // Force a Queen's favor event
         game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Queen's Favor");
-        game.checkAllOverload(new Scanner(input), new PrintWriter(output));
+        //game.checkAllOverload(new Scanner(input), new PrintWriter(output));
 
 
         assertTrue(output.toString().contains("draw 2 cards"), "Player 1 should draw 2 cards from the event.");
@@ -539,7 +533,7 @@ public class MainTest {
 
         // Force a Queen's favor event
         game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Prosperity");
-        game.checkAllOverload(new Scanner(input), new PrintWriter(output));
+        //game.checkAllOverload(new Scanner(input), new PrintWriter(output));
 
 
         assertTrue(output.toString().contains("All players will draw 2 cards."), "All players should draw 2 cards from the event");
@@ -669,6 +663,7 @@ public class MainTest {
     @DisplayName("Test that attacking players can drop out")
     void RESP_22_test_01() {
         Main game = setupGame();
+        game.testingOverload = true;
 
 
 
@@ -946,7 +941,7 @@ public class MainTest {
         game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "HighValue");
 
         // Assert that the game asks the player to choose a valid card number again
-        assertTrue(output.toString().contains("passed the stage with an attack"),"What I see: " + output.toString());
+        assertTrue(output.toString().contains("passed the stage"),"What I see: " + output.toString());
     }
 
     @Test

@@ -19,11 +19,7 @@ public class Main {
         PrintWriter output = new PrintWriter(System.out, true);  // Output to console
 
         while (!game.finished) {
-
-            game.clearScreen(output);
-
-            output.println("Are you ready, " + game.getCurrentPlayer().getName() + "? Press Enter to continue.");
-            input.nextLine();
+            game.areYouReady(input, output, game.getCurrentPlayer());
 
 
             // Prompt the current player
@@ -40,7 +36,6 @@ public class Main {
                 break;
             }
 
-            game.checkAllOverload(input, output);
             // Wait for the player to press enter to switch to the next player
             game.handleNextPlayer(input, output, null, null);
 
@@ -119,6 +114,8 @@ public class Main {
         public boolean isSponsor;
         public boolean isAttacker;
 
+        private int cardsBeforeLargeAdd;
+
         public Player(String name, int shields) {
             this.name = name;
             this.shields = shields;
@@ -128,6 +125,7 @@ public class Main {
 
             this.isSponsor = false;
             this.isAttacker = false;
+            this.cardsBeforeLargeAdd = 0;
         }
 
         public boolean checkWinner(){return isWinner;}
@@ -150,19 +148,34 @@ public class Main {
             return name;
         }
         public List<AdventureCard> getDeck() {return deck;}
-        public void addToDeck(AdventureCard card) {
+
+        public void initAddToDeck(AdventureCard card) {
             deck.add(card);
             if (deck.size() > 12){
                 isOverloaded = true;
             }
+            cardsBeforeLargeAdd++;
         }
 
-        public void addToDeck(String type, String name, int value) {
+
+        public void addToDeck(AdventureCard card, Scanner input, PrintWriter output, int count) {
+            deck.add(card);
+            if (deck.size() > 12){
+                isOverloaded = true;
+            }
+
+            if(deck.size() >= cardsBeforeLargeAdd + count){
+                handlePlayerOverload(input, output);
+            }
+        }
+
+        public void addToDeck(String type, String name, int value, Scanner input, PrintWriter output) {
             AdventureCard card = new AdventureCard(type, name, value);
             deck.add(card);
 
             if (deck.size() > 12){
                 isOverloaded = true;
+                handlePlayerOverload(input, output);
             }
         }
 
@@ -170,6 +183,7 @@ public class Main {
             if(deck.contains(card)){
                 deck.remove(card);
                 advDeck.add(card);
+                cardsBeforeLargeAdd -= 1;
             }
             if (deck.size() <= 12) {
                 isOverloaded = false;
@@ -178,9 +192,54 @@ public class Main {
 
         public void removeCardByIndex(int index) {
             if (index >= 0 && index < deck.size()) {
-                deck.remove(index);
-
+                advDeck.add(deck.remove(index));
+                cardsBeforeLargeAdd -= 1;
             }
+            if (deck.size() <= 12) {
+                isOverloaded = false;
+            }
+        }
+
+        public void handlePlayerOverload(Scanner input, PrintWriter output) {
+            areYouReady(input, output, this);
+
+            while (getCardCount() > 12) {
+                int choice = 0;
+                output.println(getName() + "'s hand has too many cards. Choose a card to delete by its number:");
+
+                // Display the player's hand
+                ShowHand(input, output, getName(), false);
+                if(!testingOverload){
+                    try {
+                        if (input.hasNextInt()) {
+                            choice = input.nextInt() - 1;  // Read input and subtract 1 for 0-based indexing
+                            input.nextLine();
+                        } else {
+                            input.next();  // Clear invalid input
+                            output.println("Invalid input. Defaulting to choice 1.");
+
+                        }
+                    } catch (NoSuchElementException | IllegalStateException e) {
+                        output.println("Error with input. Defaulting to choice 1.");
+
+                        // choice remains 0 (which corresponds to the first card)
+                    }
+                }
+
+
+                // Remove the chosen card
+                removeCardByIndex(choice);
+
+
+                // Clear the screen after the player deletes a card
+                clearScreen(output, 50);
+
+                // If the player is still overloaded, this loop continues
+            }
+
+            output.println(getName() + " no longer has too many cards.");
+            cardsBeforeLargeAdd = 12;
+            setOverloaded(false);
         }
 
         @Override
@@ -196,6 +255,7 @@ public class Main {
     // Not how I should, but eh
     public List<AdventureCard> builtQuestCards;
     public List<Integer> stageValues;
+    public boolean testingOverload = false;
 
     public Map<String, Player> players;
 
@@ -387,20 +447,20 @@ public class Main {
         for (Player player : players.values()) {
             for (int i = 0; i < 12; i++) {
                 if (!advDeck.isEmpty()) {
-                    player.addToDeck(advDeck.remove(0));  // Remove card from advDeck and add it to player's deck
+                    player.initAddToDeck(advDeck.remove(0));  // Remove card from advDeck and add it to player's deck
                 }
             }
         }
     }
 
-    public void giveCards(Player p, int numCards) {
+    public void giveCards(Player p, int numCards, Scanner input, PrintWriter output) {
         Collections.shuffle(advDeck);  // Shuffle the adventure deck
 
         // Give the player the needed number of cards from the adv deck
         // Basically a copy of dist cards, but refactored for individual players
         for(int i = 0; i < numCards; i++){
             if (!advDeck.isEmpty()) {
-                p.addToDeck(advDeck.remove(0));
+                p.addToDeck(advDeck.remove(0), input, output, numCards);
             }
         }
     }
@@ -509,18 +569,18 @@ public class Main {
             // Handle specific events
             if (lastEventCard.equals("Queen's Favor")) {
                 output.println(currentPlayer.getName() + " will draw 2 cards.");
-                giveCards(currentPlayer, 2);
+                giveCards(currentPlayer, 2, input, output);
 
             }
 
             // Handle specific events
             if (lastEventCard.equals("Prosperity")) {
-                output.print("All players will draw 2 cards.");
+                output.println("All players will draw 2 cards.");
                 for(Player p: players.values()){
-                    giveCards(p, 2);
+                    giveCards(p, 2, input, output);
                 }
             }
-            output.println("Press enter to end your turn" );
+            //output.println(currentPlayer.getName() + ": Press enter to end your turn" );
 
         }else{
             output.println("We will now look for sponsors." );
@@ -599,7 +659,7 @@ public class Main {
                 currentAsk = NextPlayer(currentAsk);
             }
 
-            clearScreen(output);  // Clear the screen after each player's response
+            clearScreen(output, 3);// Clear the screen after each player's response
         }
 
         // If all players deny, handle that case
@@ -635,7 +695,7 @@ public class Main {
                 if(!testKey.equals("SponsorPrompt")){
                     while (true) {
                         // Show sponsor's hand
-                        output.println("");
+                        clearScreen(output, 2);
                         output.println("Choose a card by its number to add to Stage " + stage + " or type 'Quit' to finish this stage:");
                         ShowHand(input, output, sponsor.getName(), false);
                         output.println("Stage " + stage + " cards: " + currentStage.stream().map(AdventureCard::getName).toList());
@@ -745,7 +805,7 @@ public class Main {
                             sponsor.removeFromDeck(chosenCard);
 
                             // Re-display the player's hand and the cards used for this stage
-                            clearScreen(output);
+                            clearScreen(output, 50);
                             ShowHand(input, output, sponsor.getName(), false);
 
 
@@ -813,6 +873,7 @@ public class Main {
         // Try to build each stage
         for (int i = 0; i < stages; i++) {
             if (foes.isEmpty()) {
+                System.out.println(player.getName() + " did not have enough foe cards to sponsor.");
                 return false;  // Not enough foe cards to build stages
             }
 
@@ -831,6 +892,7 @@ public class Main {
 
             // Ensure the stage value is strictly greater than the previous stage
             if (currentStageValue <= lastStageValue) {
+                System.out.println(player.getName() + " was not able to create stages of increasing value.");
                 return false;  // This means we couldn't use weapons to get a better value
             }
 
@@ -850,7 +912,7 @@ public class Main {
 
         for(Player p: players.values()){
             if(!p.isSponsor){
-                clearScreen(output);
+                clearScreen(output, 3);
                 output.println(p.getName() + ": Would you like to attack the quest? (Enter 0 for No, 1 for Yes): ");
 
                 // Default to no if something goes wrong
@@ -946,6 +1008,16 @@ public class Main {
             }
         }
 
+        // Give out cards before starting the quest
+        for(Player p: players.values()){
+            if(p.isAttacker){
+                output.println(p.getName() + " has received a card for agreeing to attack the stage.");
+                giveCards(p,1, input, output);
+
+            }
+
+        }
+
         int testValue = 0;
         boolean questShouldStop = false;
 
@@ -973,17 +1045,17 @@ public class Main {
 
             for(Player p: players.values()){
                 if(p.isAttacker && (testKey.equals("BadAttackNumber") || testKey.equals("AttackReady") || testKey.equals("LowValue") || testKey.equals("HighValue") || testKey.equals("dropout") || testKey.equals("Default")) ){
-                    giveCards(p,1);
-                    output.println(p.getName() + " has received a card for agreeing to attack the stage.");
                     boolean attackReady = false;
                     Set<String> usedWeaponNames = new HashSet<>();
                     List<AdventureCard> currentStage = new ArrayList<>();
                     int attackValue = 0;
 
+                    areYouReady(input, output, p);
 
 
                     while(!attackReady){
                         // Show hand and let player select cards
+                        output.println("--- Stage " + stage + " ---");
                         output.println("Choose a card by its number to attack Stage " + stage + " or type 'Quit' to finish your attack:");
                         ShowHand(input, output, p.getName(), false);
                         output.println("Stage " + stage + " attacking cards: " + currentStage.stream().map(AdventureCard::getName).toList());
@@ -1057,8 +1129,8 @@ public class Main {
                                 }else{
                                     usedWeaponNames.add(chosenCard.getName());
                                     attackValue += chosenCard.getValue();
+
                                     // Once you choose a valid card, you lose it forever
-                                    // I'll need code so that removefromdeck() adds back to the OG deck
                                     p.removeFromDeck(chosenCard);
                                     output.println(p.getName() + " added " + chosenCard.getName() + " to their attack.");
                                     currentStage.add(chosenCard);
@@ -1072,23 +1144,25 @@ public class Main {
                             }
                         }
 
-                        if (attackValue < stageValue) {
-                            output.println(p.getName() + " failed to match the stage value and is eliminated.");
-                            p.isAttacker = false;  // Mark as ineligible for further stages
 
-                            if(testKey.equals("LowValue")){
-                                questShouldStop = true;
-                                break;
-                            }
-                        } else {
-                            output.println(p.getName() + " passed the stage with an attack value of " + attackValue + ".");
-                            if(testKey.equals("HighValue")){
-                                questShouldStop = true;
-                                break;
-                            }
+
+                    } // While loop (while attack isn't ready)
+
+                    if (attackValue < stageValue) {
+                        output.println(p.getName() + " failed to match the stage value and is eliminated.");
+                        p.isAttacker = false;  // Mark as ineligible for further stages
+
+                        if(testKey.equals("LowValue")){
+                            questShouldStop = true;
+                            break;
                         }
-
-                    } // While loop
+                    } else {
+                        output.println(p.getName() + " passed the stage!");
+                        if(testKey.equals("HighValue")){
+                            questShouldStop = true;
+                            break;
+                        }
+                    }
 
 
 
@@ -1108,46 +1182,48 @@ public class Main {
                         break;
                     }
 
-                    // Every round, the winners can choose to continue (or not)
-                    output.print(p.getName() + ": Would you like to attack the next stage? (Enter 0 for No, 1 for Yes): ");
-                    int choice;
-                    if(testKey.equals("dropout")){
-                        choice = 0;
-                    }else{
-                        choice = 1;
-                    }
-
-                    try {
-                        if (input.hasNextInt()) {
-                            choice = input.nextInt();
-                            input.nextLine();
-                        } else {
-                            input.next();  // Clear invalid input
-                            output.println("Invalid input. Using default answer.");
-                            
+                    if(p.isAttacker && stage < stages){
+                        // Every round, the winners can choose to continue (or not)
+                        output.println(p.getName() + ": Would you like to attack the next stage? (Enter 0 for No, 1 for Yes): ");
+                        int choice;
+                        if(testKey.equals("dropout")){
+                            choice = 0;
+                        }else{
+                            choice = 1;
                         }
-                    } catch (NoSuchElementException | IllegalStateException e) {
-                        output.println("Error with input. Using default answer.");
-                        
+
+                        try {
+                            if (input.hasNextInt()) {
+                                choice = input.nextInt();
+                                input.nextLine();
+                            } else {
+                                input.next();  // Clear invalid input
+                                output.println("Invalid input. Using default answer.");
+
+                            }
+                        } catch (NoSuchElementException | IllegalStateException e) {
+                            output.println("Error with input. Using default answer.");
+
+                        }
+                        // If the player says yes, we don't need to do anything
+                        if (choice == 1) {
+                            output.println(p.getName() + " has agreed to attack the next stage!");
+                        } else if (choice == 0) {
+                            // If they say no, they are no longer an attacker
+                            output.println(p.getName() + " has declined to attack the next stage.");
+                            p.isAttacker = false;
+                        }
                     }
-                    // If the player says yes, we don't need to do anything
-                    if (choice == 1) {
-                        output.println(p.getName() + " has agreed to attack the next stage!");
-                    } else if (choice == 0) {
-                        // If they say no, they are no longer an attacker
-                        output.println(p.getName() + " has declined to attack the next stage.");
-                        p.isAttacker = false;
-                    }
 
 
 
-                }
-                // Nothing should go here
-            }
+
+                } // Needed conditions for player loops
+            } // Each player for loop
 
 
 
-        } // Main For Loop End
+        } // Stage for loop
 
         // After all stages, award shields to those who completed the quest
         for (Player p : players.values()) {
@@ -1161,7 +1237,7 @@ public class Main {
         // Finally, we'll handle giving the sponsor cards before ending the quest
         int sponsorCards = builtQuestCards.size() + stages;
         output.println(currentSponsor.getName() + " will now gain " + sponsorCards + " cards for sponsoring the quest.");
-        giveCards(currentSponsor, sponsorCards);
+        giveCards(currentSponsor, sponsorCards, input, output);
 
 
         // Reset all variables that deal with quests
@@ -1220,9 +1296,35 @@ public class Main {
         return players.get("Player 1");
     }
 
+    public void areYouReady(Scanner input, PrintWriter output, Player p){
+        // This will ensure the player choosing cards can ready up
+        output.println("Press Enter to continue.");
 
-    public void clearScreen(PrintWriter output) {
-        for (int i = 0; i < 100; i++) {
+        // Check if input is available before calling nextLine
+        if (input.hasNextLine()) {
+            input.nextLine();  // Wait for the player to press Enter
+        } else {
+            output.println("No input available. Skipping wait.");
+        }
+
+        clearScreen(output, 50);
+
+        // This will ensure the player choosing cards can ready up
+        output.println("Are you ready, " + p.getName() + "? Press Enter to continue.");
+
+        // Check if input is available before calling nextLine
+        if (input.hasNextLine()) {
+            input.nextLine();  // Wait for the player to press Enter
+        } else {
+            output.println("No input available. Skipping wait.");
+        }
+
+        clearScreen(output, 50);
+    }
+
+
+    public void clearScreen(PrintWriter output, int lines) {
+        for (int i = 0; i < lines; i++) {
             output.println(); // Print 100 empty lines to simulate clearing the screen
         }
     }
@@ -1233,7 +1335,7 @@ public class Main {
         if(playerName == null){
 
             currentPlayer = players.get(NextPlayerString(currentPlayer.getName()));
-            activePlayer = players.get(NextPlayerString(currentPlayer.getName()));
+            activePlayer = currentPlayer;
 //            clearScreen(output);
 //            output.println("Are you ready " + currentPlayer.getName() + "? Press enter to continue.");
 
@@ -1241,7 +1343,7 @@ public class Main {
             // Otherwise, I'll assume that person will just be in the hotseast and not having a turn
 
             activePlayer = players.get(playerName);
-            clearScreen(output);
+            clearScreen(output, 50);
             output.println("Even though it's still " + currentPlayer.getName() + "'s turn");
             output.println("Are you ready " + activePlayer.getName() + "? Press enter to continue.");
 
@@ -1271,52 +1373,17 @@ public class Main {
         }
     }
 
-    // We'll check all players and see if any of them are overloaded
-    public void checkAllOverload(Scanner input, PrintWriter output){
-        for(Player p: players.values()){
-            if(p.isOverloaded){
-                handlePlayerOverload(input, output, p);
-            }
-        }
-
-    }
-
-    public void handlePlayerOverload(Scanner input, PrintWriter output, Player player) {
-        while (player.getCardCount() > 12) {
-            int choice = 0;
-            output.println(player.getName() + "'s hand has too many cards. Choose a card to delete by its number:");
-
-            // Display the player's hand
-            ShowHand(input, output, player.getName(), false);
-
-            try {
-                if (input.hasNextInt()) {
-                    choice = input.nextInt() - 1;  // Read input and subtract 1 for 0-based indexing
-                    input.nextLine();
-                } else {
-                    input.next();  // Clear invalid input
-                    output.println("Invalid input. Defaulting to choice 1.");
-                    
-                }
-            } catch (NoSuchElementException | IllegalStateException e) {
-                output.println("Error with input. Defaulting to choice 1.");
-                
-                // choice remains 0 (which corresponds to the first card)
-            }
-
-            // Remove the chosen card
-            player.removeCardByIndex(choice);
+//    // We'll check all players and see if any of them are overloaded
+//    public void checkAllOverload(Scanner input, PrintWriter output){
+//        for(Player p: players.values()){
+//            if(p.isOverloaded){
+//                handlePlayerOverload(input, output, p);
+//            }
+//        }
+//
+//    }
 
 
-            // Clear the screen after the player deletes a card
-            clearScreen(output);
-
-            // If the player is still overloaded, this loop continues
-        }
-
-        output.println(player.getName() + " no longer has too many cards.");
-        player.setOverloaded(false);
-    }
 
 
 
