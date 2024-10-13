@@ -113,6 +113,7 @@ public class Main {
 
         public boolean isSponsor;
         public boolean isAttacker;
+        public int currentAttackValue;
 
         private int cardsBeforeLargeAdd;
 
@@ -179,6 +180,13 @@ public class Main {
             }
         }
 
+        // A specific add for the a-test
+        // Same as normal, but we don't check for overloading because we don't need to
+        public void aTestAdd(String type, String name, int value) {
+            AdventureCard card = new AdventureCard(type, name, value);
+            deck.add(card);
+        }
+
         public void removeFromDeck(AdventureCard card){
             if(deck.contains(card)){
                 deck.remove(card);
@@ -209,7 +217,7 @@ public class Main {
 
                 // Display the player's hand
                 ShowHand(input, output, getName(), false);
-                if(!testingOverload){
+                if(!testingOverload && !ATEST){
                     try {
                         if (input.hasNextInt()) {
                             choice = input.nextInt() - 1;  // Read input and subtract 1 for 0-based indexing
@@ -235,11 +243,84 @@ public class Main {
                 clearScreen(output, 50);
 
                 // If the player is still overloaded, this loop continues
+
+
             }
 
             output.println(getName() + " no longer has too many cards.");
             cardsBeforeLargeAdd = 12;
             setOverloaded(false);
+
+        }
+
+        // This function will only be used for the A-Test
+        // I'll remove all the players cards and give them the required ones
+        // I won't worry about the deck, as mentioned
+        public void RigDeck(){
+            deck.clear();
+
+            if(name.equals("Player 1")){
+                this.aTestAdd("Foe", "F5", 5);
+                this.aTestAdd("Foe", "F5", 5);
+                this.aTestAdd("Foe", "F15", 15);
+                this.aTestAdd("Foe", "F15", 15);
+                this.aTestAdd("Weapon", "Dagger", 5);
+                this.aTestAdd("Weapon", "Sword", 10);
+                this.aTestAdd("Weapon", "Sword", 10);
+                this.aTestAdd("Weapon", "Horse", 10);
+                this.aTestAdd("Weapon", "Horse", 10);
+                this.aTestAdd("Weapon", "Battle-Axe", 15);
+                this.aTestAdd("Weapon", "Battle-Axe", 15);
+                this.aTestAdd("Weapon", "Lance", 20);
+            }
+
+            if(name.equals("Player 2")){
+                this.aTestAdd("Foe", "F5", 5);
+                this.aTestAdd("Foe", "F5", 5);
+                this.aTestAdd("Foe", "F15", 15);
+                this.aTestAdd("Foe", "F15", 15);
+                this.aTestAdd("Foe", "F40", 40);
+                this.aTestAdd("Weapon", "Dagger", 5);
+                this.aTestAdd("Weapon", "Sword", 10);
+                this.aTestAdd("Weapon", "Horse", 10);
+                this.aTestAdd("Weapon", "Horse", 10);
+                this.aTestAdd("Weapon", "Battle-Axe", 15);
+                this.aTestAdd("Weapon", "Battle-Axe", 15);
+                this.aTestAdd("Weapon", "Excalibur", 30);
+            }
+
+            if(name.equals("Player 3")){
+                this.aTestAdd("Foe", "F5", 5);
+                this.aTestAdd("Foe", "F5", 5);
+                this.aTestAdd("Foe", "F5", 5);
+                this.aTestAdd("Foe", "F15", 15);
+                this.aTestAdd("Weapon", "Dagger", 5);
+                this.aTestAdd("Weapon", "Sword", 10);
+                this.aTestAdd("Weapon", "Sword", 10);
+                this.aTestAdd("Weapon", "Sword", 10);
+                this.aTestAdd("Weapon", "Horse", 10);
+                this.aTestAdd("Weapon", "Horse", 10);
+                this.aTestAdd("Weapon", "Battle-Axe", 15);
+                this.aTestAdd("Weapon", "Lance", 20);
+            }
+
+            if(name.equals("Player 4")){
+                this.aTestAdd("Foe", "F5", 5);
+                this.aTestAdd("Foe", "F15", 15);
+                this.aTestAdd("Foe", "F15", 15);
+                this.aTestAdd("Foe", "F40", 40);
+                this.aTestAdd("Weapon", "Dagger", 5);
+                this.aTestAdd("Weapon", "Dagger", 5);
+                this.aTestAdd("Weapon", "Sword", 10);
+                this.aTestAdd("Weapon", "Horse", 10);
+                this.aTestAdd("Weapon", "Horse", 10);
+                this.aTestAdd("Weapon", "Battle-Axe", 15);
+                this.aTestAdd("Weapon", "Lance", 20);
+                this.aTestAdd("Weapon", "Excalibur", 30);
+            }
+
+            cardsBeforeLargeAdd = 12;
+
         }
 
         @Override
@@ -280,6 +361,11 @@ public class Main {
 
     // For when the game ends
     public boolean finished = false;
+
+    // This will be for the A-Test
+    // When this is true, the code will ignore normal procedures and rig the input
+    public boolean ATEST = false;
+    public int GlobalATracker = 0;
 
     // Getter and Setter for the player whose turn it is
     public Player getCurrentPlayer() {
@@ -367,7 +453,7 @@ public class Main {
         if(newTurn){
             output.println(player.getName() + "'s Turn:");
         }else{
-            output.println(player.getName() + "'s Hand (NOT their turn):");
+            output.println(player.getName() + "'s Hand:");
         }
 
         // Display the player's hand in the format: (1)F5, (2)F10, (3)Sword, (4)Horse
@@ -451,6 +537,11 @@ public class Main {
                 }
             }
         }
+
+        // Only for the A-Test, we'll reset the random cards
+        for(Player p: players.values()){
+            p.RigDeck();
+        }
     }
 
     public void giveCards(Player p, int numCards, Scanner input, PrintWriter output) {
@@ -463,6 +554,12 @@ public class Main {
                 p.addToDeck(advDeck.remove(0), input, output, numCards);
             }
         }
+    }
+
+    // I'll use this for the A-Test to give the player a specific card
+    public void giveCardsRaw(Player p, Scanner input, PrintWriter output, String type, String name, int value){
+        AdventureCard card = new AdventureCard(type, name, value);
+        p.addToDeck(card, input, output, 1);
     }
 
 
@@ -535,9 +632,6 @@ public class Main {
         } else {
             lastEventCard = event; // Use the custom event if provided
 
-//            if(questNames.contains(lastEventCard)){
-//                isQuest = true;
-//            }
 
             if(testCodes.contains(lastEventCard)){
                 defaultAnswer = "YES";
@@ -580,7 +674,6 @@ public class Main {
                     giveCards(p, 2, input, output);
                 }
             }
-            //output.println(currentPlayer.getName() + ": Press enter to end your turn" );
 
         }else{
             output.println("We will now look for sponsors." );
@@ -612,20 +705,31 @@ public class Main {
                 choice = 1;
             }
 
+            // If we're not doing an A-TEST, ask the player normally
+            // If we are doing an A-TEST, force P1 to say No and P2 to say Yes
 
+            if (!ATEST) {
+                try {
+                    if (input.hasNextInt()) {
+                        choice = input.nextInt();
+                        input.nextLine();
+                    } else {
+                        input.next();  // Clear invalid input
+                        output.println("Invalid input. Using default answer.");
 
-            try {
-                if (input.hasNextInt()) {
-                    choice = input.nextInt();
-                    input.nextLine();
-                } else {
-                    input.next();  // Clear invalid input
-                    output.println("Invalid input. Using default answer.");
-                    
+                    }
+                } catch (NoSuchElementException | IllegalStateException e) {
+                    output.println("Error with input. Using default answer.");
+
                 }
-            } catch (NoSuchElementException | IllegalStateException e) {
-                output.println("Error with input. Using default answer.");
-                
+            } else{
+                if (currentAsk.getName().equals("Player 1")){
+                    choice = 0;
+                }
+
+                if (currentAsk.getName().equals("Player 2")){
+                    choice = 1;
+                }
             }
 
             int stages = Integer.parseInt(lastEventCard.substring(1));
@@ -659,7 +763,7 @@ public class Main {
                 currentAsk = NextPlayer(currentAsk);
             }
 
-            clearScreen(output, 3);// Clear the screen after each player's response
+            clearScreen(output, 50);// Clear the screen after each player's response
         }
 
         // If all players deny, handle that case
@@ -674,6 +778,7 @@ public class Main {
         stageValues.clear();
 
         int testValueTracker = 0; // This is strictly for testing
+        int ATestValueTracker = 0; // This so we know when P2 should make certain inputs
 
         int previousStageValue = 0;  // Initialize the previous stage value
 
@@ -702,47 +807,95 @@ public class Main {
 
 
                         String choice = null;
-                        try {
-                            choice = input.nextLine().trim();
-                                // Try to read the input
-                        } catch (NoSuchElementException e) {
-                            // Handle the exception and provide a default choice
-                            choice = "3";
 
-                            if(testKey.equals("InvalidNumber")){
-                                output.println("Testing an invalid number");
-                                choice = "20";
-                            }
+                        // If we're not in an A-TEST, build normally
+                        // If we are, force the sponsor (P2) to build as requested
+                        if (!ATEST) {
+                            try {
+                                choice = input.nextLine().trim();
+                                    // Try to read the input
+                            } catch (NoSuchElementException e) {
+                                // Handle the exception and provide a default choice
+                                choice = "3";
 
-                            if(testKey.equals("SelectCard")){
-                                output.println("Testing selecting a normal card");
-                                choice = "1";
-                            }
-
-                            if(testKey.equals("NoEmpty")){
-                                output.println("Testing an empty stage");
-                                choice = "Quit";
-                            }
-
-                            if(testKey.equals("BadValue")){
-                                if(testValueTracker == 0){
-                                    choice = "3";
-                                    testValueTracker++;
-                                } else if(testValueTracker == 1){
-                                    choice = "Quit";
-                                    testValueTracker++;
-                                } else if(testValueTracker == 2){
-                                    choice = "1";
-                                    testValueTracker++;
-                                } else if(testValueTracker == 3){
-                                    choice = "Quit";
-                                    testValueTracker++;
+                                if(testKey.equals("InvalidNumber")){
+                                    output.println("Testing an invalid number");
+                                    choice = "20";
                                 }
 
+                                if(testKey.equals("SelectCard")){
+                                    output.println("Testing selecting a normal card");
+                                    choice = "1";
+                                }
+
+                                if(testKey.equals("NoEmpty")){
+                                    output.println("Testing an empty stage");
+                                    choice = "Quit";
+                                }
+
+                                if(testKey.equals("BadValue")){
+                                    if(testValueTracker == 0){
+                                        choice = "3";
+                                        testValueTracker++;
+                                    } else if(testValueTracker == 1){
+                                        choice = "Quit";
+                                        testValueTracker++;
+                                    } else if(testValueTracker == 2){
+                                        choice = "1";
+                                        testValueTracker++;
+                                    } else if(testValueTracker == 3){
+                                        choice = "Quit";
+                                        testValueTracker++;
+                                    }
+
+                                }
+
+
                             }
-
-
+                        } else{ // This will ensure we build exactly as described
+                            if(ATestValueTracker == 0){
+                                choice = "1";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 1){
+                                choice = "7";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 2){
+                                choice = "Quit";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 3){
+                                choice = "2";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 4){
+                                choice = "5";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 5){
+                                choice = "Quit";
+                                ATestValueTracker++;
+                            } else  if(ATestValueTracker == 6){
+                                choice = "2";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 7){
+                                choice = "3";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 8){
+                                choice = "4";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 9){
+                                choice = "Quit";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 10){
+                                choice = "2";
+                                ATestValueTracker++;
+                            } else  if(ATestValueTracker == 11){
+                                choice = "3";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 12){
+                                choice = "Quit";
+                                ATestValueTracker++;
+                            }
                         }
+
+
                         // If the player chooses to "Quit"
                         if (choice.equalsIgnoreCase("Quit")) {
                             if(currentStageValue == 0){
@@ -909,33 +1062,40 @@ public class Main {
     public void AskForAttack(Scanner input, PrintWriter output, String defaultAnswer){
         int denied = 0;
         int stages;
+        int ATestValue = 0; // For the A-Test
 
         for(Player p: players.values()){
             if(!p.isSponsor){
-                clearScreen(output, 3);
+                clearScreen(output, 50);
                 output.println(p.getName() + ": Would you like to attack the quest? (Enter 0 for No, 1 for Yes): ");
 
                 // Default to no if something goes wrong
                 int choice;
+
                 if(defaultAnswer.equals("NO")){
                     choice = 0;
                 }else{
                     choice = 1;
                 }
 
-                try {
-                    if (input.hasNextInt()) {
-                        choice = input.nextInt();
-                        input.nextLine();
-                    } else {
-                        input.next();  // Clear invalid input
-                        output.println("Invalid input. Using default answer.");
-                        
+                if (!ATEST) {
+                    try {
+                        if (input.hasNextInt()) {
+                            choice = input.nextInt();
+                            input.nextLine();
+                        } else {
+                            input.next();  // Clear invalid input
+                            output.println("Invalid input. Using default answer.");
+
+                        }
+                    } catch (NoSuchElementException | IllegalStateException e) {
+                        output.println("Error with input. Using default answer.");
+                        //
+
                     }
-                } catch (NoSuchElementException | IllegalStateException e) {
-                    output.println("Error with input. Using default answer.");
-                    //
-                    
+                } else{
+                    // Everyone attacks in the A-Test
+                    choice = 1;
                 }
 
                 stages = Integer.parseInt(lastEventCard.substring(1));
@@ -967,8 +1127,11 @@ public class Main {
             // If we do nothing, it should send us all the way back to the function we call
         }else{
             // At least one person decided to attack
-            stages = Integer.parseInt(lastEventCard.substring(1));
+            // stages = Integer.parseInt(lastEventCard.substring(1));
+
             doQuest(input, output, defaultAnswer);
+
+
         }
     }
 
@@ -995,6 +1158,7 @@ public class Main {
     // All the "every round" code needs to be a loop from 0 > stages
     public void doQuest(Scanner input, PrintWriter output, String defaultAnswer){
         int stages = stageValues.size();
+        int ATestTracker = 0;
         if(stages == 0){
             stageValues.add(5);
             stageValues.add(10);
@@ -1008,15 +1172,6 @@ public class Main {
             }
         }
 
-        // Give out cards before starting the quest
-        for(Player p: players.values()){
-            if(p.isAttacker){
-                output.println(p.getName() + " has received a card for agreeing to attack the stage.");
-                giveCards(p,1, input, output);
-
-            }
-
-        }
 
         int testValue = 0;
         boolean questShouldStop = false;
@@ -1040,15 +1195,92 @@ public class Main {
 
             int stageValue = stageValues.get(stage - 1);
 
+            // Hand out cards to all players
+            for(Player p: players.values()){
+                if(p.isAttacker){
+                    if(!ATEST){
+                        output.println(p.getName() + " has received a card for agreeing to attack the stage.");
+                        giveCards(p,1, input, output);
+                    }else{
+                        output.println(p.getName() + " has received a card for agreeing to attack the stage.");
+
+                        if (stage == 1) {
+                            if (p.getName().equals("Player 1")) {
+                                giveCardsRaw(p, input, output, "Foe", "F30", 30);
+
+                            }
+
+                            if (p.getName().equals("Player 3")) {
+                                giveCardsRaw(p, input, output, "Weapon", "Sword", 10);
+
+                            }
+
+                            if (p.getName().equals("Player 4")) {
+                                giveCardsRaw(p, input, output, "Weapon", "Battle-Axe", 15);
+
+                            }
+                        }
+
+                        if (stage == 2) {
+                            if (p.getName().equals("Player 1")) {
+                                giveCardsRaw(p, input, output, "Foe", "F10", 10);
+
+                            }
+
+                            if (p.getName().equals("Player 3")) {
+                                giveCardsRaw(p, input, output, "Weapon", "Lance", 20);
+
+                            }
+
+                            if (p.getName().equals("Player 4")) {
+                                giveCardsRaw(p, input, output, "Weapon", "Lance", 20);
+
+                            }
+                        }
+
+                        if (stage == 3) {
+
+                            if (p.getName().equals("Player 3")) {
+                                giveCardsRaw(p, input, output, "Weapon", "Battle-Axe", 15);
+                            }
+
+                            if (p.getName().equals("Player 4")) {
+                                giveCardsRaw(p, input, output, "Weapon", "Sword", 10);
+                            }
+                        }
+
+                        if (stage == 4) {
+
+                            if (p.getName().equals("Player 3")) {
+                                giveCardsRaw(p, input, output, "Foe", "F30", 30);
+                            }
+
+                            if (p.getName().equals("Player 4")) {
+                                giveCardsRaw(p, input, output, "Weapon", "Lance", 20);
+                            }
+                        }
+
+
+                    }
+                }
+            }
+
 
             // Here, we'll do the attack for each player
 
             for(Player p: players.values()){
-                if(p.isAttacker && (testKey.equals("BadAttackNumber") || testKey.equals("AttackReady") || testKey.equals("LowValue") || testKey.equals("HighValue") || testKey.equals("dropout") || testKey.equals("Default")) ){
+                if(p.isAttacker && (testKey.equals("BadAttackNumber") || testKey.equals("AttackReady") || testKey.equals("LowValue") || testKey.equals("HighValue") || testKey.equals("dropout") || testKey.equals("Default") || ATEST) ){
                     boolean attackReady = false;
                     Set<String> usedWeaponNames = new HashSet<>();
                     List<AdventureCard> currentStage = new ArrayList<>();
                     int attackValue = 0;
+                    p.currentAttackValue = 0;
+
+
+
+
+
+
 
                     areYouReady(input, output, p);
 
@@ -1056,33 +1288,190 @@ public class Main {
                     while(!attackReady){
                         // Show hand and let player select cards
                         output.println("--- Stage " + stage + " ---");
-                        output.println("Choose a card by its number to attack Stage " + stage + " or type 'Quit' to finish your attack:");
+                        output.println("Choose a WEAPON card by its number to attack Stage " + stage + " or type 'Quit' to finish your attack:");
                         ShowHand(input, output, p.getName(), false);
                         output.println("Stage " + stage + " attacking cards: " + currentStage.stream().map(AdventureCard::getName).toList());
 
                         // Choice logic
                         String choice = null;
-                        try {
-                            choice = input.nextLine().trim();  // Try to read the input
-                            
-                        } catch (NoSuchElementException e) {
-                            // Handle the exception and provide a default choice
-                            choice = "8";
-                            // Again, I need all of these here because going into loop gets stuck
-                            if(testKey.equals("BadAttackNumber")){
-                                output.println("Invalid input. Please choose a valid card number for attack.");
-                                output.println("Now re-prompting ... ");
-                                break;
+                        if (!ATEST) {
+                            try {
+                                choice = input.nextLine().trim();  // Try to read the input
+
+                            } catch (NoSuchElementException e) {
+                                // Handle the exception and provide a default choice
+                                choice = "8";
+                                // Again, I need all of these here because going into loop gets stuck
+                                if(testKey.equals("BadAttackNumber")){
+                                    output.println("Invalid input. Please choose a valid card number for attack.");
+                                    output.println("Now re-prompting ... ");
+                                    break;
+                                }
+
+                                if(testKey.equals("dropout")){
+                                    output.println(p.getName() + " has declined to attack the next stage.");
+                                    break;
+                                }
+
+                                if(testKey.equals("AttackReady") ){
+                                    output.println(p.getName() + "'s attack is ready with a value of " + attackValue);
+                                    break;
+                                }
+
+
+                            }
+                        }else{
+                            // Stage 1
+                            if(p.getName().equals("Player 1") && stage == 1){
+                                if(ATestTracker == 0){
+                                    choice = "5";
+                                    ATestTracker++;
+
+                                } else if(ATestTracker == 1){
+                                    choice = "5";
+
+                                    ATestTracker++;
+                                } else if(ATestTracker == 2){
+                                    choice = "Quit";
+
+                                    ATestTracker = 0;
+                                }
                             }
 
-                            if(testKey.equals("dropout")){
-                                output.println(p.getName() + " has declined to attack the next stage.");
-                                break;
+                            if(p.getName().equals("Player 3") && stage == 1){
+                                if(ATestTracker == 0){
+                                    choice = "5";
+
+                                    ATestTracker++;
+                                } else if(ATestTracker == 1){
+                                    choice = "4";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 2){
+                                    choice = "Quit";
+                                    ATestTracker = 0;
+                                }
                             }
 
-                            if(testKey.equals("AttackReady") ){
-                                output.println(p.getName() + "'s attack is ready with a value of " + attackValue);
-                                break;
+                            if(p.getName().equals("Player 4") && stage == 1){
+                                if(ATestTracker == 0){
+                                    choice = "4";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 1){
+                                    choice = "6";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 2){
+                                    choice = "Quit";
+                                    ATestTracker = 0;
+                                }
+                            }
+
+                            // Stage 2
+                            if(p.getName().equals("Player 1") && stage == 2){
+                                if(ATestTracker == 0){
+                                    choice = "7";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 1){
+                                    choice = "6";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 2){
+                                    choice = "Quit";
+                                    ATestTracker = 0;
+                                }
+                            }
+
+                            if(p.getName().equals("Player 3") && stage == 2){
+                                if(ATestTracker == 0){
+                                    choice = "9";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 1){
+                                    choice = "4";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 2){
+                                    choice = "Quit";
+                                    ATestTracker = 0;
+                                }
+                            }
+
+                            if(p.getName().equals("Player 4") && stage == 2){
+                                if(ATestTracker == 0){
+                                    choice = "6";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 1){
+                                    choice = "6";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 2){
+                                    choice = "Quit";
+                                    ATestTracker = 0;
+                                }
+                            }
+
+                            // Stage 3
+                            if(p.getName().equals("Player 3") && stage == 3){
+                                if(ATestTracker == 0){
+                                    choice = "9";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 1){
+                                    choice = "6";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 2){
+                                    choice = "4";
+                                    ATestTracker++;
+                                }else if(ATestTracker == 3){
+                                    choice = "Quit";
+                                    ATestTracker = 0;
+                                }
+                            }
+
+                            if(p.getName().equals("Player 4") && stage == 3){
+                                if(ATestTracker == 0){
+                                    choice = "7";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 1){
+                                    choice = "5";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 2){
+                                    choice = "6";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 3){
+                                    choice = "Quit";
+                                    ATestTracker = 0;
+                                }
+                            }
+
+                            //Stage 4
+                            if(p.getName().equals("Player 3") && stage == 4){
+                                if(ATestTracker == 0){
+                                    choice = "7";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 1){
+                                    choice = "6";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 2){
+                                    choice = "6";
+                                    ATestTracker++;
+                                }else if(ATestTracker == 3){
+                                    choice = "Quit";
+                                    ATestTracker = 0;
+                                }
+                            }
+
+                            if(p.getName().equals("Player 4") && stage == 4){
+                                if(ATestTracker == 0){
+                                    choice = "4";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 1){
+                                    choice = "4";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 2){
+                                    choice = "4";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 3){
+                                    choice = "5";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 4){
+                                    choice = "Quit";
+                                    ATestTracker = 0;
+                                }
                             }
 
 
@@ -1120,20 +1509,24 @@ public class Main {
 
                                 if(testKey.equals("LowValue")){
                                     attackValue = 0;
+                                    p.currentAttackValue = 0;
                                     attackReady = true;
                                     output.println(p.getName() + " added nothing to their attack (test)");
                                 }else if(testKey.equals("HighValue")){
                                     attackValue = 10000;
+                                    p.currentAttackValue = 10000;
                                     attackReady = true;
                                     output.println(p.getName() + " added something to their attack (test)");
                                 }else{
                                     usedWeaponNames.add(chosenCard.getName());
                                     attackValue += chosenCard.getValue();
+                                    p.currentAttackValue = attackValue;
 
                                     // Once you choose a valid card, you lose it forever
                                     p.removeFromDeck(chosenCard);
                                     output.println(p.getName() + " added " + chosenCard.getName() + " to their attack.");
                                     currentStage.add(chosenCard);
+
                                 }
 
 
@@ -1148,7 +1541,17 @@ public class Main {
 
                     } // While loop (while attack isn't ready)
 
-                    if (attackValue < stageValue) {
+
+
+
+
+
+                } // Needed conditions for player loops
+            } // Each player for loop
+            clearScreen(output, 50);
+            for (Player p: players.values()) {
+                if (p.isAttacker) {
+                    if (p.currentAttackValue < stageValue) {
                         output.println(p.getName() + " failed to match the stage value and is eliminated.");
                         p.isAttacker = false;  // Mark as ineligible for further stages
 
@@ -1163,35 +1566,36 @@ public class Main {
                             break;
                         }
                     }
+                }
+            }
 
 
+            // Check if there are any attackers left for the next stage
+            boolean attackersRemain = false;
+            for (Player play : players.values()) {
+                if (play.isAttacker) {
+                    attackersRemain = true;
+                }
+            }
 
+            if (!attackersRemain) {
+                output.println("No more attackers. The quest ends here.");
+                isQuest = false;
+                break;
+            }
 
-
-                    // Check if there are any attackers left for the next stage
-                    boolean attackersRemain = false;
-                    for (Player play : players.values()) {
-                        if (play.isAttacker) {
-                            attackersRemain = true;
-                        }
+            for (Player p: players.values()) {
+                if(p.isAttacker && stage < stages){
+                    // Every round, the winners can choose to continue (or not)
+                    output.println(p.getName() + ": Would you like to attack the next stage? (Enter 0 for No, 1 for Yes): ");
+                    int choice;
+                    if(testKey.equals("dropout")){
+                        choice = 0;
+                    }else{
+                        choice = 1;
                     }
 
-                    if (!attackersRemain) {
-                        output.println("No more attackers. The quest ends here.");
-                        isQuest = false;
-                        break;
-                    }
-
-                    if(p.isAttacker && stage < stages){
-                        // Every round, the winners can choose to continue (or not)
-                        output.println(p.getName() + ": Would you like to attack the next stage? (Enter 0 for No, 1 for Yes): ");
-                        int choice;
-                        if(testKey.equals("dropout")){
-                            choice = 0;
-                        }else{
-                            choice = 1;
-                        }
-
+                    if (!ATEST) {
                         try {
                             if (input.hasNextInt()) {
                                 choice = input.nextInt();
@@ -1205,22 +1609,19 @@ public class Main {
                             output.println("Error with input. Using default answer.");
 
                         }
-                        // If the player says yes, we don't need to do anything
-                        if (choice == 1) {
-                            output.println(p.getName() + " has agreed to attack the next stage!");
-                        } else if (choice == 0) {
-                            // If they say no, they are no longer an attacker
-                            output.println(p.getName() + " has declined to attack the next stage.");
-                            p.isAttacker = false;
-                        }
+                    } else{
+                        choice = 1;
                     }
-
-
-
-
-                } // Needed conditions for player loops
-            } // Each player for loop
-
+                    // If the player says yes, we don't need to do anything
+                    if (choice == 1) {
+                        output.println(p.getName() + " has agreed to attack the next stage!");
+                    } else if (choice == 0) {
+                        // If they say no, they are no longer an attacker
+                        output.println(p.getName() + " has declined to attack the next stage.");
+                        p.isAttacker = false;
+                    }
+                }
+            }
 
 
         } // Stage for loop
@@ -1371,6 +1772,16 @@ public class Main {
                 finished = true;
             }
         }
+    }
+
+    public Player getPlayerByName(String s){
+        for(Player p: players.values() ){
+            if(p.getName().equals(s)){
+                return p;
+            }
+        }
+
+        return null;
     }
 
 //    // We'll check all players and see if any of them are overloaded

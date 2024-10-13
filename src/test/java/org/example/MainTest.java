@@ -837,7 +837,7 @@ public class MainTest {
         // Force a quest
         game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "dropout");
 
-        assertTrue(output.toString().contains("Choose a card by its number to attack"), "What I see: " + output.toString());
+        assertTrue(output.toString().contains("Choose a WEAPON card by its number to attack"), "What I see: " + output.toString());
 
     }
 
@@ -974,6 +974,47 @@ public class MainTest {
 
         // Assert that the game asks the player to choose a valid card number again
         assertTrue(output.toString().contains("cards for sponsoring the quest"),"What I see: " + output.toString());
+    }
+
+
+    @Test
+    @DisplayName("The mandatory A-Test")
+    void A_TEST_JP_Scenario() {
+        // I won't use any shorthand and call everything in this function
+
+        // Create and set up the game
+        Main game = new Main();
+        game.InitializeDeck();
+        game.StartGame();
+
+        // You can check the code to see what I'm doing
+        // But I'm just rigging the input, the code still calls the same logic
+        game.ATEST = true;
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        String input = "\n";
+
+        // Normal game loop, but no looping is needed for the test
+        game.areYouReady(new Scanner(input), new PrintWriter(output), game.getCurrentPlayer());
+        game.ShowHand(new Scanner(input), new PrintWriter(output), game.getCurrentPlayer().getName(), true);
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Q4"); //Needs to be a Q4 event
+        game.checkForWinners(new Scanner(input), new PrintWriter(output));
+
+
+        // All needed asserts
+        // What hand outputs are: (1)F15, (2)F15, (3)F40, (4)Lance, (5)Lance, (6)Excalibur
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", false);
+        assertTrue(game.getPlayerByName("Player 1").getShields() == 0, "Player 1 did not have the correct shields");
+        assertTrue(output.toString().contains("(1)F5, (2)F10, (3)F15, (4)F15, (5)F30, (6)Horse, (7)Battle-Axe, (8)Battle-Axe, (9)Lance"),"Player 1 did not have the correct cards");
+
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 3", false);
+        assertTrue(game.getPlayerByName("Player 3").getShields() == 0, "Player 3 did not have the correct shields");
+        assertTrue(output.toString().contains("(1)F5, (2)F5, (3)F15, (4)F30, (5)Sword"),"Player 3 did not have the correct cards");
+
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 4", false);
+        assertTrue(game.getPlayerByName("Player 4").getShields() == 4, "Player 4 did not have the correct shields");
+        assertTrue(output.toString().contains("(1)F15, (2)F15, (3)F40, (4)Lance"),"Player 4 did not have the correct cards");
     }
 
 
