@@ -981,15 +981,18 @@ public class MainTest {
     @DisplayName("The mandatory A-Test")
     void A_TEST_JP_Scenario() {
         // I won't use any shorthand and call everything in this function
-
         // Create and set up the game
         Main game = new Main();
-        game.InitializeDeck();
-        game.StartGame();
 
         // You can check the code to see what I'm doing
         // But I'm just rigging the input, the code still calls the same logic
         game.ATEST = true;
+
+
+        game.InitializeDeck();
+        game.StartGame();
+
+
 
         // Simulate Player 1's turn
         StringWriter output = new StringWriter();

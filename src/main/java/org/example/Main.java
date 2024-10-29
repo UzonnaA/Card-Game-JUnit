@@ -216,8 +216,9 @@ public class Main {
                 output.println(getName() + "'s hand has too many cards. Choose a card to delete by its number:");
 
                 // Display the player's hand
+                // ATEST CHECK
                 ShowHand(input, output, getName(), false);
-                if(!testingOverload && !ATEST){
+                if(!testingOverload && (!(ATEST || ATEST2 || ATEST3 || ATEST4))){
                     try {
                         if (input.hasNextInt()) {
                             choice = input.nextInt() - 1;  // Read input and subtract 1 for 0-based indexing
@@ -258,8 +259,20 @@ public class Main {
         // I won't worry about the deck, as mentioned
         public void RigDeck(){
             deck.clear();
+            String sponsor = null;
+            String tmp = null;
 
-            if(name.equals("Player 1")){
+            if(ATEST){
+                sponsor = "Player 2";
+                tmp = "Player 1";
+            }
+
+            if(ATEST2){
+                sponsor = "Player 1";
+                tmp = "Player 2";
+            }
+
+            if(name.equals(tmp)){
                 this.aTestAdd("Foe", "F5", 5);
                 this.aTestAdd("Foe", "F5", 5);
                 this.aTestAdd("Foe", "F15", 15);
@@ -274,7 +287,7 @@ public class Main {
                 this.aTestAdd("Weapon", "Lance", 20);
             }
 
-            if(name.equals("Player 2")){
+            if(name.equals(sponsor)){
                 this.aTestAdd("Foe", "F5", 5);
                 this.aTestAdd("Foe", "F5", 5);
                 this.aTestAdd("Foe", "F15", 15);
@@ -364,7 +377,11 @@ public class Main {
 
     // This will be for the A-Test
     // When this is true, the code will ignore normal procedures and rig the input
+    // For A2 we have more tests, which I'll rig semi-manually
     public boolean ATEST = false;
+    public boolean ATEST2 = false;
+    public boolean ATEST3 = false;
+    public boolean ATEST4 = false;
     public int GlobalATracker = 0;
 
     // Getter and Setter for the player whose turn it is
@@ -539,9 +556,13 @@ public class Main {
         }
 
         // Only for the A-Test, we'll reset the random cards
-        for(Player p: players.values()){
-            p.RigDeck();
+        if(ATEST || ATEST2){
+            for(Player p: players.values()){
+                p.RigDeck();
+            }
         }
+
+
     }
 
     public void giveCards(Player p, int numCards, Scanner input, PrintWriter output) {
@@ -707,8 +728,8 @@ public class Main {
 
             // If we're not doing an A-TEST, ask the player normally
             // If we are doing an A-TEST, force P1 to say No and P2 to say Yes
-
-            if (!ATEST) {
+            // ATEST CHECK
+            if (!(ATEST || ATEST2 || ATEST3 || ATEST4)) {
                 try {
                     if (input.hasNextInt()) {
                         choice = input.nextInt();
@@ -722,12 +743,16 @@ public class Main {
                     output.println("Error with input. Using default answer.");
 
                 }
-            } else{
+            } else if(ATEST){
                 if (currentAsk.getName().equals("Player 1")){
                     choice = 0;
                 }
 
                 if (currentAsk.getName().equals("Player 2")){
+                    choice = 1;
+                }
+            } else if(ATEST2){
+                if (currentAsk.getName().equals("Player 1")){
                     choice = 1;
                 }
             }
@@ -779,6 +804,7 @@ public class Main {
 
         int testValueTracker = 0; // This is strictly for testing
         int ATestValueTracker = 0; // This so we know when P2 should make certain inputs
+        int validChoice = 1;
 
         int previousStageValue = 0;  // Initialize the previous stage value
 
@@ -810,6 +836,7 @@ public class Main {
 
                         // If we're not in an A-TEST, build normally
                         // If we are, force the sponsor (P2) to build as requested
+                        // ATEST CHECK
                         if (!ATEST) {
                             try {
                                 choice = input.nextLine().trim();
@@ -852,7 +879,7 @@ public class Main {
 
 
                             }
-                        } else{ // This will ensure we build exactly as described
+                        } else { // This will ensure we build exactly as described
                             if(ATestValueTracker == 0){
                                 choice = "1";
                                 ATestValueTracker++;
@@ -895,7 +922,6 @@ public class Main {
                             }
                         }
 
-
                         // If the player chooses to "Quit"
                         if (choice.equalsIgnoreCase("Quit")) {
                             if(currentStageValue == 0){
@@ -915,6 +941,10 @@ public class Main {
                             if (currentStageValue <= previousStageValue) {
                                 output.println("Insufficient value for this stage.");
                                 output.println("The total value of this stage must be higher than the previous stage (" + previousStageValue + ").");
+                                if(ATEST2){
+                                    ATestValueTracker = 2;
+                                }
+
                                 if(testKey.equals("BadValue")){
                                     break;
                                 }else{
@@ -1000,7 +1030,7 @@ public class Main {
     // I essentially have to simulate building a quest
     // brutal
     public boolean canSponsorQuest(Player player, int stages) {
-        List<AdventureCard> foes = new ArrayList<>(); // do I need this? Not really.
+        List<AdventureCard> foes = new ArrayList<>();
         List<AdventureCard> weapons = new ArrayList<>();
 
         // Separate the player's cards into foes and weapons
@@ -1077,8 +1107,8 @@ public class Main {
                 }else{
                     choice = 1;
                 }
-
-                if (!ATEST) {
+                // ATEST CHECK
+                if (!(ATEST || ATEST2 || ATEST3 || ATEST4)) {
                     try {
                         if (input.hasNextInt()) {
                             choice = input.nextInt();
@@ -1198,7 +1228,8 @@ public class Main {
             // Hand out cards to all players
             for(Player p: players.values()){
                 if(p.isAttacker){
-                    if(!ATEST){
+                    // ATEST CHECK
+                    if(!(ATEST || ATEST3 || ATEST4)){
                         output.println(p.getName() + " has received a card for agreeing to attack the stage.");
                         giveCards(p,1, input, output);
                     }else{
@@ -1294,7 +1325,8 @@ public class Main {
 
                         // Choice logic
                         String choice = null;
-                        if (!ATEST) {
+                        // ATEST CHECK
+                        if (!(ATEST || ATEST2 || ATEST3 || ATEST4)) {
                             try {
                                 choice = input.nextLine().trim();  // Try to read the input
 
@@ -1320,7 +1352,7 @@ public class Main {
 
 
                             }
-                        }else{
+                        }else if(ATEST){
                             // Stage 1
                             if(p.getName().equals("Player 1") && stage == 1){
                                 if(ATestTracker == 0){
@@ -1475,11 +1507,14 @@ public class Main {
                             }
 
 
+
+                        } else if(ATEST2){
+                            choice = "Quit";
                         }
 
                         // Quit logic
                         if (choice.equalsIgnoreCase("Quit")) {
-                            if (attackValue == 0) {
+                            if (attackValue == 0 && !(ATEST2)) {
                                 output.println("You need at least one weapon card to attack.");
                                 continue;
                             }
@@ -1552,6 +1587,7 @@ public class Main {
             for (Player p: players.values()) {
                 if (p.isAttacker) {
                     if (p.currentAttackValue < stageValue) {
+
                         output.println(p.getName() + " failed to match the stage value and is eliminated.");
                         p.isAttacker = false;  // Mark as ineligible for further stages
 
@@ -1594,8 +1630,8 @@ public class Main {
                     }else{
                         choice = 1;
                     }
-
-                    if (!ATEST) {
+                    // ATEST CHECK
+                    if (!(ATEST || ATEST2 || ATEST3 || ATEST4)) {
                         try {
                             if (input.hasNextInt()) {
                                 choice = input.nextInt();
@@ -1783,22 +1819,6 @@ public class Main {
 
         return null;
     }
-
-//    // We'll check all players and see if any of them are overloaded
-//    public void checkAllOverload(Scanner input, PrintWriter output){
-//        for(Player p: players.values()){
-//            if(p.isOverloaded){
-//                handlePlayerOverload(input, output, p);
-//            }
-//        }
-//
-//    }
-
-
-
-
-
-
 
 }
 

@@ -15,19 +15,36 @@ public class GameSteps {
     private StringWriter output;
     private String input = "\n";
 
-    @Given("a new game starts")
+
+    @Given("the game is set to ATEST mode")
+    public void the_game_is_set_to_ATEST_mode() {
+        game.ATEST = true;
+    }
+
+
+    @When("a new game starts")
     public void a_new_game_starts() {
         game.InitializeDeck();
         game.StartGame();
         output = new StringWriter();
     }
 
-    @And("the game is set to ATEST mode")
-    public void the_game_is_set_to_ATEST_mode() {
-        game.ATEST = true;
+
+
+    @And("the game is set to ATEST2 mode")
+    public void the_game_is_set_to_ATEST2_mode() {
+        game.ATEST2 = true;
     }
 
+    @And("the game is set to ATEST3 mode")
+    public void the_game_is_set_to_ATEST3_mode() {
+        game.ATEST3 = true;
+    }
 
+    @And("the game is set to ATEST4 mode")
+    public void the_game_is_set_to_ATEST4_mode() {
+        game.ATEST4 = true;
+    }
 
     @And("Player 1 is ready")
     public void player_1_is_ready() {
