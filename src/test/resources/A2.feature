@@ -3,9 +3,9 @@ Feature: Assignment 2
   Scenario: A1_Scenario
     Given the game is set to ATEST mode
     When a new game starts
-    And Player 1 is ready
-    And Player 1's hand is shown
-    And Player 1 triggers a Q4 event
+    And The next player is ready
+    And The player's hand is shown
+    And The player triggers a Q4 event
     And the game checks for winners
     Then Player 1 should have 0 shields
     And Player 1 should have cards "(1)F5, (2)F10, (3)F15, (4)F15, (5)F30, (6)Horse, (7)Battle-Axe, (8)Battle-Axe, (9)Lance"
@@ -14,4 +14,23 @@ Feature: Assignment 2
     And Player 4 should have 4 shields
     And Player 4 should have cards "(1)F15, (2)F15, (3)F40, (4)Lance"
 
-#  Scenario: 2winner_game_2winner_quest
+  Scenario: 2winner_game_2winner_quest
+    Given the game is set to ATEST2 mode
+    When a new game starts
+    And The next player is ready
+    And The player's hand is shown
+    And The player triggers a Q4 event
+    And the game checks for winners
+    Then Player 3 should be eliminated for failing a stage
+    And Player 2 should be awarded 4 shields for completing the quest
+    And Player 4 should be awarded 4 shields for completing the quest
+#    Do a second loop for the second quest
+    And The next player is ready
+    And The player's hand is shown
+    And The player triggers a Q3 event
+    And the game checks for winners
+    Then Player 2 should decline to sponsor the quest
+    And Player 3 should agree to sponsor the quest
+    And Player 1 should decline to attack the quest
+    And Player 2 should be declared a winner
+    And Player 4 should be declared a winner

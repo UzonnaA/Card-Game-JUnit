@@ -1021,5 +1021,63 @@ public class MainTest {
     }
 
 
+
+    @Test
+    @DisplayName("A-TEST 2")
+    void A_TEST_2() {
+        // I won't use any shorthand and call everything in this function
+        // Create and set up the game
+        Main game = new Main();
+
+        // You can check the code to see what I'm doing
+        // But I'm just rigging the input, the code still calls the same logic
+        game.ATEST2 = true;
+
+
+        game.InitializeDeck();
+        game.StartGame();
+
+
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        String input = "\n";
+
+        // Normal game loop, but no looping is needed for the test
+        game.areYouReady(new Scanner(input), new PrintWriter(output), game.getCurrentPlayer());
+        game.ShowHand(new Scanner(input), new PrintWriter(output), game.getCurrentPlayer().getName(), true);
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Q4"); //Needs to be a Q4 event
+        game.checkForWinners(new Scanner(input), new PrintWriter(output));
+
+
+        game.areYouReady(new Scanner(input), new PrintWriter(output), game.getCurrentPlayer());
+        game.ShowHand(new Scanner(input), new PrintWriter(output), game.getCurrentPlayer().getName(), true);
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Q3"); //Needs to be a Q3 event
+        game.checkForWinners(new Scanner(input), new PrintWriter(output));
+
+
+        // All needed asserts
+        assertTrue(output.toString().contains("Player 3 failed to match the stage value and is eliminated"),"Player 3 did not fail any stages");
+        assertTrue(output.toString().contains("Player 2 is awarded 4 shields for completing the quest"),"Player 2 did not win a quest" + "What I see: " + output.toString());
+        assertTrue(output.toString().contains("Player 4 is awarded 4 shields for completing the quest"),"Player 4 did not win a quest");
+
+        // Part 2
+        assertTrue(output.toString().contains("Player 2 has declined to sponsor the quest"),"Player 2 sponsored the quest??");
+        assertTrue(output.toString().contains("Player 3 has agreed to sponsor the quest"),"Player 3 did not sponsor");
+        assertTrue(output.toString().contains("Player 1 has declined to attack the quest"),"Player 1 did not decline the quest");
+        assertTrue(output.toString().contains("Player 2 is a winner"),"Player 2 did not win the game");
+        assertTrue(output.toString().contains("Player 4 is a winner"),"Player 4 did not win the game");
+        //
+
+
+
+
+
+
+
+
+    }
+
+
 }
 
