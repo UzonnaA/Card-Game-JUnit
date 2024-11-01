@@ -413,7 +413,7 @@ public class Main {
             testAlt = "Player 1";
         }
 
-        if(ATEST2){
+        if(ATEST2 || ATEST3 || ATEST4){
             testSponsor = "Player 1";
             testAlt = "Player 2";
         }
@@ -562,7 +562,7 @@ public class Main {
         }
 
         // Only for the A-Test, we'll reset the random cards
-        if(ATEST || ATEST2){
+        if(ATEST || ATEST2 || ATEST3 || ATEST4){
             for(Player p: players.values()){
                 p.RigDeck();
             }
@@ -652,6 +652,25 @@ public class Main {
 
         if(ATEST2 && testQuestNumber == 2){
             event = "Q3";
+
+        }
+
+        if(ATEST3 && testQuestNumber == 2){
+            event = "Plague";
+            testQuestNumber++;
+
+        } else if(ATEST3 && testQuestNumber == 3){
+            event = "Prosperity";
+            testQuestNumber++;
+
+        } else if(ATEST3 && testQuestNumber == 4){
+            event = "Queen's Favor";
+            testQuestNumber++;
+
+        } else if(ATEST3 && testQuestNumber == 5){
+            event = "Q3";
+
+
         }
 
         String defaultAnswer = "NO";
@@ -694,7 +713,12 @@ public class Main {
             // Handle specific events
             if (lastEventCard.equals("Queen's Favor")) {
                 output.println(currentPlayer.getName() + " will draw 2 cards.");
-                giveCards(currentPlayer, 2, input, output);
+                if(!ATEST3){
+                    giveCards(currentPlayer, 2, input, output);
+                }else{
+                    // Give specific cards
+                }
+
 
             }
 
@@ -702,7 +726,29 @@ public class Main {
             if (lastEventCard.equals("Prosperity")) {
                 output.println("All players will draw 2 cards.");
                 for(Player p: players.values()){
-                    giveCards(p, 2, input, output);
+                    if(!ATEST3){
+                        giveCards(p, 2, input, output);
+                    }else{
+                        if(p.getName().equals("Player 1")){
+                            giveCardsRaw(p, input, output, "Foe", "F5", 5);
+                            giveCardsRaw(p, input, output, "Foe", "F5", 5);
+                        }
+
+                        if(p.getName().equals("Player 2")){
+                            giveCardsRaw(p, input, output, "Weapon", "Dagger", 5);
+                            giveCardsRaw(p, input, output, "Weapon", "Sword", 10);
+                        }
+
+                        if(p.getName().equals("Player 3")){
+                            giveCardsRaw(p, input, output, "Weapon", "Battle-Axe", 15);
+                            giveCardsRaw(p, input, output, "Weapon", "Excalibur", 30);
+                        }
+
+                        if(p.getName().equals("Player 4")){
+                            giveCardsRaw(p, input, output, "Weapon", "Horse", 10);
+                            giveCardsRaw(p, input, output, "Weapon", "Lance", 20);
+                        }
+                    }
                 }
             }
 
@@ -761,7 +807,7 @@ public class Main {
                 if (currentAsk.getName().equals("Player 2")){
                     choice = 1;
                 }
-            } else if(ATEST2 && testQuestNumber == 1){
+            } else if( (ATEST2 && testQuestNumber == 1) || ATEST3){
                 if (currentAsk.getName().equals("Player 1")){
                     choice = 1;
                 }
@@ -897,7 +943,7 @@ public class Main {
 
 
                             }
-                        } else if (ATEST || (ATEST2 && testQuestNumber == 1)) { // This will ensure we build exactly as described
+                        } else if (ATEST || (ATEST2 && testQuestNumber == 1) || (ATEST3 && testQuestNumber == 1)) { // This will ensure we build exactly as described
                             if(ATestValueTracker == 0){
                                 choice = "1";
                                 ATestValueTracker++;
@@ -961,6 +1007,38 @@ public class Main {
                                 choice = "2";
                                 ATestValueTracker++;
                             } else if(ATestValueTracker == 7){
+                                choice = "Quit";
+                                ATestValueTracker++;
+                            }
+                        } else if(ATEST3 && testQuestNumber == 5){
+                            if(ATestValueTracker == 0){
+                                choice = "1";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 1){
+                                choice = "3";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 2){
+                                choice = "Quit";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 3){
+                                choice = "1";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 4){
+                                choice = "6";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 5){
+                                choice = "Quit";
+                                ATestValueTracker++;
+                            } else  if(ATestValueTracker == 6){
+                                choice = "1";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 7){
+                                choice = "1";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 8){
+                                choice = "4";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 9){
                                 choice = "Quit";
                                 ATestValueTracker++;
                             }
@@ -1067,6 +1145,10 @@ public class Main {
 
 
         output.println("Quest built successfully! Stages: " + stageValues);
+        if(testQuestNumber == 5){
+            System.out.println("Quest built successfully! Stages: " + stageValues);
+        }
+
     }
 
 
@@ -1100,7 +1182,6 @@ public class Main {
         // Try to build each stage
         for (int i = 0; i < stages; i++) {
             if (foes.isEmpty()) {
-                System.out.println(player.getName() + " did not have enough foe cards to sponsor.");
                 return false;  // Not enough foe cards to build stages
             }
 
@@ -1167,7 +1248,7 @@ public class Main {
                         //
 
                     }
-                } else if(ATEST || (ATEST2 && testQuestNumber == 1)){
+                } else if(ATEST || (ATEST2 && testQuestNumber == 1) || ATEST3){
                     // Everyone attacks in the A-Test
                     choice = 1;
                 } else if (ATEST2 && testQuestNumber == 2){
@@ -1433,6 +1514,120 @@ public class Main {
                                     giveCardsRaw(p, input, output, "Weapon", "Excalibur", 30);
 
                                 }
+                            }
+                        }
+
+                        if(ATEST3 && testQuestNumber == 1){
+                            if (stage == 1) {
+                                if (p.getName().equals("Player 2")) {
+                                    giveCardsRaw(p, input, output, "Foe", "F30", 30);
+
+                                }
+
+                                if (p.getName().equals("Player 3")) {
+                                    giveCardsRaw(p, input, output, "Weapon", "Sword", 10);
+
+                                }
+
+                                if (p.getName().equals("Player 4")) {
+                                    giveCardsRaw(p, input, output, "Weapon", "Battle-Axe", 15);
+
+                                }
+                            }
+
+                            if (stage == 2) {
+                                if (p.getName().equals("Player 2")) {
+                                    giveCardsRaw(p, input, output, "Weapon", "Excalibur", 30);
+
+                                }
+
+                                if (p.getName().equals("Player 3")) {
+                                    giveCardsRaw(p, input, output, "Weapon", "Battle-Axe", 15);
+
+                                }
+
+                                if (p.getName().equals("Player 4")) {
+                                    giveCardsRaw(p, input, output, "Weapon", "Sword", 10);
+
+                                }
+                            }
+
+                            if (stage == 3) {
+                                if (p.getName().equals("Player 2")) {
+                                    giveCardsRaw(p, input, output, "Weapon", "Lance", 20);
+
+                                }
+
+                                if (p.getName().equals("Player 3")) {
+                                    giveCardsRaw(p, input, output, "Weapon", "Lance", 20);
+
+                                }
+
+                                if (p.getName().equals("Player 4")) {
+                                    giveCardsRaw(p, input, output, "Weapon", "Lance", 20);
+
+                                }
+                            }
+
+                            if (stage == 4) {
+                                if (p.getName().equals("Player 2")) {
+                                    giveCardsRaw(p, input, output, "Weapon", "Excalibur", 30);
+
+                                }
+
+                                if (p.getName().equals("Player 3")) {
+                                    giveCardsRaw(p, input, output, "Weapon", "Excalibur", 30);
+
+                                }
+
+                                if (p.getName().equals("Player 4")) {
+                                    giveCardsRaw(p, input, output, "Weapon", "Excalibur", 30);
+
+                                }
+                            }
+                        }
+
+                        if(ATEST3 && testQuestNumber == 5){
+                            if (stage == 1) {
+                                if (p.getName().equals("Player 2")) {
+                                    giveCardsRaw(p, input, output, "Weapon", "Sword", 10);
+
+                                }
+
+                                if (p.getName().equals("Player 3")) {
+                                    giveCardsRaw(p, input, output, "Weapon", "Lance", 20);
+
+                                }
+
+                                if (p.getName().equals("Player 4")) {
+                                    giveCardsRaw(p, input, output, "Weapon", "Dagger", 5);
+
+                                }
+                            }
+
+                            if (stage == 2) {
+                                if (p.getName().equals("Player 2")) {
+                                    giveCardsRaw(p, input, output, "Weapon", "Sword", 10);
+
+                                }
+
+                                if (p.getName().equals("Player 3")) {
+                                    giveCardsRaw(p, input, output, "Weapon", "Sword", 10);
+
+                                }
+                            }
+
+                            if (stage == 3) {
+                                if (p.getName().equals("Player 2")) {
+                                    giveCardsRaw(p, input, output, "Weapon", "Excalibur", 30);
+
+                                }
+
+                                if (p.getName().equals("Player 3")) {
+                                    giveCardsRaw(p, input, output, "Weapon", "Excalibur", 30);
+
+                                }
+
                             }
                         }
 
@@ -1855,6 +2050,283 @@ public class Main {
                                     ATestTracker = 0;
                                 }
                             }
+                        } else if (ATEST3 && testQuestNumber == 1){
+                            // Stage 1
+                            if(p.getName().equals(testAlt) && stage == 1){
+                                if(ATestTracker == 0){
+                                    choice = "5";
+                                    ATestTracker++;
+
+                                } else if(ATestTracker == 1){
+                                    choice = "5";
+
+                                    ATestTracker++;
+                                } else if(ATestTracker == 2){
+                                    choice = "Quit";
+
+                                    ATestTracker = 0;
+                                }
+                            }
+
+                            if(p.getName().equals("Player 3") && stage == 1){
+                                if(ATestTracker == 0){
+                                    choice = "4";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 1){
+                                    choice = "4";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 2){
+                                    choice = "Quit";
+                                    ATestTracker = 0;
+                                }
+                            }
+
+                            if(p.getName().equals("Player 4") && stage == 1){
+                                if(ATestTracker == 0){
+                                    choice = "4";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 1){
+                                    choice = "5";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 2){
+                                    choice = "Quit";
+                                    ATestTracker = 0;
+                                }
+                            }
+
+                            // Stage 2
+
+                            if(p.getName().equals(testAlt) && stage == 2){
+                                if(ATestTracker == 0){
+                                    choice = "5";
+                                    ATestTracker++;
+
+                                } else if(ATestTracker == 1){
+                                    choice = "7";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 2){
+                                    choice = "Quit";
+                                    ATestTracker = 0;
+                                }
+                            }
+
+
+                            if(p.getName().equals("Player 3") && stage == 2){
+                                if(ATestTracker == 0){
+                                    choice = "6";
+                                    ATestTracker++;
+
+                                } else if(ATestTracker == 1){
+                                    choice = "8";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 2){
+                                    choice = "Quit";
+                                    ATestTracker = 0;
+                                }
+                            }
+
+                            if(p.getName().equals("Player 4") && stage == 2){
+                                if(ATestTracker == 0){
+                                    choice = "6";
+                                    ATestTracker++;
+
+                                } else if(ATestTracker == 1){
+                                    choice = "7";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 2){
+                                    choice = "Quit";
+
+                                    ATestTracker = 0;
+                                }
+                            }
+
+                            // Stage 3
+
+                            if(p.getName().equals(testAlt) && stage == 3){
+                                if(ATestTracker == 0){
+                                    choice = "8";
+                                    ATestTracker++;
+
+                                } else if(ATestTracker == 1){
+                                    choice = "7";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 2){
+                                    choice = "Quit";
+                                    ATestTracker = 0;
+                                }
+                            }
+
+                            if(p.getName().equals("Player 3") && stage == 3){
+                                if(ATestTracker == 0){
+                                    choice = "9";
+                                    ATestTracker++;
+
+                                } else if(ATestTracker == 1){
+                                    choice = "8";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 2){
+                                    choice = "Quit";
+
+                                    ATestTracker = 0;
+                                }
+                            }
+
+                            if(p.getName().equals("Player 4") && stage == 3){
+                                if(ATestTracker == 0){
+                                    choice = "8";
+                                    ATestTracker++;
+
+                                } else if(ATestTracker == 1){
+                                    choice = "7";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 2){
+                                    choice = "Quit";
+
+                                    ATestTracker = 0;
+                                }
+                            }
+
+                            //Stage 4
+                            if(p.getName().equals(testAlt) && stage == 4){
+                                if(ATestTracker == 0){
+                                    choice = "9";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 1){
+                                    choice = "7";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 2){
+                                    choice = "6";
+                                    ATestTracker++;
+                                }else if(ATestTracker == 3){
+                                    choice = "Quit";
+                                    ATestTracker = 0;
+                                }
+                            }
+
+                            if(p.getName().equals("Player 3") && stage == 4){
+                                if(ATestTracker == 0){
+                                    choice = "9";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 1){
+                                    choice = "8";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 2){
+                                    choice = "7";
+                                    ATestTracker++;
+                                }else if(ATestTracker == 3){
+                                    choice = "Quit";
+                                    ATestTracker = 0;
+                                }
+                            }
+
+                            if(p.getName().equals("Player 4") && stage == 4){
+                                if(ATestTracker == 0){
+                                    choice = "9";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 1){
+                                    choice = "7";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 2){
+                                    choice = "6";
+                                    ATestTracker++;
+                                }else if(ATestTracker == 3){
+                                    choice = "Quit";
+                                    ATestTracker = 0;
+                                }
+                            }
+                        } else if (ATEST3 && testQuestNumber == 5){
+
+                            // Stage 1
+                            if(p.getName().equals("Player 2") && stage == 1){
+                                if(ATestTracker == 0){
+                                    choice = "6";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 1){
+                                    choice = "Quit";
+                                    ATestTracker = 0;
+                                }
+                            }
+
+                            if(p.getName().equals("Player 3") && stage == 1){
+                                if(ATestTracker == 0){
+                                    choice = "5";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 1){
+                                    choice = "Quit";
+                                    ATestTracker = 0;
+                                }
+                            }
+
+                            if(p.getName().equals("Player 4") && stage == 1){
+                                if(ATestTracker == 0){
+                                    choice = "4";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 1){
+                                    choice = "Quit";
+                                    ATestTracker = 0;
+                                }
+                            }
+
+                            // Stage 2
+
+                            if(p.getName().equals("Player 2") && stage == 2){
+
+                                if(ATestTracker == 0){
+                                    choice = "5";
+                                    ATestTracker++;
+
+                                } else if(ATestTracker == 1){
+                                    choice = "5";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 2){
+                                    choice = "Quit";
+                                    ATestTracker = 0;
+                                }
+                            }
+
+                            if(p.getName().equals("Player 3") && stage == 2){
+                                if(ATestTracker == 0){
+                                    choice = "4";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 1){
+                                    choice = "6";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 2){
+                                    choice = "Quit";
+                                    ATestTracker = 0;
+                                    System.out.println("Stage 2 started");
+                                }
+                            }
+
+                            // Stage 3
+                            if(p.getName().equals("Player 2") && stage == 3){
+                                if(ATestTracker == 0){
+                                    choice = "8";
+                                    ATestTracker++;
+
+                                } else if(ATestTracker == 1){
+                                    choice = "Quit";
+                                    ATestTracker = 0;
+                                }
+                            }
+
+                            if(p.getName().equals("Player 3") && stage == 3){
+                                if(ATestTracker == 0){
+                                    choice = "8";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 1){
+                                    choice = "Quit";
+                                    ATestTracker = 0;
+
+                                }
+                            }
+
+
+                        }
+
+                        if(choice == null){
+                            System.out.println("The culprit is: " + p.getName());
+                            System.out.println("On stage: " + stage);
                         }
 
                         // Quit logic
@@ -2017,11 +2489,11 @@ public class Main {
         }
 
         // Finally, we'll handle giving the sponsor cards before ending the quest
-        if(!ATEST2){
+        if(!(ATEST2 || ATEST3)){
             int sponsorCards = builtQuestCards.size() + stages;
             output.println(currentSponsor.getName() + " will now gain " + sponsorCards + " cards for sponsoring the quest.");
             giveCards(currentSponsor, sponsorCards, input, output);
-        } else{
+        } else if(ATEST2){
             // Here we give specific cards to sponsor once the quest is done
             // For A-TEST 2, sponsor should get (9 + 4 = 13) cards.
 
@@ -2045,6 +2517,26 @@ public class Main {
 
             // Increment the test quest number so we know which quest we're on
             testQuestNumber++;
+        } else if(ATEST3){
+            giveCardsRaw(currentSponsor, input, output, "Foe", "F5", 5);
+            giveCardsRaw(currentSponsor, input, output, "Foe", "F5", 5);
+            giveCardsRaw(currentSponsor, input, output, "Foe", "F5", 5);
+            giveCardsRaw(currentSponsor, input, output, "Foe", "F5", 5);
+            giveCardsRaw(currentSponsor, input, output, "Foe", "F5", 5);
+            giveCardsRaw(currentSponsor, input, output, "Foe", "F5", 5);
+
+            giveCardsRaw(currentSponsor, input, output, "Weapon", "Dagger", 5);
+            giveCardsRaw(currentSponsor, input, output, "Weapon", "Dagger", 5);
+            giveCardsRaw(currentSponsor, input, output, "Weapon", "Dagger", 5);
+            giveCardsRaw(currentSponsor, input, output, "Weapon", "Dagger", 5);
+            giveCardsRaw(currentSponsor, input, output, "Weapon", "Dagger", 5);
+
+            giveCardsRaw(currentSponsor, input, output, "Weapon", "Sword", 10);
+            giveCardsRaw(currentSponsor, input, output, "Weapon", "Sword", 10);
+
+            // Increment the test quest number so we know which quest we're on
+            testQuestNumber++;
+
         }
 
 
@@ -2173,12 +2665,20 @@ public class Main {
     }
 
     public void checkForWinners(Scanner input, PrintWriter output){
+        boolean oneWinner = false;
         for(Player p: players.values()){
             if(p.getShields() >= 7){
                 p.setWinner(true);
                 output.println(p.getName() + " is a winner!");
-                finished = true;
+                oneWinner = true;
             }
+        }
+
+        if(oneWinner){
+            finished = true;
+        }else{
+            currentPlayer = players.get(NextPlayerString(currentPlayer.getName()));
+            activePlayer = currentPlayer;
         }
     }
 

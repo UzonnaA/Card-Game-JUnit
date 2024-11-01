@@ -34,3 +34,40 @@ Feature: Assignment 2
     And Player 1 should decline to attack the quest
     And Player 2 should be declared a winner
     And Player 4 should be declared a winner
+
+  Scenario: 1winner_game_with_events
+    Given the game is set to ATEST3 mode
+    When a new game starts
+    And The next player is ready
+    And The player's hand is shown
+    And The player triggers a Q4 event
+    And the game checks for winners
+    Then Player 3 should be awarded 4 shields for completing the quest
+    And Player 2 should be awarded 4 shields for completing the quest
+    And Player 4 should be awarded 4 shields for completing the quest
+#    Loop for plague event
+    And The next player is ready
+    And The player's hand is shown
+    And The player triggers a plague event
+    And the game checks for winners
+    And Player 2 should have lost shields from plague
+#    Loop for prosperity event
+    And The next player is ready
+    And The player's hand is shown
+    And The player triggers a prosperity event
+    And the game checks for winners
+    And Prosperity must have happened
+#    Loop for queen's favor event
+    And The next player is ready
+    And The player's hand is shown
+    And The player triggers a queen's favor event
+    And the game checks for winners
+    And Player 4 should have gained cards from the Queen
+#    loop for final quest
+    And The next player is ready
+    And The player's hand is shown
+    And The player triggers a Q3 event
+    And the game checks for winners
+    Then Player 4 should be eliminated for failing a stage
+    And Player 3 should be declared a winner
+

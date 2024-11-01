@@ -70,6 +70,21 @@ public class GameSteps {
         game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Q3");
     }
 
+    @And("The player triggers a plague event")
+    public void player_1_triggers_a_plague_event() {
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Plague");
+    }
+
+    @And("The player triggers a queen's favor event")
+    public void player_1_triggers_a_queen_event() {
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Queen's Favor");
+    }
+
+    @And("The player triggers a prosperity event")
+    public void player_1_triggers_a_prosperity_event() {
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Prosperity");
+    }
+
     @And("the game checks for winners")
     public void the_game_checks_for_winners() {
         game.checkForWinners(new Scanner(input), new PrintWriter(output));
@@ -108,14 +123,37 @@ public class GameSteps {
         assertTrue( "Player 4 did not have the correct cards", output.toString().contains(expectedCards));
     }
 
-    @Then("Player 3 should be eliminated for failing a stage")
-    public void player_3_should_be_eliminated() {
-        assertTrue("Player 3 did not fail any stages", output.toString().contains("Player 3 failed to match the stage value and is eliminated"));
+    @Then("Player {int} should be eliminated for failing a stage")
+    public void player_should_be_eliminated(int playerNumber) {
+        assertTrue("Player " + playerNumber + " did not fail any stages", output.toString().contains("Player " + playerNumber + " failed to match the stage value and is eliminated"));
     }
+
+    @Then("Player {int} should have lost shields from plague")
+    public void player_should_lose_shields(int playerNumber) {
+        assertTrue("Player " + playerNumber + " did not lose any shields" + output.toString() , output.toString().contains("Player " + playerNumber + " lost 2 shields!"));
+    }
+
+    @Then("Player {int} should have gained cards from the Queen")
+    public void player_get_from_Queen(int playerNumber) {
+        assertTrue("Player " + playerNumber + " did gain any cards from Queen's Favor" + output.toString() , output.toString().contains("Player " + playerNumber + " will draw 2 cards."));
+    }
+
+    @And("Prosperity must have happened")
+    public void prosperity_must_have_happened() {
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 4", false);
+        assertTrue( "Prosperity did not occur", output.toString().contains("All players will draw 2 cards."));
+    }
+
+    //
 
     @Then("Player 2 should be awarded {int} shields for completing the quest")
     public void player_2_should_be_awarded_shields(int shields) {
         assertTrue("Player 2 did not win a quest. Output: " + output.toString(), output.toString().contains("Player 2 is awarded " + shields + " shields for completing the quest"));
+    }
+
+    @Then("Player 3 should be awarded {int} shields for completing the quest")
+    public void player_3_should_be_awarded_shields(int shields) {
+        assertTrue("Player 3 did not win a quest. Output: " + output.toString(), output.toString().contains("Player 3 is awarded " + shields + " shields for completing the quest"));
     }
 
     @Then("Player 4 should be awarded {int} shields for completing the quest")

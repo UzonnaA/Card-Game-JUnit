@@ -1048,6 +1048,7 @@ public class MainTest {
         game.ShowHand(new Scanner(input), new PrintWriter(output), game.getCurrentPlayer().getName(), true);
         game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Q4"); //Needs to be a Q4 event
         game.checkForWinners(new Scanner(input), new PrintWriter(output));
+        //game.handleNextPlayer(new Scanner(input), new PrintWriter(output), null, null);
 
 
         game.areYouReady(new Scanner(input), new PrintWriter(output), game.getCurrentPlayer());
@@ -1067,14 +1068,65 @@ public class MainTest {
         assertTrue(output.toString().contains("Player 1 has declined to attack the quest"),"Player 1 did not decline the quest");
         assertTrue(output.toString().contains("Player 2 is a winner"),"Player 2 did not win the game");
         assertTrue(output.toString().contains("Player 4 is a winner"),"Player 4 did not win the game");
-        //
+
+    }
+
+    @Test
+    @DisplayName("A-TEST 3")
+    void A_TEST_3() {
+        // I won't use any shorthand and call everything in this function
+        // Create and set up the game
+        Main game = new Main();
+
+        // You can check the code to see what I'm doing
+        // But I'm just rigging the input, the code still calls the same logic
+        game.ATEST3 = true;
+
+
+        game.InitializeDeck();
+        game.StartGame();
 
 
 
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        String input = "\n";
+
+        // Normal game loop, but no looping is needed for the test
+        game.areYouReady(new Scanner(input), new PrintWriter(output), game.getCurrentPlayer());
+        game.ShowHand(new Scanner(input), new PrintWriter(output), game.getCurrentPlayer().getName(), true);
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Q4"); //Needs to be a Q4 event
+        game.checkForWinners(new Scanner(input), new PrintWriter(output));
+        //game.handleNextPlayer(new Scanner(input), new PrintWriter(output), null, null);
 
 
+        game.areYouReady(new Scanner(input), new PrintWriter(output), game.getCurrentPlayer());
+        game.ShowHand(new Scanner(input), new PrintWriter(output), game.getCurrentPlayer().getName(), true);
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Plague"); //Needs to be a Q3 event
+        game.checkForWinners(new Scanner(input), new PrintWriter(output));
+        //game.handleNextPlayer(new Scanner(input), new PrintWriter(output), null, null);
+
+        game.areYouReady(new Scanner(input), new PrintWriter(output), game.getCurrentPlayer());
+        game.ShowHand(new Scanner(input), new PrintWriter(output), game.getCurrentPlayer().getName(), true);
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Prosperity"); //Needs to be a Q3 event
+        game.checkForWinners(new Scanner(input), new PrintWriter(output));
+        //game.handleNextPlayer(new Scanner(input), new PrintWriter(output), null, null);
+
+        game.areYouReady(new Scanner(input), new PrintWriter(output), game.getCurrentPlayer());
+        game.ShowHand(new Scanner(input), new PrintWriter(output), game.getCurrentPlayer().getName(), true);
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Queen's Favor"); //Needs to be a Q3 event
+        game.checkForWinners(new Scanner(input), new PrintWriter(output));
+        //game.handleNextPlayer(new Scanner(input), new PrintWriter(output), null, null);
+
+        game.areYouReady(new Scanner(input), new PrintWriter(output), game.getCurrentPlayer());
+        game.ShowHand(new Scanner(input), new PrintWriter(output), game.getCurrentPlayer().getName(), true);
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Q3"); //Needs to be a Q3 event
+        game.checkForWinners(new Scanner(input), new PrintWriter(output));
+        //game.handleNextPlayer(new Scanner(input), new PrintWriter(output), null, null);
 
 
+        // All needed asserts
+        assertTrue(output.toString().contains("Player " + "2" + " lost 2 shields"), "What I see: " + output.toString());
 
     }
 
