@@ -1131,5 +1131,44 @@ public class MainTest {
     }
 
 
+    @Test
+    @DisplayName("A-TEST 4")
+    void A_TEST_4() {
+        // I won't use any shorthand and call everything in this function
+        // Create and set up the game
+        Main game = new Main();
+
+        // You can check the code to see what I'm doing
+        // But I'm just rigging the input, the code still calls the same logic
+        game.ATEST4 = true;
+
+
+        game.InitializeDeck();
+        game.StartGame();
+
+
+
+        // Simulate Player 1's turn
+        StringWriter output = new StringWriter();
+        String input = "\n";
+
+        // Normal game loop, but no looping is needed for the test
+        game.areYouReady(new Scanner(input), new PrintWriter(output), game.getCurrentPlayer());
+        game.ShowHand(new Scanner(input), new PrintWriter(output), game.getCurrentPlayer().getName(), true);
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Q4"); //Needs to be a Q4 event
+        game.checkForWinners(new Scanner(input), new PrintWriter(output));
+
+
+
+        // All needed asserts
+        // " no longer has too many cards."
+        assertTrue(output.toString().contains("Player " + "1" + " will now gain 4 cards for sponsoring the quest."), "What I see: " + output.toString());
+        assertTrue(output.toString().contains("Player " + "2" + " failed to match the stage value and is eliminated."), "What I see: " + output.toString());
+        assertTrue(output.toString().contains("Player " + "3" + " failed to match the stage value and is eliminated."), "What I see: " + output.toString());
+        assertTrue(output.toString().contains("Player " + "4" + " failed to match the stage value and is eliminated."), "What I see: " + output.toString());
+        assertTrue(output.toString().contains("Player " + "1" + " no longer has too many cards."), "What I see: " + output.toString());
+    }
+
+
 }
 

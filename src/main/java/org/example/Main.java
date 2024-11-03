@@ -655,6 +655,10 @@ public class Main {
 
         }
 
+        if(ATEST4){
+            event = "Q2";
+        }
+
         if(ATEST3 && testQuestNumber == 2){
             event = "Plague";
             testQuestNumber++;
@@ -669,9 +673,9 @@ public class Main {
 
         } else if(ATEST3 && testQuestNumber == 5){
             event = "Q3";
-
-
         }
+
+
 
         String defaultAnswer = "NO";
         if (event == null) {
@@ -807,7 +811,7 @@ public class Main {
                 if (currentAsk.getName().equals("Player 2")){
                     choice = 1;
                 }
-            } else if( (ATEST2 && testQuestNumber == 1) || ATEST3){
+            } else if( (ATEST2 && testQuestNumber == 1) || ATEST3 || ATEST4){
                 if (currentAsk.getName().equals("Player 1")){
                     choice = 1;
                 }
@@ -1042,6 +1046,20 @@ public class Main {
                                 choice = "Quit";
                                 ATestValueTracker++;
                             }
+                        } else if (ATEST4){
+                            if(ATestValueTracker == 0){
+                                choice = "3";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 1){
+                                choice = "Quit";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 2){
+                                choice = "4";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 3){
+                                choice = "Quit";
+                                ATestValueTracker++;
+                            }
                         }
 
                         // If the player chooses to "Quit"
@@ -1248,7 +1266,7 @@ public class Main {
                         //
 
                     }
-                } else if(ATEST || (ATEST2 && testQuestNumber == 1) || ATEST3){
+                } else if(ATEST || (ATEST2 && testQuestNumber == 1) || ATEST3 || ATEST4){
                     // Everyone attacks in the A-Test
                     choice = 1;
                 } else if (ATEST2 && testQuestNumber == 2){
@@ -1624,6 +1642,26 @@ public class Main {
                                 }
 
                                 if (p.getName().equals("Player 3")) {
+                                    giveCardsRaw(p, input, output, "Weapon", "Excalibur", 30);
+
+                                }
+
+                            }
+                        }
+
+                        if(ATEST4){
+                            if (stage == 1) {
+                                if (p.getName().equals("Player 2")) {
+                                    giveCardsRaw(p, input, output, "Weapon", "Excalibur", 30);
+
+                                }
+
+                                if (p.getName().equals("Player 3")) {
+                                    giveCardsRaw(p, input, output, "Weapon", "Excalibur", 30);
+
+                                }
+
+                                if (p.getName().equals("Player 4")) {
                                     giveCardsRaw(p, input, output, "Weapon", "Excalibur", 30);
 
                                 }
@@ -2322,6 +2360,37 @@ public class Main {
                             }
 
 
+                        } else if(ATEST4){
+                            // Stage 1
+                            if(p.getName().equals("Player 2") && stage == 1){
+                                if(ATestTracker == 0){
+                                    choice = "4";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 1){
+                                    choice = "Quit";
+                                    ATestTracker = 0;
+                                }
+                            }
+
+                            if(p.getName().equals("Player 3") && stage == 1){
+                                if(ATestTracker == 0){
+                                    choice = "4";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 1){
+                                    choice = "Quit";
+                                    ATestTracker = 0;
+                                }
+                            }
+
+                            if(p.getName().equals("Player 4") && stage == 1){
+                                if(ATestTracker == 0){
+                                    choice = "4";
+                                    ATestTracker++;
+                                } else if(ATestTracker == 1){
+                                    choice = "Quit";
+                                    ATestTracker = 0;
+                                }
+                            }
                         }
 
                         if(choice == null){

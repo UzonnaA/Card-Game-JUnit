@@ -71,3 +71,17 @@ Feature: Assignment 2
     Then Player 4 should be eliminated for failing a stage
     And Player 3 should be declared a winner
 
+  Scenario: 0_winner_quest
+    Given the game is set to ATEST4 mode
+    When a new game starts
+    And The next player is ready
+    And The player's hand is shown
+    And The player triggers a Q2 event
+    And the game checks for winners
+    Then Player 2 should be eliminated for failing a stage
+    And Player 3 should be eliminated for failing a stage
+    And Player 4 should be eliminated for failing a stage
+    And Player 1 should gain 4 cards for sponsoring
+    And Player 1 should not have too many cards
+
+

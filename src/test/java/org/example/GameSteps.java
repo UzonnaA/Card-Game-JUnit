@@ -70,6 +70,11 @@ public class GameSteps {
         game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Q3");
     }
 
+    @And("The player triggers a Q2 event")
+    public void player_1_triggers_a_Q2_event() {
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Q2");
+    }
+
     @And("The player triggers a plague event")
     public void player_1_triggers_a_plague_event() {
         game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Plague");
@@ -179,6 +184,16 @@ public class GameSteps {
     @Then("Player {int} should be declared a winner")
     public void player_is_declared_winner(int playerNumber) {
         assertTrue("Player " + playerNumber + " did not win the game", output.toString().contains("Player " + playerNumber + " is a winner"));
+    }
+
+    @Then("Player {int} should gain {int} cards for sponsoring")
+    public void sponsor_gets_cards(int playerNumber, int cards) {
+        assertTrue("Player " + playerNumber + " did not get cards for sponsoring", output.toString().contains("Player " + playerNumber + " will now gain " + cards + " cards for sponsoring the quest."));
+    }
+
+    @Then("Player {int} should not have too many cards")
+    public void player_trims_hand(int playerNumber) {
+        assertTrue("Player " + playerNumber + " did not trim their hand", output.toString().contains("Player " + playerNumber + " no longer has too many cards."));
     }
 
 
