@@ -16,24 +16,25 @@ public class GameSteps {
     private String input = "\n";
 
 
-    @Given("the game is set to ATEST mode")
-    public void the_game_is_set_to_ATEST_mode() {
-        game.ATEST = true;
-    }
 
-    @Given("the game is set to ATEST2 mode")
-    public void the_game_is_set_to_ATEST2_mode() {
-        game.ATEST2 = true;
-    }
+    @Given("the game is set to {string} mode")
+    public void set_test_mode(String test) {
+        if(test.equals("ATEST")){
+            game.ATEST = true;
+        }
 
-    @Given("the game is set to ATEST3 mode")
-    public void the_game_is_set_to_ATEST3_mode() {
-        game.ATEST3 = true;
-    }
+        if(test.equals("ATEST2")){
+            game.ATEST2 = true;
+        }
 
-    @Given("the game is set to ATEST4 mode")
-    public void the_game_is_set_to_ATEST4_mode() {
-        game.ATEST4 = true;
+        if(test.equals("ATEST3")){
+            game.ATEST3 = true;
+        }
+
+        if(test.equals("ATEST4")){
+            game.ATEST4 = true;
+        }
+
     }
 
 
@@ -46,87 +47,39 @@ public class GameSteps {
         output = new StringWriter();
     }
 
-
-
-
-
     @And("The next player is ready")
-    public void player_1_is_ready() {
+    public void player_is_ready() {
         game.areYouReady(new Scanner(input), new PrintWriter(output), game.getCurrentPlayer());
     }
 
     @And("The player's hand is shown")
-    public void player_1s_hand_is_shown() {
+    public void player_hand_is_shown() {
         game.ShowHand(new Scanner(input), new PrintWriter(output), game.getCurrentPlayer().getName(), true);
     }
 
-    @And("The player triggers a Q4 event")
-    public void player_1_triggers_a_Q4_event() {
-        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Q4");
+
+    @And("The player triggers a {string} event")
+    public void player_triggers_event(String event) {
+        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), event);
     }
 
-    @And("The player triggers a Q3 event")
-    public void player_1_triggers_a_Q3_event() {
-        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Q3");
-    }
-
-    @And("The player triggers a Q2 event")
-    public void player_1_triggers_a_Q2_event() {
-        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Q2");
-    }
-
-    @And("The player triggers a plague event")
-    public void player_1_triggers_a_plague_event() {
-        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Plague");
-    }
-
-    @And("The player triggers a queen's favor event")
-    public void player_1_triggers_a_queen_event() {
-        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Queen's Favor");
-    }
-
-    @And("The player triggers a prosperity event")
-    public void player_1_triggers_a_prosperity_event() {
-        game.DrawPlayEvents(new Scanner(input), new PrintWriter(output), "Prosperity");
-    }
 
     @And("the game checks for winners")
     public void the_game_checks_for_winners() {
         game.checkForWinners(new Scanner(input), new PrintWriter(output));
     }
 
-    @Then("Player 1 should have {int} shields")
-    public void player_1_should_have_shields(int expectedShields) {
-        assertTrue("Player 1 did not have the correct shields", game.getPlayerByName("Player 1").getShields() == expectedShields);
+    @Then("Player {int} should have {int} shields")
+    public void player_should_have_shields(int playerNum, int expectedShields) {
+        assertTrue("Player " + playerNum +  " did not have the correct shields", game.getPlayerByName("Player " + playerNum).getShields() == expectedShields);
     }
 
-    @And("Player 1 should have cards {string}")
-    public void player_1_should_have_cards(String expectedCards) {
-        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 1", false);
-        assertTrue("Player 1 did not have the correct cards", output.toString().contains(expectedCards));
+    @And("Player {int} should have cards {string}")
+    public void player_should_have_cards(int playerNum, String expectedCards) {
+        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player " + playerNum, false);
+        assertTrue( "Player " + playerNum + " did not have the correct cards", output.toString().contains(expectedCards));
     }
 
-    @Then("Player 3 should have {int} shields")
-    public void player_3_should_have_shields(int expectedShields) {
-        assertTrue( "Player 3 did not have the correct shields", game.getPlayerByName("Player 3").getShields() == expectedShields);
-    }
-
-    @And("Player 3 should have cards {string}")
-    public void player_3_should_have_cards(String expectedCards) {
-        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 3", false);
-        assertTrue( "Player 3 did not have the correct cards", output.toString().contains(expectedCards));
-    }
-
-    @Then("Player 4 should have {int} shields")
-    public void player_4_should_have_shields(int expectedShields) {
-        assertTrue( "Player 4 did not have the correct shields", game.getPlayerByName("Player 4").getShields() == expectedShields);
-    }
-
-    @And("Player 4 should have cards {string}")
-    public void player_4_should_have_cards(String expectedCards) {
-        game.ShowHand(new Scanner(input), new PrintWriter(output), "Player 4", false);
-        assertTrue( "Player 4 did not have the correct cards", output.toString().contains(expectedCards));
-    }
 
     @Then("Player {int} should be eliminated for failing a stage")
     public void player_should_be_eliminated(int playerNumber) {
@@ -149,36 +102,27 @@ public class GameSteps {
         assertTrue( "Prosperity did not occur", output.toString().contains("All players will draw 2 cards."));
     }
 
-    //
 
-    @Then("Player 2 should be awarded {int} shields for completing the quest")
-    public void player_2_should_be_awarded_shields(int shields) {
-        assertTrue("Player 2 did not win a quest. Output: " + output.toString(), output.toString().contains("Player 2 is awarded " + shields + " shields for completing the quest"));
+    @Then("Player {int} should be awarded {int} shields for completing the quest")
+    public void player_should_be_awarded_shields(int playerNum, int shields) {
+        assertTrue("Player " + playerNum + " did not win a quest. Output: " + output.toString(), output.toString().contains("Player " + playerNum + " is awarded " + shields + " shields for completing the quest"));
     }
 
-    @Then("Player 3 should be awarded {int} shields for completing the quest")
-    public void player_3_should_be_awarded_shields(int shields) {
-        assertTrue("Player 3 did not win a quest. Output: " + output.toString(), output.toString().contains("Player 3 is awarded " + shields + " shields for completing the quest"));
+
+
+    @Then("Player {int} should decline to sponsor the quest")
+    public void player_declines_to_sponsor(int playerNum) {
+        assertTrue("Player " + playerNum + " sponsored the quest?", output.toString().contains("Player " + playerNum + " has declined to sponsor the quest"));
     }
 
-    @Then("Player 4 should be awarded {int} shields for completing the quest")
-    public void player_4_should_be_awarded_shields(int shields) {
-        assertTrue("Player 4 did not win a quest. Output: " + output.toString(), output.toString().contains("Player 4 is awarded " + shields + " shields for completing the quest"));
+    @Then("Player {int} should agree to sponsor the quest")
+    public void player_agrees_to_sponsor(int playerNum) {
+        assertTrue("Player " + playerNum + " did not sponsor", output.toString().contains("Player " + playerNum + " has agreed to sponsor the quest"));
     }
 
-    @Then("Player 2 should decline to sponsor the quest")
-    public void player_2_declines_to_sponsor() {
-        assertTrue("Player 2 sponsored the quest?", output.toString().contains("Player 2 has declined to sponsor the quest"));
-    }
-
-    @Then("Player 3 should agree to sponsor the quest")
-    public void player_3_agrees_to_sponsor() {
-        assertTrue("Player 3 did not sponsor", output.toString().contains("Player 3 has agreed to sponsor the quest"));
-    }
-
-    @Then("Player 1 should decline to attack the quest")
-    public void player_1_declines_to_attack() {
-        assertTrue("Player 1 did not decline the quest", output.toString().contains("Player 1 has declined to attack the quest"));
+    @Then("Player {int} should decline to attack the quest")
+    public void player_declines_to_attack(int playerNum) {
+        assertTrue("Player " + playerNum + " did not decline the quest", output.toString().contains("Player " + playerNum + " has declined to attack the quest"));
     }
 
     @Then("Player {int} should be declared a winner")
@@ -195,6 +139,20 @@ public class GameSteps {
     public void player_trims_hand(int playerNumber) {
         assertTrue("Player " + playerNumber + " did not trim their hand", output.toString().contains("Player " + playerNumber + " no longer has too many cards."));
     }
+
+    @Then("Player {int} should have sponsored a {string} quest")
+    public void player_did_sponsor(int playerNumber, String quest) {
+        assertTrue("Player " + playerNumber + " did not sponsor the quest", output.toString().contains("Player " + playerNumber + " has agreed to sponsor the quest!"));
+        assertTrue("Player " + playerNumber + " did not sponsor the CORRECT quest", output.toString().contains("Drew event card: " + quest));
+    }
+
+
+    @Then("Player {int} should have exactly {int} shields")
+    public void player_has_shields(int playerNumber, int shields) {
+        assertTrue("Player " + playerNumber + " did not have the needed shields", game.getPlayerByName("Player " + playerNumber).getShields() == shields);
+
+    }
+
 
 
 

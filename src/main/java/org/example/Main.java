@@ -947,7 +947,7 @@ public class Main {
 
 
                             }
-                        } else if (ATEST || (ATEST2 && testQuestNumber == 1) || (ATEST3 && testQuestNumber == 1)) { // This will ensure we build exactly as described
+                        } else if (ATEST  || (ATEST3 && testQuestNumber == 1)) { // This will ensure we build exactly as described
                             if(ATestValueTracker == 0){
                                 choice = "1";
                                 ATestValueTracker++;
@@ -1060,6 +1060,41 @@ public class Main {
                                 choice = "Quit";
                                 ATestValueTracker++;
                             }
+                        } else if (ATEST2 && testQuestNumber == 1){
+                            if(ATestValueTracker == 0){
+                                choice = "3";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 1){
+                                choice = "Quit";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 2){
+                                choice = "3";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 3){
+                                choice = "4";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 4){
+                                choice = "Quit";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 5){
+                                choice = "1";
+                                ATestValueTracker++;
+                            } else  if(ATestValueTracker == 6){
+                                choice = "8";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 7){
+                                choice = "Quit";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 8){
+                                choice = "2";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 9){
+                                choice = "5";
+                                ATestValueTracker++;
+                            } else if(ATestValueTracker == 10){
+                                choice = "Quit";
+                                ATestValueTracker++;
+                            }
                         }
 
                         // If the player chooses to "Quit"
@@ -1163,9 +1198,7 @@ public class Main {
 
 
         output.println("Quest built successfully! Stages: " + stageValues);
-        if(testQuestNumber == 5){
-            System.out.println("Quest built successfully! Stages: " + stageValues);
-        }
+
 
     }
 
