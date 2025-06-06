@@ -1,4 +1,4 @@
-# 🃏 Card Game Engine with JUnit Testing
+# 🃏 Card Game with JUnit Testing
 
 A lightweight Java-based card game implementation with extensive test coverage, designed to demonstrate clean logic, modular design, and automated testing practices.
 
