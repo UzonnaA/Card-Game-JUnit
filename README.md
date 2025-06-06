@@ -31,6 +31,8 @@ The accompanying test suite (`MainTest.java`) covers nearly all logical branches
 - JUnit 5
 - IntelliJ (IDE)
 
+## 🔧 How to Run Locally
+
 ### 1. Clone the repository
 
 ```bash
@@ -38,11 +40,11 @@ git clone https://github.com/UzonnaA/Card-Game-JUnit
 cd Card-Game-JUnit
 ```
 
-## 2. Run tests
+### 2. Run tests
 ```bash
 mvn test
 ```
-## 3. Run the game
+### 3. Run the game
 ```bash
 cd src
 javac -d out main/java/org/example/Main.java
