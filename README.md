@@ -30,3 +30,21 @@ The accompanying test suite (`MainTest.java`) covers nearly all logical branches
 - Java 17
 - JUnit 5
 - IntelliJ (IDE)
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/UzonnaA/Card-Game-JUnit
+cd Card-Game-JUnit
+```
+
+## 2. Run tests
+```bash
+mvn test
+```
+## 3. Run the game
+```bash
+cd src
+javac -d out main/java/org/example/Main.java
+java -cp out org.example.Main
+```
